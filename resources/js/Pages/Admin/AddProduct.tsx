@@ -1,5 +1,4 @@
 'use client'
-import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { Button } from "@/Components/ui/button"
@@ -12,8 +11,6 @@ import { Switch } from "@/Components/ui/switch"
 import { Card, CardContent } from "@/Components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group"
-import { useToast } from "@/hooks/use-toast"
-
 
 // Mock data for categories and brands
 const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Books']
@@ -21,35 +18,14 @@ const brands = ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
 
 
 export default function AddProduct() {
-    const { toast } = useToast()
-    const [productName, setProductName] = useState("");
-    const [shortDescription, setShortDescription] = useState("");
-    const [fullDescription, setFullDescription] = useState("");
-    const [mrpPrice, setMrpPrice] = useState<string>('');
-    const [salePrice, setSalePrice] = useState<string>('');
-    //const [isVariableProduct, setIsVariableProduct] = useState(false);
-    //const [attributeGroups, setAttributeGroups] = useState([]);
-    //const [variations, setVariations] = useState([]);
-    //const [mainImage, setMainImage] = useState(null);
-    //const [galleryImages, setGalleryImages] = useState([]);
-    const [category, setCategory] = useState("");
-    const [brand, setBrand] = useState("");
-    //const [productStatus, setProductStatus] = useState("draft");
-    
-
-
-
-
     const [isVariableProduct, setIsVariableProduct] = useState(false)
     const [mainImage, setMainImage] = useState<string | null>(null)
     const [galleryImages, setGalleryImages] = useState<string[]>([])
-    
     const [attributeGroups, setAttributeGroups] = useState([
       { name: 'Size', values: ['S', 'M', 'L'] },
       { name: 'Color', values: ['Red', 'Blue', 'Green'] },
       { name: 'Pattern', values: ['Solid', 'Striped', 'Floral'] }
     ])
-      
     const [variations, setVariations] = useState([{ attributes: {}, mrpPrice: '', salePrice: '', stock: '' }])
     const [productStatus, setProductStatus] = useState('draft')
   
@@ -128,55 +104,6 @@ export default function AddProduct() {
     const removeVariation = (index: number) => {
       setVariations(variations.filter((_, i) => i !== index))
     }
-
-    const handleSubmit = async (e:any) => {
-        e.preventDefault();
-        const formData = new FormData();
-    
-        formData.append("name", productName);
-        formData.append("description", shortDescription);
-        formData.append("content", fullDescription);
-        formData.append("price", mrpPrice);
-        formData.append("sale_price", salePrice);
-    //    formData.append("isVariableProduct", String(isVariableProduct));
-    //    formData.append("category", category);
-    //    formData.append("brand", brand);
-        formData.append("status", productStatus);
-    
-    //    if (mainImage) {
-    //      formData.append("images", mainImage);
-    //    }
-        
-    //    galleryImages.forEach((image, index) => {
-    //      formData.append(`galleryImages[${index}]`, image);
-    //    });
-    
-    //    formData.append("attributeGroups", JSON.stringify(attributeGroups));
-    //    formData.append("variations", JSON.stringify(variations));
-    
-        try {
-            const response = await axios.post("/api/products", formData, {
-                headers: { "Content-Type": "multipart/form-data" },
-              });
-
-              toast({
-                variant: "success",
-                title: "Product Submitted Successfully",
-                description: "There was a problem with your request.",
-              })
-          console.log("Product saved:", response.data);
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Uh oh! Something went wrong.",
-                description: "There was a problem with your request.",
-              })
-            console.log(Array.from(formData.entries()));
-          console.error("Error saving product:", error);
-        }
-      };
-  
-
     return (
         <AuthenticatedLayout
             header={
@@ -189,31 +116,31 @@ export default function AddProduct() {
 
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold mb-6">Add New Product</h1>
-                <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-6">
-                    <div className="md:col-span-2 space-y-6 p-6 bg-white rounded-lg">
+                <form className="grid md:grid-cols-3 gap-6">
+                    <div className="md:col-span-2 space-y-6">
                     <div>
                         <Label htmlFor="productName">Product Name</Label>
-                        <Input onChange={(event) => setProductName(event.target.value)} id="productName" placeholder="Enter product name" />
+                        <Input id="productName" placeholder="Enter product name" />
                     </div>
 
                     <div>
                         <Label htmlFor="shortDescription">Short Description</Label>
-                        <Input onChange={(event) => setShortDescription(event.target.value)} id="shortDescription" placeholder="Enter short description" />
+                        <Input id="shortDescription" placeholder="Enter short description" />
                     </div>
 
                     <div>
                         <Label htmlFor="fullDescription">Full Description</Label>
-                        <Textarea onChange={(event) => setFullDescription(event.target.value)} id="fullDescription" placeholder="Enter full product description" className="min-h-[200px]" />
+                        <Textarea id="fullDescription" placeholder="Enter full product description" className="min-h-[200px]" />
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                         <Label htmlFor="mrpPrice">MRP Price</Label>
-                        <Input onChange={(event) => setMrpPrice(event.target.value)} value={mrpPrice} id="mrpPrice" type="number" placeholder="0.00" />
+                        <Input id="mrpPrice" type="number" placeholder="0.00" />
                         </div>
                         <div>
                         <Label htmlFor="salePrice">Sale Price</Label>
-                        <Input onChange={(event) => setSalePrice(event.target.value)} id="salePrice" type="number" placeholder="0.00" />
+                        <Input id="salePrice" type="number" placeholder="0.00" />
                         </div>
                     </div>
 
