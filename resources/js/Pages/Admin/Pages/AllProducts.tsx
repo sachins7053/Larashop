@@ -9,6 +9,7 @@ import { Label } from "@/Components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
 } from "@/Components/ui/table"
+import { PageProps } from '@/types';
 
     /*// Mock data for demonstration
     const mockProducts = [
@@ -33,7 +34,7 @@ interface Product {
     // Add other properties as needed
   }
 
-export default function AllProductsPage() {
+export default function AllProductsPage( { product }: PageProps <{ product : string[] }> ) {
     const [mockProducts, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('')

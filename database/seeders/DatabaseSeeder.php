@@ -12,9 +12,13 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
+    { 
+      $this->call([
+        AttributesTableSeeder::class,
+        AttributeValuesTableSeeder::class,
+    ]);
 
-        $this->call(RolesAndPermissions::class);
+       // $this->call(RolesAndPermissions::class);
         // User::factory(10)->create();
 
       //  User::factory()->create([
