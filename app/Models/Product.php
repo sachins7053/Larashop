@@ -52,4 +52,9 @@ class Product extends Model
         'store_id',
         'approved_by'
     ];
+
+    public function variations()
+    {
+        return $this->hasMany(ProductVariation::class);
+    }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductVariation;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\Api\TaxController;
 use App\Http\Controllers\FilesController;
@@ -16,6 +17,7 @@ Route::apiResource('taxes', TaxController::class);
 Route::apiResource('categories', ProductCategoryController::class);
 //Route::apiResource('attributes', AttributeController::class);
 Route::apiResource('files', FilesController::class);
+route::apiResource('pro-variation', ProductVariation::class);
 
 Route::get('/pro-cat', [ProductCategoryController::class , 'categories']);
 Route::get('/user', function (Request $request) {

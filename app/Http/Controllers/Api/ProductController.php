@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use  App\Http\Controllers\Api\ProductVariation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductAttribute;
+use App\Models\ProductVariations;
+use  App\Models\VariationAttribute;
+use  App\Models\AttributeValue;
 
 class ProductController extends Controller
 {
@@ -32,14 +36,54 @@ class ProductController extends Controller
         ]);
 */
         // Create the Product in the database
-        $product = Product::create($request->all());
+        $product = Product::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'sale_price' => $request->sale_price,
+            'content' => $request->content,
+            'images' => $request->images
+        ]);
+
+        if ($request->has('variations')) {
+            $variations = json_decode($request->input('variations'), true);
+ 
+            // Create variations
+          
+            
+            foreach ($variations as $variationData) {   
+
+            $variation = \App\Models\ProductVariation::create([
+                    'product_id' =>  $product->id,
+                    //'attributes' => json_encode($variationData['attributes']),
+                    'price' => $variationData['mrpPrice'],
+                    'sale_price' => $variationData['salePrice'],
+                    'sku' => $variationData['stock']
+                ]);
+
+                // Handle attribute values for this variation
+            if (isset($variationData['attribute_values'])) {
+                foreach ($variationData['attribute_values'] as $attributeValue) {
+                    $value = AttributeValue::where('value', $attributeValue)->first();
+                    if ($value) {
+                        // Attach the attribute value to the variation
+                        $variation->attributeValues()->attach($value->id);
+                    }
+                }
+            }
+    
+        }
         
         // Return a success response
         return response()->json([
             'message' => 'Product created successfully',
-            'data' => $request->all(),
+            'data' => $product,
         ], 200);
+
+       // return response()->json($product->load('variations'), 201);
+
     }
+}
 
     public function show($id)
     {

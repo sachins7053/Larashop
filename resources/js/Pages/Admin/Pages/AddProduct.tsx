@@ -28,23 +28,14 @@ export default function AddProduct() {
     const [fullDescription, setFullDescription] = useState("");
     const [mrpPrice, setMrpPrice] = useState<string>('');
     const [salePrice, setSalePrice] = useState<string>('');
-    //const [isVariableProduct, setIsVariableProduct] = useState(false);
-    //const [attributeGroups, setAttributeGroups] = useState([]);
-    //const [variations, setVariations] = useState([]);
-    //const [mainImage, setMainImage] = useState(null);
-    //const [galleryImages, setGalleryImages] = useState([]);
-    const [category, setCategory] = useState("");
-    const [brand, setBrand] = useState("");
-    //const [productStatus, setProductStatus] = useState("draft");
-    
-
-
-
-
     const [isVariableProduct, setIsVariableProduct] = useState(false)
     const [mainImage, setMainImage] = useState<string | null>(null)
     const [galleryImages, setGalleryImages] = useState<string[]>([])
-    
+    //const [attributeGroups, setAttributeGroups] = useState([]);
+    //const [variations, setVariations] = useState([]);
+    const [category, setCategory] = useState("");
+    const [brand, setBrand] = useState("");
+    //const [productStatus, setProductStatus] = useState("draft");
     const [attributeGroups, setAttributeGroups] = useState([
       { name: 'Size', values: ['S', 'M', 'L'] },
       { name: 'Color', values: ['Red', 'Blue', 'Green'] },
@@ -54,22 +45,6 @@ export default function AddProduct() {
     const [variations, setVariations] = useState([{ attributes: {}, mrpPrice: '', salePrice: '', stock: '' }])
     const [productStatus, setProductStatus] = useState('draft')
   
-    const handleMainImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (e) => setMainImage(e.target?.result as string)
-        reader.readAsDataURL(file)
-      }
-    }
-  
-    const handleGalleryImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = event.target.files
-      if (files) {
-        const newImages = Array.from(files).map(file => URL.createObjectURL(file))
-        setGalleryImages(prevImages => [...prevImages, ...newImages])
-      }
-    }
   
     const addAttributeGroup = () => {
       setAttributeGroups([...attributeGroups, { name: '', values: [''] }])
@@ -153,7 +128,7 @@ export default function AddProduct() {
     //    });
     
     //    formData.append("attributeGroups", JSON.stringify(attributeGroups));
-    //    formData.append("variations", JSON.stringify(variations));
+        formData.append("variations", JSON.stringify(variations));
     
         try {
             const response = await axios.post("/api/products", formData, {
@@ -165,7 +140,7 @@ export default function AddProduct() {
                 title: "Product Submitted Successfully",
                 description: "There was a problem with your request.",
               })
-          console.log("Product saved:", response.data);
+          console.log("Product saved:", response);
         } catch (error) {
             toast({
                 variant: "destructive",
@@ -182,7 +157,7 @@ export default function AddProduct() {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
+                    Add New Product
                 </h2>
             }
         >
@@ -359,11 +334,6 @@ export default function AddProduct() {
                                         multiple={false} // Pass `multiple={false}` for single image
                                     />
                             </div>
-                            {mainImage && (
-                                <div className="mt-4">
-                                <img src={mainImage} alt="Main product" className="w-full h-auto" />
-                                </div>
-                            )}
                             </div>
 
                             <div>
@@ -376,13 +346,7 @@ export default function AddProduct() {
                                         multiple={true} // Pass `multiple={false}` for single image
                                     />
                             </div>
-                            {galleryImages.length > 0 && (
-                                <div className="mt-4 grid grid-cols-2 gap-4">
-                                {galleryImages.map((img, index) => (
-                                    <img key={index} src={img} alt={`Gallery ${index + 1}`} className="w-full h-auto" />
-                                ))}
-                                </div>
-                            )}
+                           
                             </div>
                         </div>
                         </CardContent>

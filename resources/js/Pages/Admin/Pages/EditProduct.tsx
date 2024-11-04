@@ -3,7 +3,7 @@ import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { Button } from "@/Components/ui/button"
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus, Trash2, Upload } from 'lucide-react'
 import { Input } from "@/Components/ui/input"
 import { Label } from "@/Components/ui/label"
@@ -12,6 +12,7 @@ import { Switch } from "@/Components/ui/switch"
 import { Card, CardContent } from "@/Components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group"
+import FileUploader from '@/Components/file-uploader';
 import { useToast } from "@/hooks/use-toast"
 import { PageProps } from '@/types';
 
@@ -21,7 +22,9 @@ interface Product {
     price: number;
     description: string;
     content: string;
-    sale_price: number; 
+    sale_price: number;
+    images : string | Blob | null;
+
     // Add more fields based on your Product model
 }
 
@@ -37,12 +40,14 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
     const [shortDescription, setShortDescription] = useState("");
     const [fullDescription, setFullDescription] = useState("");
     const [mrpPrice, setMrpPrice] = useState<string>('');
-    const [salePrice, setSalePrice] = useState<string>('');
-    //const [isVariableProduct, setIsVariableProduct] = useState(false);
+    const [salePrice, setSalePrice] = useState<string>('');    
+    const [isVariableProduct, setIsVariableProduct] = useState(false)
+    const [mainImage, setMainImage] = useState('')
+    const [galleryImages, setGalleryImages] = useState<string[]>([])
+
     //const [attributeGroups, setAttributeGroups] = useState([]);
     //const [variations, setVariations] = useState([]);
-    //const [mainImage, setMainImage] = useState(null);
-    //const [galleryImages, setGalleryImages] = useState([]);
+
     const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     //const [productStatus, setProductStatus] = useState("draft");
@@ -50,10 +55,6 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
 
 
 
-
-    const [isVariableProduct, setIsVariableProduct] = useState(false)
-    const [mainImage, setMainImage] = useState<string | null>(null)
-    const [galleryImages, setGalleryImages] = useState<string[]>([])
     
     const [attributeGroups, setAttributeGroups] = useState([
       { name: 'Size', values: ['S', 'M', 'L'] },
@@ -63,23 +64,6 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
       
     const [variations, setVariations] = useState([{ attributes: {}, mrpPrice: '', salePrice: '', stock: '' }])
     const [productStatus, setProductStatus] = useState('draft')
-  
-    const handleMainImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (e) => setMainImage(e.target?.result as string)
-        reader.readAsDataURL(file)
-      }
-    }
-  
-    const handleGalleryImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = event.target.files
-      if (files) {
-        const newImages = Array.from(files).map(file => URL.createObjectURL(file))
-        setGalleryImages(prevImages => [...prevImages, ...newImages])
-      }
-    }
   
     const addAttributeGroup = () => {
       setAttributeGroups([...attributeGroups, { name: '', values: [''] }])
@@ -118,6 +102,8 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
         salePrice: string
         stock: string
       }
+
+
       
       const updateVariation = (index: number, field: keyof Variation | `attribute-${string}`, value: string) => {
         const newVariations = [...variations]
@@ -149,21 +135,22 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
         formData.append("content", fullDescription);
         formData.append("price", mrpPrice);
         formData.append("sale_price", salePrice);
+        //formData.append('images', mainImage)
     //    formData.append("isVariableProduct", String(isVariableProduct));
     //    formData.append("category", category);
     //    formData.append("brand", brand);
         formData.append("status", productStatus);
     
-    //    if (mainImage) {
-    //      formData.append("images", mainImage);
-    //    }
+        if (mainImage) {
+          formData.append("images", mainImage);
+        }
         
     //    galleryImages.forEach((image, index) => {
     //      formData.append(`galleryImages[${index}]`, image);
     //    });
     
     //    formData.append("attributeGroups", JSON.stringify(attributeGroups));
-    //    formData.append("variations", JSON.stringify(variations));
+        formData.append("variations", JSON.stringify(variations));
     
         try {
             const response = await axios.post("/api/products", formData, {
@@ -355,17 +342,18 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
 
                     <div className="space-y-6">
                     <Card>
-                        <CardContent className="pt-6">
+                    <CardContent className="pt-6">
                         <h2 className="text-xl font-semibold mb-4">Product Images</h2>
                         <div className="space-y-4">
                             <div>
                             <Label htmlFor="mainImage">Main Product Image</Label>
                             <div className="mt-2">
-                                <Label htmlFor="mainImage" className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                                <Upload className="w-4 h-4 mr-2" />
-                                Upload Image
-                                </Label>
-                                <Input id="mainImage" type="file" className="hidden" onChange={handleMainImageUpload} accept="image/*" />
+                                
+                                <FileUploader 
+                                        onImageSelect={(imageUrl: any) => setMainImage( imageUrl )}
+                                        selectedImages={mainImage}
+                                        multiple={false} // Pass `multiple={false}` for single image
+                                    />
                             </div>
                             {mainImage && (
                                 <div className="mt-4">
@@ -377,11 +365,12 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
                             <div>
                             <Label htmlFor="galleryImages">Gallery Images</Label>
                             <div className="mt-2">
-                                <Label htmlFor="galleryImages" className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                                <Upload className="w-4 h-4 mr-2" />
-                                Upload Images
-                                </Label>
-                                <Input id="galleryImages" type="file" multiple className="hidden" onChange={handleGalleryImageUpload} accept="image/*" />
+                                
+                                <FileUploader 
+                                        onImageSelect={(imageUrl: any) => setGalleryImages( imageUrl )}
+                                        selectedImages={galleryImages}
+                                        multiple={true} // Pass `multiple={false}` for single image
+                                    />
                             </div>
                             {galleryImages.length > 0 && (
                                 <div className="mt-4 grid grid-cols-2 gap-4">
