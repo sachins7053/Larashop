@@ -26,9 +26,20 @@ class ProductCategoryController extends Controller
         return response()->json($category, 201);
     }
 
+    public function update(Request $request, $id){
+        $category = ProductCat::find($id);
+        $category->update($request->all());
+        return response()->json($category, 200);
+    }
+
     public function categories(){
         $categories = ProductCat::all();
         return response()->json($categories);
+    }
+
+    public function destroy($id){
+        ProductCat::destroy($id);
+        return response()->json(null, 204);
     }
        
 }

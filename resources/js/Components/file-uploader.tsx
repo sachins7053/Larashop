@@ -17,11 +17,12 @@ interface UploadedImage {
 }
 
 interface FileUploaderProps {
-  onImageSelect: (imageUrl: string | null) => void
-  selectedImage: string | null
+  onImageSelect: (images: string[] | string | null) => void // Accept single URL, array, or null
+  selectedImages: string[] | string | null // Accept single URL, array, or null
+  multiple?: boolean // New prop to control single/multiple mode
 }
 
-export default function FileUploader({ onImageSelect, selectedImage }: FileUploaderProps) {
+export default function FileUploader({ onImageSelect, selectedImages, multiple = false }: FileUploaderProps) {
   const { props } = usePage();
   const [images, setImages] = useState<UploadedImage[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -29,7 +30,6 @@ export default function FileUploader({ onImageSelect, selectedImage }: FileUploa
   const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
-    // Fetch previously uploaded images from the database
     const fetchImages = async () => {
       try {
         const response = await axios.get('/api/files')
@@ -44,60 +44,104 @@ export default function FileUploader({ onImageSelect, selectedImage }: FileUploa
   const handleImageUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFiles = event.target.files;
     if (uploadedFiles && uploadedFiles.length > 0) {
-      const file = uploadedFiles[0];
-      const formData = new FormData();
-      formData.append('file', file);
-  
-      try {
-        setIsUploading(true);
-        const response = await axios.post('/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-          onUploadProgress: (progressEvent) => {
-            if (progressEvent.total) {
-              const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              setUploadProgress(progress);
-            }
-          },
-        });
-        
-        const imageUrl = response.data.url;
-        const newImage: UploadedImage = {
-          id: response.data.id, // Assuming the response includes the new image ID
-          name: file.name,
-          url: imageUrl,
-        };
-        setImages((prevImages) => [...prevImages, newImage]);
-        onImageSelect(imageUrl);
-        setIsOpen(false);
-      } catch (error) {
-        console.error('Upload failed:', error);
-      } finally {
-        setIsUploading(false);
-        setUploadProgress(0);
+      const newImages: UploadedImage[] = [];
+
+      for (let i = 0; i < uploadedFiles.length; i++) {
+        const file = uploadedFiles[i];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          setIsUploading(true);
+          const response = await axios.post('/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setUploadProgress(progress);
+              }
+            },
+          });
+
+          const imageUrl = response.data.url;
+          const newImage: UploadedImage = {
+            id: response.data.id,
+            name: file.name,
+            url: imageUrl,
+          };
+          newImages.push(newImage);
+        } catch (error) {
+          console.error('Upload failed:', error);
+        }
       }
+
+      if (multiple) {
+        setImages((prevImages) => [...prevImages, ...newImages]);
+        onImageSelect([...(selectedImages as string[]), ...newImages.map((img) => img.url)]);
+      } else {
+        const [firstImage] = newImages;
+        setImages([firstImage]);
+        onImageSelect(firstImage.url);
+      }
+
+      setIsOpen(false);
+      setIsUploading(false);
+      setUploadProgress(0);
     }
-  }, [onImageSelect]);
+  }, [onImageSelect, selectedImages, multiple]);
 
   const handleSelectImage = useCallback((image: UploadedImage) => {
-    onImageSelect(image.url)
-    setIsOpen(false)
-  }, [onImageSelect])
+    if (multiple) {
+      const updatedImages = [...(selectedImages as string[]), image.url];
+      onImageSelect(updatedImages);
+    } else {
+      onImageSelect(image.url);
+    }
+    setIsOpen(false);
+  }, [onImageSelect, selectedImages, multiple]);
 
-  const handleRemoveImage = useCallback(() => {
-    onImageSelect(null)
-  }, [onImageSelect])
+  const handleRemoveImage = useCallback((imageUrl: string | null) => {
+    if (multiple) {
+      onImageSelect((selectedImages as string[]).filter(img => img !== imageUrl));
+    } else {
+      onImageSelect(null);
+    }
+  }, [onImageSelect, selectedImages, multiple]);
 
   return (
     <div className="space-y-4">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" className="w-[300px] h-[200px] border-dashed">
-            {selectedImage ? (
+            {selectedImages && Array.isArray(selectedImages) && selectedImages.length > 0 ? (
+              <div className="grid grid-cols-2 gap-2">
+                {selectedImages.map((imageUrl, index) => (
+                  <div key={index} className="relative w-full h-full">
+                    <img 
+                      src={imageUrl} 
+                      alt={`Selected image ${index}`} 
+                      className="object-cover w-full h-full"
+                    />
+                    <Button 
+                      variant="destructive" 
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleRemoveImage(imageUrl)
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : selectedImages ? (
               <div className="relative w-full h-full">
                 <img 
-                  src={selectedImage} 
+                  src={selectedImages as string} 
                   alt="Selected image" 
                   className="object-cover w-full h-full"
                 />
@@ -107,7 +151,7 @@ export default function FileUploader({ onImageSelect, selectedImage }: FileUploa
                   className="absolute top-2 right-2"
                   onClick={(e) => {
                     e.stopPropagation()
-                    handleRemoveImage()
+                    handleRemoveImage(selectedImages as string)
                   }}
                 >
                   <X className="h-4 w-4" />
@@ -116,30 +160,29 @@ export default function FileUploader({ onImageSelect, selectedImage }: FileUploa
             ) : (
               <div className="flex flex-col items-center justify-center">
                 <Image className="w-8 h-8 mb-2" />
-                <span>Select Image</span>
+                <span>Select Image{multiple && 's'}</span>
               </div>
             )}
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Select or Upload Image</DialogTitle>
+            <DialogTitle>Select or Upload Image{multiple && "s"}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Button onClick={() => document.getElementById('file-upload')?.click()} disabled={isUploading}>
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Image
-              </Button>
-              <Input 
-                id="file-upload"
-                type="file" 
-                onChange={handleImageUpload} 
-                className="hidden"
-                accept="image/*"
-                disabled={isUploading}
-              />
-            </div>
+            <Button onClick={() => document.getElementById('file-upload')?.click()} disabled={isUploading}>
+              <Upload className="w-4 h-4 mr-2" />
+              Upload {multiple ? "Images" : "Image"}
+            </Button>
+            <Input 
+              id="file-upload"
+              type="file" 
+              onChange={handleImageUpload} 
+              className="hidden"
+              accept="image/*"
+              multiple={multiple}
+              disabled={isUploading}
+            />
             {isUploading && (
               <div className="space-y-2">
                 <Progress value={uploadProgress} className="w-full" />

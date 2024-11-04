@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/Components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
+import FileUploader from '@/Components/file-uploader'
 
 
 // Mock data for categories and brands
@@ -205,7 +206,7 @@ export default function AddProduct() {
                         <Label htmlFor="fullDescription">Full Description</Label>
                         <Textarea onChange={(event) => setFullDescription(event.target.value)} id="fullDescription" placeholder="Enter full product description" className="min-h-[200px]" />
                     </div>
-
+                    {!isVariableProduct && (
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                         <Label htmlFor="mrpPrice">MRP Price</Label>
@@ -215,7 +216,8 @@ export default function AddProduct() {
                         <Label htmlFor="salePrice">Sale Price</Label>
                         <Input onChange={(event) => setSalePrice(event.target.value)} id="salePrice" type="number" placeholder="0.00" />
                         </div>
-                    </div>
+                    </div> )
+                    }
 
                     <div className="flex items-center space-x-2">
                         <Switch
@@ -350,11 +352,12 @@ export default function AddProduct() {
                             <div>
                             <Label htmlFor="mainImage">Main Product Image</Label>
                             <div className="mt-2">
-                                <Label htmlFor="mainImage" className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                                <Upload className="w-4 h-4 mr-2" />
-                                Upload Image
-                                </Label>
-                                <Input id="mainImage" type="file" className="hidden" onChange={handleMainImageUpload} accept="image/*" />
+                                
+                                <FileUploader 
+                                        onImageSelect={(imageUrl: any) => setMainImage( imageUrl )}
+                                        selectedImages={mainImage}
+                                        multiple={false} // Pass `multiple={false}` for single image
+                                    />
                             </div>
                             {mainImage && (
                                 <div className="mt-4">
@@ -366,11 +369,12 @@ export default function AddProduct() {
                             <div>
                             <Label htmlFor="galleryImages">Gallery Images</Label>
                             <div className="mt-2">
-                                <Label htmlFor="galleryImages" className="cursor-pointer inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                                <Upload className="w-4 h-4 mr-2" />
-                                Upload Images
-                                </Label>
-                                <Input id="galleryImages" type="file" multiple className="hidden" onChange={handleGalleryImageUpload} accept="image/*" />
+                                
+                                <FileUploader 
+                                        onImageSelect={(imageUrl: any) => setGalleryImages( imageUrl )}
+                                        selectedImages={galleryImages}
+                                        multiple={true} // Pass `multiple={false}` for single image
+                                    />
                             </div>
                             {galleryImages.length > 0 && (
                                 <div className="mt-4 grid grid-cols-2 gap-4">

@@ -18,5 +18,14 @@ class ProductCategoryController extends Controller
         // Return the view with the fetched categories
         return Inertia::render('Admin/Pages/Categories', $categories);
     }
+
+    public function edit_cat($id): Response
+    {   
+        // Fetch product categories from the database
+        $category = ProductCat::find($id);
+
+        // Return the view with the fetched categories
+        return Inertia::render('Admin/Pages/EditCategory', $category);
+    }
 }
 

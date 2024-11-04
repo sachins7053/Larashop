@@ -36,7 +36,7 @@ interface Category {
     slug: string;
     description: string;
     parentCategory: string | null; // Allow string or null
-    image: string; // Adjust this if needed
+    image: string[]; // Adjust this if needed
     icon: string;
     status: string;
   }
@@ -60,6 +60,7 @@ export default function Component() {
   const [ parentCat, setParentCat] = useState('0');
   const [icon, setIcon] = useState('');
   const [image, setImage] = useState('');
+  const [gallery, setGallery] = useState<string[]>([]);
   const [status, setStatus] = useState<string>('active');
   const [categories, setCategories] = useState<Category[]>([]);
   const [Parentcategories, setParentCategories] = useState<Category[]>([]);
@@ -285,9 +286,21 @@ export default function Component() {
                       <Label htmlFor="category-image">Image</Label>
                       <div className="flex items-center space-x-2">
                         
-                          <FileUploader
+                          <FileUploader 
                             onImageSelect={(imageUrl: any) => setImage( imageUrl )}
-                            selectedImage={image}
+                            selectedImages={image}
+                            multiple={false} // Pass `multiple={false}` for single image
+                          />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="category-image">Gallery Image</Label>
+                      <div className="flex items-center space-x-2">
+                        
+                          <FileUploader 
+                            onImageSelect={(imageUrls: any) =>  setGallery(imageUrls || [])}
+                            selectedImages={gallery}
+                            multiple={true} // Pass `multiple={false}` for single image
                           />
                       </div>
                     </div>

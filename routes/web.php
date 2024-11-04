@@ -29,6 +29,7 @@ Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
     Route::get('/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
     Route::get('/product-categories', [ProductCategoryController::class, 'categories']);
+    Route::get('/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
