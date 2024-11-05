@@ -1,14 +1,16 @@
 import * as React from "react"
-import Image from "next/image"
 import { MinusIcon, PlusIcon, ShoppingCart, X } from "lucide-react"
 import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button"
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/sheet"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
@@ -26,14 +28,18 @@ interface CartItem {
 export function ProductPage() {
   const [selectedImage, setSelectedImage] = React.useState(0)
   const [selectedColor, setSelectedColor] = React.useState("grey")
+  const [quantity, setQuantity] = React.useState(1)
   const [cartOpen, setCartOpen] = React.useState(false)
   const [cartItems, setCartItems] = React.useState<CartItem[]>([])
+  const [pincode, setPincode] = React.useState("")
+  const [deliveryInfo, setDeliveryInfo] = React.useState<string | null>(null)
+  const [activeSection, setActiveSection] = React.useState<string | null>(null)
 
   const images = [
-    "/placeholder.svg?height=600&width=600",
-    "/placeholder.svg?height=600&width=600",
-    "/placeholder.svg?height=600&width=600",
-    "/placeholder.svg?height=600&width=600",
+    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2Fnew-logo%2Ffront-walnutt-810x702.jpg",
+    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2Fnew-logo%2F1-810x702.jpg",
+    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2Fnew-logo%2F3-810x702.jpg",
+    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2F4-810x702.jpg",
   ]
 
   const colors = [
@@ -43,13 +49,48 @@ export function ProductPage() {
     { name: "Brown", value: "brown" },
   ]
 
+  const sections = {
+    overview: {
+      title: "Overview",
+      content: "Modern table lamp with wooden base and fabric shade...",
+    },
+    merchantDetails: {
+      title: "Merchant Details",
+      content: "Sold and fulfilled by Premium Lighting Store...",
+    },
+    careInstructions: {
+      title: "Care & Instructions",
+      content: "Clean with soft, dry cloth. Avoid harsh chemicals...",
+    },
+    deliveryInstallation: {
+      title: "Delivery & Installation",
+      content: "Free delivery within 5-7 business days...",
+    },
+    warranty: {
+      title: "Warranty",
+      content: "1 year manufacturer warranty on electrical components...",
+    },
+    termsConditions: {
+      title: "Terms And Conditions",
+      content: "Standard terms and conditions apply...",
+    },
+    faqs: {
+      title: "FAQ's",
+      content: "Frequently asked questions about the product...",
+    },
+    disclaimer: {
+      title: "Disclaimer",
+      content: "Product colors may vary slightly from images shown...",
+    },
+  }
+
   const addToCart = () => {
     const newItem = {
       id: `lamp-${selectedColor}`,
       name: "Modern Table Lamp",
       price: 379,
       color: selectedColor,
-      quantity: 1,
+      quantity: quantity,
       image: images[0],
     }
 
@@ -58,7 +99,7 @@ export function ProductPage() {
       if (existingItem) {
         return prev.map(item =>
           item.id === newItem.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         )
       }
@@ -67,6 +108,23 @@ export function ProductPage() {
 
     setCartOpen(true)
     toast.success("Added to cart!")
+  }
+
+  const buyNow = () => {
+    addToCart()
+    // Additional checkout logic would go here
+    toast.success("Proceeding to checkout...")
+  }
+
+  const checkDelivery = () => {
+    // Simulate delivery check
+    if (pincode.length === 6) {
+      setDeliveryInfo("Delivery available in 5-7 business days")
+      toast.success("Delivery available in your area!")
+    } else {
+      setDeliveryInfo("Please enter a valid pincode")
+      toast.error("Please enter a valid pincode")
+    }
   }
 
   const updateQuantity = (id: string, change: number) => {
@@ -104,21 +162,20 @@ export function ProductPage() {
                     : "border-transparent"
                 }`}
               >
-                <Image
+                <img
                   src={src}
                   alt={`Product ${index + 1}`}
                   className="object-cover"
-                  fill
                 />
               </button>
             ))}
           </div>
-          <div className="relative flex-1 overflow-hidden rounded-lg bg-gray-100">
-            <Image
+          <div className="relative flex-1 overflow-hidden rounded-lg">
+            <img
               src={images[selectedImage]}
               alt="Main product image"
-              className="object-cover"
-              fill
+              className="object-cover shadow-lg rounded-lg"
+              
             />
           </div>
         </div>
@@ -155,29 +212,64 @@ export function ProductPage() {
             </RadioGroup>
           </div>
 
-          <Button onClick={addToCart} className="mt-4">
-            Add to Cart
-          </Button>
+          <div className="space-y-2">
+            <Label>Quantity</Label>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setQuantity(q => Math.max(1, q - 1))}
+              >
+                <MinusIcon className="h-4 w-4" />
+              </Button>
+              <span className="w-12 text-center">{quantity}</span>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setQuantity(q => q + 1)}
+              >
+                <PlusIcon className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <Button onClick={addToCart} className="flex-1">
+              Add to Cart
+            </Button>
+            <Button onClick={buyNow} variant="secondary" className="flex-1">
+              Buy Now
+            </Button>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Check Delivery</Label>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter Pincode"
+                value={pincode}
+                onChange={e => setPincode(e.target.value)}
+                maxLength={6}
+              />
+              <Button onClick={checkDelivery} variant="outline">
+                Check
+              </Button>
+            </div>
+            {deliveryInfo && (
+              <p className="text-sm text-muted-foreground">{deliveryInfo}</p>
+            )}
+          </div>
 
           <Separator className="my-4" />
 
-          <div className="space-y-4">
-            <h2 className="font-semibold">Product Details</h2>
-            <div className="grid gap-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Material</span>
-                <span>Wood, Fabric</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Dimensions</span>
-                <span>H: 45cm, W: 25cm</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Assembly Required</span>
-                <span>No</span>
-              </div>
-            </div>
-          </div>
+          <Accordion type="single" collapsible>
+            {Object.entries(sections).map(([key, section]) => (
+              <AccordionItem key={key} value={key}>
+                <AccordionTrigger>{section.title}</AccordionTrigger>
+                <AccordionContent>{section.content}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
 
@@ -206,11 +298,11 @@ export function ProductPage() {
                   className="flex items-center gap-4 rounded-lg border p-4"
                 >
                   <div className="relative h-20 w-20 overflow-hidden rounded-md bg-muted">
-                    <Image
+                    <img
                       src={item.image}
                       alt={item.name}
                       className="object-cover"
-                      fill
+                      
                     />
                   </div>
                   <div className="flex flex-1 flex-col gap-1">

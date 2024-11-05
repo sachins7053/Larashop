@@ -23,6 +23,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/upload', [FilesController::class, 'upload']);
+Route::get('/product/demo', [ProductController::class, 'ProductPage']);
 
 Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,
-  } from "@/Components/ui/pagination"
+  } from "@/components/ui/pagination"
 
 interface PaginationProps {
   totalItems: number;

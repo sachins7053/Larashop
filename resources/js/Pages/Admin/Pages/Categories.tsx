@@ -3,17 +3,17 @@ import { Head } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
 import { Plus, Trash2, Upload, Check, ChevronsUpDown  } from 'lucide-react'
-import { Button } from "@/Components/ui/button"
-import { Input } from "@/Components/ui/input"
-import { Label } from "@/Components/ui/label"
-import { Textarea } from "@/Components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/Components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
-import { Switch } from "@/Components/ui/switch"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { PageProps } from '@/types'
 import { cn } from "@/lib/utils"
-import Paginations from '@/Components/Pagination';
-import FileUploader from '@/Components/file-uploader'
+import Paginations from '@/components/Pagination';
+import FileUploader from '@/components/file-uploader'
 import { useToast } from '@/hooks/use-toast'
 import {
   Command,
@@ -22,12 +22,12 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/Components/ui/command"
+} from "@/components/ui/command"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/Components/ui/popover"
+} from "@/components/ui/popover"
 import axios from 'axios'
 
 interface Category {

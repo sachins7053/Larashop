@@ -2,18 +2,18 @@
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { Button } from "@/Components/ui/button"
+import { Button } from "@/components/ui/button"
 import { useState } from 'react'
 import { Plus, Trash2, Upload } from 'lucide-react'
-import { Input } from "@/Components/ui/input"
-import { Label } from "@/Components/ui/label"
-import { Textarea } from "@/Components/ui/textarea"
-import { Switch } from "@/Components/ui/switch"
-import { Card, CardContent } from "@/Components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
+import { Card, CardContent } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
-import FileUploader from '@/Components/file-uploader'
+import FileUploader from '@/components/file-uploader'
 
 
 // Mock data for categories and brands

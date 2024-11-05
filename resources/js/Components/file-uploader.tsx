@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { Button } from "@/Components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/Components/ui/dialog"
-import { Input } from "@/Components/ui/input"
-import { Progress } from "@/Components/ui/progress"
-import { ScrollArea } from "@/Components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Progress } from "@/components/ui/progress"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Image, Upload, X } from 'lucide-react'
 import { usePage } from '@inertiajs/react'
 import axios from 'axios';

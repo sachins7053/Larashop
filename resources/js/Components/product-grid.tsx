@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Heart } from 'lucide-react'
-import { Button } from "@/Components/ui/button"
-import { Badge } from "@/Components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface Product {
   id: number
@@ -29,7 +29,7 @@ interface ProductGridProps {
 export function ProductGrid({
   products = [],
   title = "Products",
-  columns = { sm: 2, md: 3, lg: 3, xl: 4 },
+  columns = { sm: 2, md: 3, lg: 4, xl: 5 },
   onAddToCart,
   onToggleWishlist
 }: ProductGridProps) {
@@ -52,15 +52,16 @@ export function ProductGrid({
     return `grid-cols-1 ${columns.sm ? `sm:grid-cols-${columns.sm}` : ''} ${columns.md ? `md:grid-cols-${columns.md}` : ''} ${columns.lg ? `lg:grid-cols-${columns.lg}` : ''} ${columns.xl ? `xl:grid-cols-${columns.xl}` : ''}`
   }
   
-
-  if (products.length === 0) {
-    console.log(products.length)
-    return (
-      <div className="w-full text-center py-8">
+  setTimeout(()=>{
+    if (products.length === 0) {
+      console.log(products.length)
+      return (
+        <div className="w-full text-center py-8">
         <p className="text-lg text-muted-foreground">No products available.</p>
       </div>
     )
   }
+}, 2000 )
 
   return (
     <div className="w-full">
@@ -85,22 +86,21 @@ export function ProductGrid({
             </div>
             <div className="p-4">
               <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.title}</h3>
-              <div className="flex items-center mb-2">
-                <span className="text-yellow-400 mr-1">★</span>
-                <span>{product.rating.toFixed(1)}</span>
-              </div>
+
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-muted-foreground line-through text-sm mr-2">
-                    ${product.price.toFixed(2)}
+                    ₹{product.price.toFixed(2)}
                   </span>
                   <span className="text-primary font-bold">
-                    ${product.salePrice ? product.salePrice.toFixed(2) : null}
+                    ₹{product.salePrice ? product.salePrice.toFixed(2) : null}
                   </span>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => handleAddToCart(product)}>
-                  Add to Cart
-                </Button>
+                <div className="flex items-center mb-2">
+                <span className="text-yellow-400 mr-1">★★★★ </span>
+                <span>{product.rating.toFixed(1)}</span>
+              </div>
+                
               </div>
             </div>
           </div>

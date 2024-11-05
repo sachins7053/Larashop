@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (min-width: 768px) {
+  .md\:grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

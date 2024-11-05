@@ -26,4 +26,9 @@ class ProductController extends Controller
         return Inertia::render('Admin/Pages/EditProduct', compact('product'));
         //return Inertia::render('Admin/Pages/AddProduct');
     }
+
+    public function ProductPage(): Response
+    {
+        return Inertia::render('ProductPage');
+    }
 }

@@ -7,15 +7,15 @@ import { Plus, Trash2, Upload, Check, ChevronsUpDown  } from 'lucide-react'
 import { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils"
 import { Head } from '@inertiajs/react';
-import { Button } from "@/Components/ui/button"
-import { Input } from "@/Components/ui/input"
-import { Label } from "@/Components/ui/label"
-import { Textarea } from "@/Components/ui/textarea"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/Components/ui/card"
-import { Switch } from "@/Components/ui/switch"
-import FileUploader from '@/Components/file-uploader'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/Components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger,} from "@/Components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
+import FileUploader from '@/components/file-uploader'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command"
+import { Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover"
 
 interface Category {
     id: string;
