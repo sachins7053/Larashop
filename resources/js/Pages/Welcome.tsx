@@ -1,11 +1,57 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { ProductGrid } from '@/Components/product-grid';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+
+interface Product {
+    id: number
+    title: string
+    images: string
+    price: number
+    salePrice: number | null
+    rating: number
+    discount: number
+  }
 
 export default function Welcome({
     auth,
     laravelVersion,
     phpVersion,
 }: PageProps<{ laravelVersion: string; phpVersion: string }>) {
+    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+    useEffect(() => {
+        // Simulating API calls for different product queries
+        const fetchProducts = async () => {
+          try {
+            // In a real application, these would be separate API calls
+            const featuredResponse = await fetch('https://dummyjson.com/products')
+    
+            const featured = await featuredResponse.json()
+          
+    
+            setFeaturedProducts(featured.products)
+            console.log('Featured products:', featuredProducts)
+          } catch (error) {
+            console.error('Error fetching products:', error)
+          }
+          console.log(featuredProducts)
+        }
+    
+        fetchProducts()
+        console.log(featuredProducts)
+      }, [])
+
+      const handleAddToCart = (product: Product) => {
+        // Implement add to cart logic
+        console.log('Adding to cart:', product)
+      }
+    
+      const handleToggleWishlist = (product: Product) => {
+        // Implement wishlist toggle logic
+        console.log('Toggling wishlist:', product)
+      }
     const handleImageError = () => {
         document
             .getElementById('screenshot-container')
@@ -68,6 +114,15 @@ export default function Welcome({
                                 )}
                             </nav>
                         </header>
+                        <section className="mb-12">
+                            <ProductGrid
+                            products={featuredProducts}
+                            title="Featured Products"
+                            columns={{ sm: 2, md: 3, lg: 4 }}
+                            onAddToCart={handleAddToCart}
+                            onToggleWishlist={handleToggleWishlist}
+                            />
+                        </section>
 
                         <main className="mt-6">
                             <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
