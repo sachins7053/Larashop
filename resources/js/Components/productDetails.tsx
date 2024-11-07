@@ -37,7 +37,7 @@ interface ProductPageProps {
   productData: ProductData; // Define productData as part of the props
 }
 
-export function ProductPage({ productData }: ProductPageProps){
+export function ProductDetails({ productData }: ProductPageProps){
   const [selectedImage, setSelectedImage] = React.useState(0)
   const [selectedColor, setSelectedColor] = React.useState("grey")
   const [quantity, setQuantity] = React.useState(1)
@@ -128,10 +128,11 @@ export function ProductPage({ productData }: ProductPageProps){
 
   return (
     <div className="mx-auto max-w-7xl p-4 md:p-6">
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-5">
         {/* Product Images */}
-        <div className="flex gap-4">
-          <div className="flex flex-col gap-4">
+        <div className="col-span-3 ">
+          <div className="flex sticky top-0 gap-4">
+            <div className="flex flex-col gap-4">
             {images.map((src, index) => (
               <button
                 key={index}
@@ -150,18 +151,19 @@ export function ProductPage({ productData }: ProductPageProps){
               </button>
             ))}
           </div>
-          <div className="relative flex-1 overflow-hidden rounded-lg">
-            <img
-              src={images[selectedImage]}
-              alt="Main product image"
-              className="object-cover shadow-lg rounded-lg"
-              
-            />
-          </div>
+              <div className="relative flex-1 overflow-hidden rounded-lg">
+                <img
+                  src={images[selectedImage]}
+                  alt="Main product image"
+                  className="object-cover shadow-lg rounded-lg"
+                  
+                />
+              </div>
+            </div>
         </div>
 
         {/* Product Details */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col col-span-2 gap-4">
           <div>
             <h1 className="text-2xl font-bold">{productData.name}</h1>
             <p className="text-xl font-semibold">₹{productData.price}</p>

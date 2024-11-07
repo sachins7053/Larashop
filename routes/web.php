@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ProductCategoryController;
+use App\Http\Controllers\CartCheckoutCouponController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,8 +24,10 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/upload', [FilesController::class, 'upload']);
+Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/product/demo', [ProductController::class, 'ProductPage']);
 Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay']);
+Route::get('/category', [ProductController::class, 'Category']);
 
 Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');

@@ -70,7 +70,7 @@ export function ProductGrid({
         {products.map((product) => (
           <div key={product.id} className="bg-card text-card-foreground rounded-lg shadow-lg overflow-hidden">
             <div className="relative">
-              <img src={product.images} alt={product.title} className="w-full object-cover" />
+              <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover" />
               <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground">
                 {product.discount}% OFF
               </Badge>

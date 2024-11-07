@@ -1,5 +1,5 @@
 import { Header } from "@/components/header"
-import { ProductPage } from "@/components/product-page"
+import { ProductDetails } from "@/components/productDetails"
 
 interface Product {
     id: string;
@@ -16,6 +16,8 @@ interface ProductPageProps {
   }
 
 export default function ProductShow ({product}: ProductPageProps) {
+
+
     product ={
         id: '1',
         name: "Product 1",
@@ -28,6 +30,8 @@ export default function ProductShow ({product}: ProductPageProps) {
     return (
         <>
         <Header />
-        <ProductPage productData={product}/>
+        <ProductDetails productData={product}/>
+
+      
         </>
     )}

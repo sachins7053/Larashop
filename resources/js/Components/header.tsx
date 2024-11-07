@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from '@inertiajs/react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,11 +16,49 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { Search, Heart, ShoppingCart, User, Store, Menu, ArrowLeft, ChevronRight, Truck } from "lucide-react"
+import { Cart } from './Cart';
 
 export function Header() {
+  const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState(false)
   const [activeSubmenu, setActiveSubmenu] = useState<string[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
+  const [searchResults, setSearchResults] = useState<string[]>([])
+  const searchRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearch(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (searchQuery) {
+      // Simulating API call for search suggestions
+      const suggestions = ['Sofa', 'Dining Table', 'Bed', 'Wardrobe'].filter(item =>
+        item.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setSearchSuggestions(suggestions)
+
+      // Simulating API call for search results
+      const results = ['Leather Sofa', 'Wooden Dining Table', 'Queen Size Bed', 'Modern Wardrobe'].filter(item =>
+        item.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setSearchResults(results)
+    } else {
+      setSearchSuggestions([])
+      setSearchResults([])
+    }
+  }, [searchQuery])
 
   const categories = [
     {
@@ -138,6 +176,7 @@ export function Header() {
   }
 
   return (
+    <>
     <header className="w-full border-b">
       {/* Mobile Header */}
       <div className="flex flex-col md:hidden">
@@ -255,20 +294,67 @@ export function Header() {
               <Heart className="h-5 w-5" />
               <span className="sr-only">Wishlist</span>
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="sr-only">Cart</span>
-            </Button>
+            {/* Cart Sidebar */}
+            <Sheet open={cartIsOpen} onOpenChange={setCartIsOpen}>
+                    <SheetTrigger asChild>
+                      <Button onClick={() => {
+                        setCartIsOpen;
+                        console.log("cart Displayed");
+                      }} variant="ghost" size="icon">
+                        <ShoppingCart className="h-5 w-5" />
+                        <span className="sr-only">Cart</span>
+                      </Button>
+                    </SheetTrigger>
+                  <SheetContent className="flex w-full flex-col sm:max-w-lg">
+                    <SheetHeader>
+                      <SheetTitle className="flex items-center gap-2">
+                        <ShoppingCart className="h-5 w-5" />
+                        Shopping Cart
+                      </SheetTitle>
+                    </SheetHeader>
+                    <Cart />
+                  </SheetContent>
+                </Sheet>
           </div>
         </div>
         {showSearch && (
-          <div className="border-b px-4 py-2">
+          <div className="border-b px-4 py-2" ref={searchRef}>
             <div className="relative">
               <Input
                 placeholder="Search Products"
                 className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+              {(searchSuggestions.length > 0 || searchResults.length > 0) && (
+                <div className="absolute left-0 z-40 right-0 top-full mt-1 rounded-md border bg-background shadow-lg">
+                  {searchSuggestions.length > 0 && (
+                    <div className="p-2">
+                      <h3 className="mb-1 text-sm font-semibold">Suggestions</h3>
+                      <ul>
+                        {searchSuggestions.map((suggestion, index) => (
+                          <li key={index} className="cursor-pointer p-1 text-sm hover:bg-muted">
+                            {suggestion}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {searchResults.length > 0 && (
+                    <div className="p-2">
+                      <h3 className="mb-1 text-sm font-semibold">Results</h3>
+                      <ul>
+                        {searchResults.map((result, index) => (
+                          <li key={index} className="cursor-pointer p-1 text-sm hover:bg-muted">
+                            {result}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -307,7 +393,7 @@ export function Header() {
             <div className="flex-1 md:flex-none">
               <Link href="/" className="mx-auto block w-fit">
                 <img
-                  src="/placeholder.svg"
+                  src="https://fernindia.com/wp-content/uploads/2024/10/logo-e1729487436319-400x114.png"
                   alt="FernIndia"
                   width={180}
                   height={60}
@@ -322,8 +408,39 @@ export function Header() {
                 className="pl-10"
                 placeholder="Search"
                 type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowSearch(true)} 
               />
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+              {showSearch && (searchSuggestions.length > 0 || searchResults.length > 0) && (
+                <div className="absolute left-0 z-40 right-0 top-full mt-1 rounded-md border bg-background shadow-lg">
+                  {searchSuggestions.length > 0 && (
+                    <div className="p-2">
+                      <h3 className="mb-1 text-sm font-semibold">Suggestions</h3>
+                      <ul>
+                        {searchSuggestions.map((suggestion, index) => (
+                          <li key={index} className="cursor-pointer p-1 text-sm hover:bg-muted">
+                            {suggestion}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {searchResults.length > 0 && (
+                    <div className="p-2">
+                      <h3 className="mb-1 text-sm font-semibold">Results</h3>
+                      <ul>
+                        {searchResults.map((result, index) => (
+                          <li key={index} className="cursor-pointer p-1 text-sm hover:bg-muted">
+                            {result}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Actions */}
@@ -348,18 +465,36 @@ export function Header() {
                   <Heart className="h-5 w-5" />
                   <span className="sr-only">Wishlist</span>
                 </Button>
-                <Button variant="ghost" size="icon">
-                  <ShoppingCart className="h-5 w-5" />
-                  <span className="sr-only">Cart</span>
-                </Button>
+                
+                {/* Cart Sidebar */}
+                  <Sheet open={cartIsOpen} onOpenChange={setCartIsOpen}>
+                    <SheetTrigger asChild>
+                      <Button onClick={() => {
+                        setCartIsOpen;
+                        console.log("cart Displayed");
+                      }} variant="ghost" size="icon">
+                        <ShoppingCart className="h-5 w-5" />
+                        <span className="sr-only">Cart</span>
+                      </Button>
+                    </SheetTrigger>
+                  <SheetContent className="flex w-full flex-col sm:max-w-lg">
+                    <SheetHeader>
+                      <SheetTitle className="flex items-center gap-2">
+                        <ShoppingCart className="h-5 w-5" />
+                        Shopping Cart
+                      </SheetTitle>
+                    </SheetHeader>
+                    <Cart />
+                  </SheetContent>
+                </Sheet>
               </div>
             </div>
           </div>
         </div>
 
         {/* Navigation with Mega Menus */}
-        <nav className="relative px-4">
-          <ul className="mx-auto flex max-w-7xl items-center gap-8 overflow-x-auto py-2 text-sm font-medium">
+        <nav className="relative px-4 ">
+          <ul className="mx-auto flex max-w-7xl items-center gap-8 overflow-x-auto py-2 text-sm font-medium sticky top-0">
             {categories.map((category) => (
               <li key={category.name} className="shrink-0">
                 <HoverCard openDelay={0} closeDelay={0}>
@@ -409,8 +544,18 @@ export function Header() {
           </ul>
         </nav>
       </div>
+
+
+          
     </header>
-  )
+        
+    
+    </>
+
+          
+
+            
+  );
 }
 
 function renderMobileSubmenu(categories:any, activeSubmenu:any, setActiveSubmenu:any, setIsOpen:any) {

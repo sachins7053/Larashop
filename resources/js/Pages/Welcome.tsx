@@ -6,6 +6,7 @@ import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { Header } from '@/components/header';
 import { ImageSlider } from '@/components/image-slider';
+import Footer from '@/components/Footer';
 
 interface Product {
     id: number
@@ -122,6 +123,7 @@ export default function Welcome({
                     </div>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

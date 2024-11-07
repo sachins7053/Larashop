@@ -36,4 +36,9 @@ class ProductController extends Controller
         $product = Product::find($id);
         return Inertia::render('Frontend/ProductPage', compact('product'));
     }
+
+    public function Category(): Response
+    {
+        return Inertia::render('Frontend/Category');
+    }
 }

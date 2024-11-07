@@ -120,7 +120,7 @@ export default function AddProduct() {
         formData.append("status", productStatus);
     
     //    if (mainImage) {
-    //      formData.append("images", mainImage);
+    //      formData.append("images", images);
     //    }
         
     //    galleryImages.forEach((image, index) => {
