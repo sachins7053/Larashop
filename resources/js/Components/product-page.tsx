@@ -1,12 +1,7 @@
 import * as React from "react"
 import { MinusIcon, PlusIcon, ShoppingCart, X } from "lucide-react"
 import { toast } from "sonner"
-
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,6 +10,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle,
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { CartData, CartManager } from "@/hooks/CartManager"
+import { Cart } from "./Cart"
 
 interface CartItem {
   id: string
@@ -25,7 +22,22 @@ interface CartItem {
   image: string
 }
 
-export function ProductPage() {
+interface ProductData {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  content: string;
+  sale_price: number;
+  images : string | Blob | null;
+
+  // Add more fields based on your Product model
+}
+interface ProductPageProps {
+  productData: ProductData; // Define productData as part of the props
+}
+
+export function ProductPage({ productData }: ProductPageProps){
   const [selectedImage, setSelectedImage] = React.useState(0)
   const [selectedColor, setSelectedColor] = React.useState("grey")
   const [quantity, setQuantity] = React.useState(1)
@@ -84,37 +96,22 @@ export function ProductPage() {
     },
   }
 
-  const addToCart = () => {
-    const newItem = {
-      id: `lamp-${selectedColor}`,
-      name: "Modern Table Lamp",
-      price: 379,
-      color: selectedColor,
-      quantity: quantity,
-      image: images[0],
-    }
-
-    setCartItems(prev => {
-      const existingItem = prev.find(item => item.id === newItem.id)
-      if (existingItem) {
-        return prev.map(item =>
-          item.id === newItem.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
+  const handleAddToCart = () => {
+      const item: CartData = {
+        id: productData.id,
+        name: productData.name,
+        price: productData.price,
+        quantity: quantity,
+        image: images[0],
+        color: selectedColor,
       }
-      return [...prev, newItem]
-    })
+  
+      CartManager.addItem(item);
+      setCartOpen(true)
+    };
+  
 
-    setCartOpen(true)
-    toast.success("Added to cart!")
-  }
 
-  const buyNow = () => {
-    addToCart()
-    // Additional checkout logic would go here
-    toast.success("Proceeding to checkout...")
-  }
 
   const checkDelivery = () => {
     // Simulate delivery check
@@ -127,24 +124,7 @@ export function ProductPage() {
     }
   }
 
-  const updateQuantity = (id: string, change: number) => {
-    setCartItems(prev =>
-      prev.map(item => {
-        if (item.id === id) {
-          const newQuantity = item.quantity + change
-          return newQuantity > 0
-            ? { ...item, quantity: newQuantity }
-            : item
-        }
-        return item
-      }).filter(item => item.quantity > 0)
-    )
-  }
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  )
 
   return (
     <div className="mx-auto max-w-7xl p-4 md:p-6">
@@ -183,8 +163,8 @@ export function ProductPage() {
         {/* Product Details */}
         <div className="flex flex-col gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Modern Table Lamp</h1>
-            <p className="text-xl font-semibold">₹379</p>
+            <h1 className="text-2xl font-bold">{productData.name}</h1>
+            <p className="text-xl font-semibold">₹{productData.price}</p>
           </div>
 
           <div className="space-y-2">
@@ -234,10 +214,10 @@ export function ProductPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button onClick={addToCart} className="flex-1">
+            <Button onClick={handleAddToCart} className="flex-1">
               Add to Cart
             </Button>
-            <Button onClick={buyNow} variant="secondary" className="flex-1">
+            <Button onClick={handleAddToCart} variant="secondary" className="flex-1">
               Buy Now
             </Button>
           </div>
@@ -282,76 +262,7 @@ export function ProductPage() {
               Shopping Cart
             </SheetTitle>
           </SheetHeader>
-          <div className="flex flex-1 flex-col gap-4 overflow-auto py-4">
-            {cartItems.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
-                <ShoppingCart className="h-12 w-12 text-muted-foreground" />
-                <p className="text-lg font-medium">Your cart is empty</p>
-                <p className="text-sm text-muted-foreground">
-                  Add items to your cart to see them here
-                </p>
-              </div>
-            ) : (
-              cartItems.map(item => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-4 rounded-lg border p-4"
-                >
-                  <div className="relative h-20 w-20 overflow-hidden rounded-md bg-muted">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="object-cover"
-                      
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1">
-                    <h3 className="font-medium">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Color: {item.color}
-                    </p>
-                    <p className="font-medium">₹{item.price}</p>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, -1)}
-                      >
-                        <MinusIcon className="h-4 w-4" />
-                      </Button>
-                      <span className="w-8 text-center">{item.quantity}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, 1)}
-                      >
-                        <PlusIcon className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => updateQuantity(item.id, -item.quantity)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-          {cartItems.length > 0 && (
-            <div className="border-t pt-4">
-              <div className="flex justify-between text-lg font-medium">
-                <span>Total</span>
-                <span>₹{total}</span>
-              </div>
-              <Button className="mt-4 w-full">Checkout</Button>
-            </div>
-          )}
+         <Cart />
         </SheetContent>
       </Sheet>
     </div>

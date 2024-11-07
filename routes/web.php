@@ -24,6 +24,7 @@ Route::get('/dashboard', function () {
 
 Route::post('/upload', [FilesController::class, 'upload']);
 Route::get('/product/demo', [ProductController::class, 'ProductPage']);
+Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay']);
 
 Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');
