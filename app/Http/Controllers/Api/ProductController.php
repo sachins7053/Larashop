@@ -5,10 +5,12 @@ use  App\Http\Controllers\Api\ProductVariation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductCatLinking;
 use App\Models\ProductAttribute;
 use App\Models\ProductVariations;
 use  App\Models\VariationAttribute;
 use  App\Models\AttributeValue;
+
 
 class ProductController extends Controller
 {
@@ -35,15 +37,26 @@ class ProductController extends Controller
             'sale_price' => 'nullable|integer|min:0',
         ]);
 */
+        $slug = Product::generateUniqueSlug($request->name);
         // Create the Product in the database
         $product = Product::create([
             'name' => $request->name,
+            'slug' => $slug,
             'description' => $request->description,
             'price' => $request->price,
             'sale_price' => $request->sale_price,
             'content' => $request->content,
             'images' => $request->images
         ]);
+
+        $categories = json_decode($request->input('categories'), true);
+        foreach($categories as $category){
+            $cat = \App\Models\ProductCatLinking::create([
+                'category_id' => $category,
+                'product_id' =>  $product->id,
+                //'attributes' => json_encode($variationData['attributes']),
+            ]);
+        }
 
         if ($request->has('variations')) {
             $variations = json_decode($request->input('variations'), true);

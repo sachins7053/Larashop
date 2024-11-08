@@ -12,16 +12,25 @@ import { Switch } from "@/components/ui/switch"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from "@/hooks/use-toast"
 import FileUploader from '@/components/file-uploader'
+import { PageProps } from '@/types';
+import { CheckedState } from '@radix-ui/react-checkbox';
+import { Inertia } from '@inertiajs/inertia';
 
+
+interface Categories {
+    id: string;
+    name:string;
+}
 
 // Mock data for categories and brands
-const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Books']
+//const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Books']
 const brands = ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
 
 
-export default function AddProduct() {
+export default function AddProduct( { categories}: PageProps<{categories:Categories[]}>) {
     const { toast } = useToast()
     const [productName, setProductName] = useState("");
     const [shortDescription, setShortDescription] = useState("");
@@ -34,11 +43,11 @@ export default function AddProduct() {
     //const [attributeGroups, setAttributeGroups] = useState([]);
     //const [variations, setVariations] = useState([]);
     const [category, setCategory] = useState("");
-    const [brand, setBrand] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState<string[]>([])
     //const [productStatus, setProductStatus] = useState("draft");
     const [attributeGroups, setAttributeGroups] = useState([
-      { name: 'Size', values: ['S', 'M', 'L'] },
-      { name: 'Color', values: ['Red', 'Blue', 'Green'] },
+      { name: 'Size', values: ['S', 'M', 'L', 'XL', 'XXL'] },
+      { name: 'Color', values: ['Red', 'Blue', 'Green', 'Pink', 'Grey', 'Orange'] },
       { name: 'Pattern', values: ['Solid', 'Striped', 'Floral'] }
     ])
       
@@ -105,6 +114,14 @@ export default function AddProduct() {
       setVariations(variations.filter((_, i) => i !== index))
     }
 
+    const handleCategoryChange = (id: string, checked: CheckedState) => {
+        if (checked) {
+          setSelectedCategories(prev => [...prev, id])
+        } else {
+          setSelectedCategories(prev => prev.filter(c => c!== id))
+        }
+      }
+
     const handleSubmit = async (e:any) => {
         e.preventDefault();
         const formData = new FormData();
@@ -117,6 +134,7 @@ export default function AddProduct() {
     //    formData.append("isVariableProduct", String(isVariableProduct));
     //    formData.append("category", category);
     //    formData.append("brand", brand);
+        formData.append("categories", JSON.stringify(selectedCategories)); // Using "categories[]" indicates an array
         formData.append("status", productStatus);
     
     //    if (mainImage) {
@@ -126,9 +144,12 @@ export default function AddProduct() {
     //    galleryImages.forEach((image, index) => {
     //      formData.append(`galleryImages[${index}]`, image);
     //    });
-    
+
+     
     //    formData.append("attributeGroups", JSON.stringify(attributeGroups));
+        if(isVariableProduct === true) {
         formData.append("variations", JSON.stringify(variations));
+        }
     
         try {
             const response = await axios.post("/api/products", formData, {
@@ -140,14 +161,16 @@ export default function AddProduct() {
                 title: "Product Submitted Successfully",
                 description: "There was a problem with your request.",
               })
+              Inertia.visit('/admin/products');
           console.log("Product saved:", response);
+          console.log(Array.from(formData.entries()));
         } catch (error) {
             toast({
                 variant: "destructive",
                 title: "Uh oh! Something went wrong.",
                 description: "There was a problem with your request.",
               })
-            console.log(Array.from(formData.entries()));
+            console.log(formData.entries());
           console.error("Error saving product:", error);
         }
       };
@@ -358,16 +381,25 @@ export default function AddProduct() {
                         <div className="space-y-4">
                             <div>
                             <Label htmlFor="category">Category</Label>
-                            <Select>
-                                <SelectTrigger id="category">
-                                <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent>
+                            <div className="mt-2 space-y-2">
                                 {categories.map((category) => (
-                                    <SelectItem key={category} value={category.toLowerCase()}>{category}</SelectItem>
+                                <div  className="flex items-center space-x-2">
+                                    <Checkbox
+                                    key={category.id}
+                                    id={category.id}
+                                    checked={selectedCategories.includes(category.id)}
+                                    onCheckedChange={(checked: CheckedState) => handleCategoryChange(category.id, checked)}
+                                    />
+                                    <Label
+                                    htmlFor={category.id}
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                    {category.name}
+                                    </Label>
+                                </div>
                                 ))}
-                                </SelectContent>
-                            </Select>
+                            </div>
+                           
                             </div>
                             <div>
                             <Label htmlFor="brand">Brand</Label>

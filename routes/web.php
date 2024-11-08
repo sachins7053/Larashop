@@ -19,7 +19,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
+Route::get('/admin/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -30,14 +30,14 @@ Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay']);
 Route::get('/category', [ProductController::class, 'Category']);
 
 Route::middleware('role_or_permission:Admin')->group(function () {
-    Route::get('/products', [ProductController::class, 'index'])->name('product.index');
-    Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
-    Route::get('/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
-    Route::get('/product-categories', [ProductCategoryController::class, 'categories']);
-    Route::get('/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/admin/products', [ProductController::class, 'index'])->name('product.index');
+    Route::get('/admin/product/add', [ProductController::class, 'add'])->name('product.add');
+    Route::get('/admin/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
+    Route::get('/admin/product-categories', [ProductCategoryController::class, 'categories']);
+    Route::get('/admin/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
+    Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/admin/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/admin/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 

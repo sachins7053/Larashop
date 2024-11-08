@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\attributeValue;
 
 
-class ProductVariation extends Model
+class ProductVariation extends BaseModel
 {   
     protected $table = 'product_variations';
 

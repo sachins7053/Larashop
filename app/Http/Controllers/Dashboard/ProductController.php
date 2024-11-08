@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Product;
+use App\Models\ProductCat;
+
 
 class ProductController extends Controller
 {
@@ -16,8 +18,14 @@ class ProductController extends Controller
     }
     
     public function add(): Response 
-    {
-        return Inertia::render('Admin/Pages/AddProduct');
+    {   
+        $categories = ProductCat::get()->map(function ($category) {
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+            ];
+        });
+        return Inertia::render('Admin/Pages/AddProduct' , ['categories' => $categories]);
     }
 
     public function Edit($id): Response 

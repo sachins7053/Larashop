@@ -38,6 +38,9 @@ interface ProductPageProps {
 }
 
 export function ProductDetails({ productData }: ProductPageProps){
+  if (!productData) {
+    return <div>Loading...</div>; // or some fallback UI
+  }
   const [selectedImage, setSelectedImage] = React.useState(0)
   const [selectedColor, setSelectedColor] = React.useState("grey")
   const [quantity, setQuantity] = React.useState(1)
