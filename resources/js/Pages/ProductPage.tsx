@@ -8,7 +8,7 @@ interface Product {
     sale_price: number;
     content: string;
     description: string;
-    images: string | Blob | null;
+    images: string[] ;
 }
 
 interface ProductPageProps {
@@ -25,7 +25,7 @@ export default function ProductShow ({product}: ProductPageProps) {
         sale_price: 80,
         content: "This is a sample product.",
         description: "This is a sample product.",
-        images: "https://example.com/image1.jpg"
+        images: ["https://example.com/image1.jpg"]
     } 
     return (
         <>

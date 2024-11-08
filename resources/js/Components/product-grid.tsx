@@ -11,6 +11,7 @@ interface Product {
   salePrice: number | null
   rating: number
   discount: number
+  sale_price: number | null
 }
 
 interface ProductGridProps {
@@ -68,7 +69,7 @@ export function ProductGrid({
       {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
       <div className={`grid ${getGridColumns()} gap-6`}>
         {products.map((product) => (
-          <div key={product.id} className="bg-card text-card-foreground rounded-lg shadow-lg overflow-hidden">
+          <div key={product.id} className="bg-card text-card-foreground rounded shadow-md overflow-hidden">
             <div className="relative">
               <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover" />
               <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground">
@@ -93,12 +94,12 @@ export function ProductGrid({
                     ₹{product.price.toFixed(2)}
                   </span>
                   <span className="text-primary font-bold">
-                    ₹{product.salePrice ? product.salePrice.toFixed(2) : null}
+                    ₹{product.sale_price ? product.sale_price.toFixed(2) : null}
                   </span>
                 </div>
                 <div className="flex items-center mb-2">
                 <span className="text-yellow-400 mr-1">★★★★ </span>
-                <span>{product.rating.toFixed(1)}</span>
+                <span></span>
               </div>
                 
               </div>

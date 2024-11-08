@@ -14,6 +14,7 @@ interface Product {
     images: string
     price: number
     salePrice: number | null
+    sale_price: number | null
     rating: number
     discount: number
   }

@@ -50,10 +50,11 @@ export default function AddProduct( { categories}: PageProps<{categories:Categor
       { name: 'Color', values: ['Red', 'Blue', 'Green', 'Pink', 'Grey', 'Orange'] },
       { name: 'Pattern', values: ['Solid', 'Striped', 'Floral'] }
     ])
-      
+    
     const [variations, setVariations] = useState([{ attributes: {}, mrpPrice: '', salePrice: '', stock: '' }])
     const [productStatus, setProductStatus] = useState('draft')
-  
+    const images = mainImage ? [mainImage, ...galleryImages] : [...galleryImages];
+
   
     const addAttributeGroup = () => {
       setAttributeGroups([...attributeGroups, { name: '', values: [''] }])
@@ -137,9 +138,8 @@ export default function AddProduct( { categories}: PageProps<{categories:Categor
         formData.append("categories", JSON.stringify(selectedCategories)); // Using "categories[]" indicates an array
         formData.append("status", productStatus);
     
-    //    if (mainImage) {
-    //      formData.append("images", images);
-    //    }
+     
+          formData.append("images", JSON.stringify(images));
         
     //    galleryImages.forEach((image, index) => {
     //      formData.append(`galleryImages[${index}]`, image);

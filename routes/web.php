@@ -28,6 +28,7 @@ Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/product/demo', [ProductController::class, 'ProductPage']);
 Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay']);
 Route::get('/category', [ProductController::class, 'Category']);
+Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
 
 Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/admin/products', [ProductController::class, 'index'])->name('product.index');

@@ -56,11 +56,12 @@
         "date-fns": "^3.6.0",
         "embla-carousel-react": "^8.3.1",
         "input-otp": "^1.2.4",
+        "lodash.template": "^4.5.0",
         "lucide-react": "^0.453.0",
         "npm": "^10.9.0",
         "react-day-picker": "^8.10.1",
         "recharts": "^2.13.0",
-        "shadcn": "^2.1.6",
+        "shadcn": "^1.0.0",
         "sonner": "^1.7.0",
         "tailwind-merge": "^2.5.4",
         "tailwindcss-animate": "^1.0.7"

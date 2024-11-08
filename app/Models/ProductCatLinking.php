@@ -3,8 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product;
-use App\Models\ProductCat;
+
 
 class ProductCatLinking extends Model
 {
@@ -16,12 +15,5 @@ class ProductCatLinking extends Model
        
     ];
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
-    public function Category()
-    {
-        return $this->belongsTo(ProductCat::class);
-    }
+  
 }

@@ -27,5 +27,12 @@ class ProductCategoryController extends Controller
         // Return the view with the fetched categories
         return Inertia::render('Admin/Pages/EditCategory', $category);
     }
+
+    public function CategoryProduct($slug):Response {
+        $category = ProductCat::where('slug', $slug )->first();
+        $products = $category->products;
+        return Inertia::render('Frontend/Category');
+
+    }
 }
 

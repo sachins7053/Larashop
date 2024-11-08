@@ -29,7 +29,7 @@ interface ProductData {
   description: string;
   content: string;
   sale_price: number;
-  images : string | Blob | null;
+  images : string[] ;
 
   // Add more fields based on your Product model
 }
@@ -50,13 +50,7 @@ export function ProductDetails({ productData }: ProductPageProps){
   const [deliveryInfo, setDeliveryInfo] = React.useState<string | null>(null)
   const [activeSection, setActiveSection] = React.useState<string | null>(null)
 
-  const images = [
-    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2Fnew-logo%2Ffront-walnutt-810x702.jpg",
-    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2Fnew-logo%2F1-810x702.jpg",
-    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2Fnew-logo%2F3-810x702.jpg",
-    "https://images.woodenstreet.de/image/cache/data%2Fbed-with-storage%2Fwalken-bed-with-storage%2Fupdated%2Fupdated%2Fwalnut%2F4-810x702.jpg",
-  ]
-
+  const images :string[] = typeof productData.images === 'string' ? JSON.parse(productData.images) :[]
   const colors = [
     { name: "Grey", value: "grey" },
     { name: "Blue", value: "blue" },
@@ -136,23 +130,25 @@ export function ProductDetails({ productData }: ProductPageProps){
         <div className="col-span-3 ">
           <div className="flex sticky top-0 gap-4">
             <div className="flex flex-col gap-4">
-            {images.map((src, index) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(index)}
-                className={`relative h-20 w-20 overflow-hidden rounded-lg border-2 ${
-                  selectedImage === index
-                    ? "border-primary"
-                    : "border-transparent"
-                }`}
-              >
-                <img
-                  src={src}
-                  alt={`Product ${index + 1}`}
-                  className="object-cover"
-                />
-              </button>
-            ))}
+            {Array.isArray(images) && images.length > 0 ? (
+              images.map((src, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`relative h-20 w-20 overflow-hidden rounded-lg border-2 ${
+                    selectedImage === index
+                      ? "border-primary"
+                      : "border-transparent"
+                  }`}
+                >
+                  <img
+                    src={src}
+                    alt={`Product ${index + 1}`}
+                    className="object-cover"
+                  />
+                </button>
+            ))
+          ) : ''}
           </div>
               <div className="relative flex-1 overflow-hidden rounded-lg">
                 <img

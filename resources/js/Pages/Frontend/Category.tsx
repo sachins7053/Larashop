@@ -7,7 +7,7 @@ import { Product } from '@/components/components-product-archive'
 // This function would typically be in a separate API file
 async function fetchCategoryProducts(category: string, start: number, end: number): Promise<Product[]> {
   // In a real application, you'd make an API call here
-  const response = await fetch(`/api/products?category=${category}&start=${start}&end=${end}`)
+  const response = await fetch(`/api/product-category?category=${category}&start=${start}&end=${end}`)
   if (!response.ok) {
     throw new Error('Failed to fetch products')
   }

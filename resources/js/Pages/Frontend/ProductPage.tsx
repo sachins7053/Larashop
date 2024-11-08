@@ -11,7 +11,7 @@ interface Product {
     description: string;
     content: string;
     sale_price: number;
-    images : string | Blob | null;
+    images : string[] ;
 
     // Add more fields based on your Product model
 }
@@ -22,6 +22,7 @@ interface ProductGridData {
     images: string
     price: number
     salePrice: number | null
+    sale_price: number | null
     rating: number
     discount: number
 

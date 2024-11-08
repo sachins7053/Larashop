@@ -19,6 +19,7 @@ Route::apiResource('categories', ProductCategoryController::class);
 Route::apiResource('files', FilesController::class);
 route::apiResource('pro-variation', ProductVariation::class);
 
+Route::get('/product-category', [ProductCategoryController::class , 'CategoryProduct']);
 Route::get('/pro-cat', [ProductCategoryController::class , 'categories']);
 Route::get('/user', function (Request $request) {
     return $request->user();
