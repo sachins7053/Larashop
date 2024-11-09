@@ -52,14 +52,17 @@ const FilterSection = ({ title, children }: { title: string; children: React.Rea
 )
 
 const ProductCard = ({ product }: { product: Product }) => (
-  <div className="border rounded-lg overflow-hidden shadow-sm">
-    <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+  
+
+  <div className="border bg-white rounded-md overflow-hidden shadow-lg">
+    <img src="https://mysleepyhead.com/media/catalog/product/1/1/11_1.jpg" alt={product.name} className="w-full h-48 object-cover" />
     <div className="p-4">
       <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-      <p className="text-gray-600 mb-2">${product.price}</p>
+      <p className="text-gray-600 mb-2">₹{product.price}</p>
       <p className="text-sm text-gray-500">{product.color} | {product.material}</p>
     </div>
   </div>
+
 )
 
 const Sidebar = ({ filters, setFilters, isMobile = false }: { 
@@ -96,7 +99,7 @@ const Sidebar = ({ filters, setFilters, isMobile = false }: {
     <div className={`space-y-6 ${isMobile ? 'p-6' : ''}`}>
       <FilterSection title="Price Range">
         <Label htmlFor={`${isMobile ? 'mobile-' : ''}price-range`}>
-          ${filters.priceRange[0]} - ${filters.priceRange[1]}
+          {filters.priceRange[0]} - {filters.priceRange[1]}
         </Label>
         <Slider
           id={`${isMobile ? 'mobile-' : ''}price-range`}
@@ -213,10 +216,10 @@ export function ProductArchive({ initialProducts, fetchMoreProducts, title = "Pr
   }, [loadMoreProducts, isLoading])
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="container mx-auto bg-">
+      <div className="flex flex-col md:flex-row gap-4">
         {/* Sidebar for desktop */}
-        <aside className="w-full md:w-64 hidden md:block">
+        <aside className="w-full md:w-64 hidden md:block p-3">
           <div className="sticky top-4">
             <h2 className="text-2xl font-bold mb-4">Filters</h2>
             <Sidebar filters={filters} setFilters={setFilters} />
@@ -224,7 +227,7 @@ export function ProductArchive({ initialProducts, fetchMoreProducts, title = "Pr
         </aside>
 
         {/* Main content */}
-        <main className="flex-1">
+        <main className="flex-1 bg-gray-50 p-4">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold">{title}</h1>
             <div className="flex items-center space-x-4">
@@ -240,7 +243,7 @@ export function ProductArchive({ initialProducts, fetchMoreProducts, title = "Pr
               </Select>
               <Button
                 variant="outline"
-                className="md:hidden"
+                className="md:hidden bg-white"
                 onClick={() => setIsSidebarOpen(true)}
               >
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
@@ -274,7 +277,7 @@ export function ProductArchive({ initialProducts, fetchMoreProducts, title = "Pr
               </Button>
             </div>
             <Sidebar filters={filters} setFilters={setFilters} isMobile />
-          </div>
+          </div>  
         </div>
       )}
     </div>

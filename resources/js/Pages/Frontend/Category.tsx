@@ -19,35 +19,59 @@ async function fetchCategoryProducts(category: string, start: number, end: numbe
   
   if (!response.ok) {
     console.error('Failed to fetch products', response)
-    return [] // Return an empty array on error to avoid further issues
+    return [] 
   }
-  console.log('category response:', response)
-  return response.json()
 
+  const data = await response.json()
+  return data 
 }
 
-export default function CategoryPage({ data }: { data: any }) {
+export default function CategoryPage(data: any) {
+  const { category } = data;
+  
   const [initialProducts, setInitialProducts] = useState<ProductGridData[]>([]);
-  const [productsData, setProductsData] = useState<ProductGridData[]>([]);
-
+  const [allProductsLoaded, setAllProductsLoaded] = useState(false); 
+  const [startIndex, setStartIndex] = useState(0); 
+  
   useEffect(() => {
-    if (data){
-      if (data.products && Array.isArray(data.products)) {
-        setProductsData(data.products);
-      } else if (data.category && data.category?.slug) {
-        fetchCategoryProducts(data.category.slug, 0, 10).then(setInitialProducts);
-      }
+    if (category && category.slug) {
+      fetchCategoryProducts(category.slug, 0, 2).then(newProducts => {
+        setInitialProducts(newProducts);
+        setStartIndex(2); 
+        if (newProducts.length < 1) {
+          setAllProductsLoaded(true);
+        }
+      });
     }
-  }, [data]);
+  }, [category]);
 
-  const fetchMoreProducts = (start: number, end: number) => 
-    data?.category?.slug ? fetchCategoryProducts(data.category.slug, start, end) : Promise.resolve([]);
+  const fetchMoreProducts = async (start: number, end: number): Promise<ProductGridData[]> => {
+    if (!category.slug || allProductsLoaded) return []; 
+    
+    const newProducts = await fetchCategoryProducts(category.slug, start, end);
+
+    if (newProducts.length === 0) {
+      setAllProductsLoaded(true);
+    } else {
+      setInitialProducts(prevProducts => [...prevProducts, ...newProducts]);
+      setStartIndex(prevIndex => prevIndex + 2);
+    }
+
+    return newProducts; 
+  };
 
   return (
-    <ProductArchive
-      initialProducts={initialProducts}
-      fetchMoreProducts={fetchMoreProducts}
-      title={`Category: ${ data?.category?.name || 'Unknown Category'}`}
-    />
+    <div>
+      <ProductArchive
+        initialProducts={initialProducts}
+        fetchMoreProducts={fetchMoreProducts}  // Pass the updated fetchMoreProducts function
+        title={`Category: ${category.name || 'Unknown Category'}`}
+      />
+      
+      {/* Optionally, you can show a "Load More" button or auto-fetch */}
+      {!allProductsLoaded && (
+        <button onClick={() => fetchMoreProducts(startIndex, startIndex + 2)}>Load More</button>
+      )}
+    </div>
   )
 }

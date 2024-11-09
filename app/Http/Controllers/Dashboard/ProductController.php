@@ -30,7 +30,8 @@ class ProductController extends Controller
 
     public function Edit($id): Response 
     {   
-        $product = Product::find($id);
+        $product = Product::where('id', $id)->first();
+        $variations = $product->variations;
         return Inertia::render('Admin/Pages/EditProduct', compact('product'));
         //return Inertia::render('Admin/Pages/AddProduct');
     }
@@ -39,9 +40,12 @@ class ProductController extends Controller
     {
         return Inertia::render('ProductPage');
     }
+
+
     public function ProductDisplay($id): Response
     {   
         $product = Product::find($id);
+        
         return Inertia::render('Frontend/ProductPage', compact('product'));
     }
 
