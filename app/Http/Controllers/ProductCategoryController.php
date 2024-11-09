@@ -45,7 +45,8 @@ class ProductCategoryController extends Controller
         return response()->json(null, 204);
     }
 
-    public function CategoryProduct(Request $request, $slug,):Response {
+    public function CategoryProduct(Request $request) {
+        $slug = $request->query('category', '');
         $category = ProductCat::where('slug', $slug)->first();
 
     // If the category does not exist, return a 404 response

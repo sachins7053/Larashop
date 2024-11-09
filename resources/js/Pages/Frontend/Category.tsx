@@ -2,33 +2,52 @@
 
 import { useEffect, useState } from 'react'
 import { ProductArchive } from '@/components/components-product-archive'
-import { Product } from '@/components/components-product-archive'
 
-// This function would typically be in a separate API file
-async function fetchCategoryProducts(category: string, start: number, end: number): Promise<Product[]> {
-  // In a real application, you'd make an API call here
-  const response = await fetch(`/api/product-category?category=${category}&start=${start}&end=${end}`)
-  if (!response.ok) {
-    throw new Error('Failed to fetch products')
-  }
-  return response.json()
+interface ProductGridData {
+  id: number
+  title: string
+  name: string
+  price: number
+  color: string
+  material: string
+  image: string
+  sale_price: number | null
 }
 
-export default function CategoryPage({ params }: { params: { slug: string } }) {
-  const [initialProducts, setInitialProducts] = useState<Product[]>([])
+async function fetchCategoryProducts(category: string, start: number, end: number): Promise<ProductGridData[]> {
+  const response = await fetch(`/api/product-category?category=${category}&start=${start}&end=${end}`)
+  
+  if (!response.ok) {
+    console.error('Failed to fetch products', response)
+    return [] // Return an empty array on error to avoid further issues
+  }
+  console.log('category response:', response)
+  return response.json()
+
+}
+
+export default function CategoryPage({ data }: { data: any }) {
+  const [initialProducts, setInitialProducts] = useState<ProductGridData[]>([]);
+  const [productsData, setProductsData] = useState<ProductGridData[]>([]);
 
   useEffect(() => {
-    fetchCategoryProducts(params.slug, 0, 20).then(setInitialProducts)
-  }, [params.slug])
+    if (data){
+      if (data.products && Array.isArray(data.products)) {
+        setProductsData(data.products);
+      } else if (data.category && data.category?.slug) {
+        fetchCategoryProducts(data.category.slug, 0, 10).then(setInitialProducts);
+      }
+    }
+  }, [data]);
 
   const fetchMoreProducts = (start: number, end: number) => 
-    fetchCategoryProducts(params.slug, start, end)
+    data?.category?.slug ? fetchCategoryProducts(data.category.slug, start, end) : Promise.resolve([]);
 
   return (
     <ProductArchive
       initialProducts={initialProducts}
       fetchMoreProducts={fetchMoreProducts}
-      title={`Category: ${params.slug}`}
+      title={`Category: ${ data?.category?.name || 'Unknown Category'}`}
     />
   )
 }

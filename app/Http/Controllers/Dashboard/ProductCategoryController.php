@@ -30,9 +30,20 @@ class ProductCategoryController extends Controller
 
     public function CategoryProduct($slug):Response {
         $category = ProductCat::where('slug', $slug )->first();
-        $products = $category->products;
-        return Inertia::render('Frontend/Category');
+        if (!$category) {
+            abort(404, 'Category not found');
+        }
+        //$products = $category->products;
 
-    }
+        $start = request()->query('start', 0);
+        $end = request()->query('end', 20);
+    
+        $paginatedProducts = $category->products()->skip($start)->take($end - $start)->get();
+    
+        return Inertia::render('Frontend/Category', [
+            'category' => $category,
+            'products' => $paginatedProducts // Ensure this matches the API response
+        ]);
+    } 
 }
 
