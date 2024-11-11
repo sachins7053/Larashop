@@ -2,11 +2,14 @@
 
 export interface CartData {
     id: string;
+    cartId: string;
     name: string;
     price: number;
     quantity: number;
     image: string;
-    color: string;
+    attribute_name:string;
+    attribute_value:string;
+    
 }
 
 export class CartManager {
@@ -21,7 +24,7 @@ export class CartManager {
 
     static addItem(item: CartData): void {
         const cart = this.getCart();
-        const existingItemIndex = cart.findIndex(CartData => CartData.id === item.id);
+        const existingItemIndex = cart.findIndex(CartData => CartData.cartId === item.cartId);
 
         if (existingItemIndex !== -1) {
             cart[existingItemIndex].quantity += item.quantity;
@@ -34,7 +37,7 @@ export class CartManager {
 
     static updateItem(itemId: string, quantity: number): void {
         const cart = this.getCart();
-        const itemIndex = cart.findIndex(CartData => CartData.id === itemId);
+        const itemIndex = cart.findIndex(CartData => CartData.cartId === itemId);
 
         if (itemIndex !== -1) {
             if (quantity <= 0) {
@@ -48,7 +51,7 @@ export class CartManager {
 
     static removeItem(itemId: string): void {
         const cart = this.getCart();
-        const updatedCart = cart.filter(CartData => CartData.id !== itemId);
+        const updatedCart = cart.filter(CartData => CartData.cartId !== itemId);
         this.saveCart(updatedCart);
     }
 

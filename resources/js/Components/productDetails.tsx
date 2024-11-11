@@ -14,22 +14,36 @@ import { CartData, CartManager } from "@/hooks/CartManager"
 import { Cart } from "./Cart"
 
 interface CartItem {
+  cartId: string
   id: string
   name: string
   price: number
-  color: string
   quantity: number
   image: string
+  attribute_name: string; // Field for the attribute name
+  attribute_value: string;
+}
+
+interface Variation {
+  attribute_id: number;
+  attribute_name: string;
+  variation_id: string;
+  product_id: number;
+  price: string;
+  sale_price: string;
+  attribute_value: string;
 }
 
 interface ProductData {
   id: string;
   name: string;
-  price: number;
   description: string;
   content: string;
-  sale_price: number;
-  images : string[] ;
+  images: string[] | null;
+  variations: Variation[];
+  price: number | null; // Normal price
+  sale_price: number | null; // Sale price
+  product_type: string;
 
   // Add more fields based on your Product model
 }
@@ -42,13 +56,13 @@ export function ProductDetails({ productData }: ProductPageProps){
     return <div>Loading...</div>; // or some fallback UI
   }
   const [selectedImage, setSelectedImage] = React.useState(0)
-  const [selectedColor, setSelectedColor] = React.useState("grey")
+  const [selectedVariation, setSelectedVariation] = React.useState<Variation | null>(null);
   const [quantity, setQuantity] = React.useState(1)
   const [cartOpen, setCartOpen] = React.useState(false)
   const [cartItems, setCartItems] = React.useState<CartItem[]>([])
   const [pincode, setPincode] = React.useState("")
   const [deliveryInfo, setDeliveryInfo] = React.useState<string | null>(null)
-  const [activeSection, setActiveSection] = React.useState<string | null>(null)
+  //const [activeSection, setActiveSection] = React.useState<string | null>(null)
 
   const images :string[] = typeof productData.images === 'string' ? JSON.parse(productData.images) :[]
   const colors = [
@@ -94,18 +108,41 @@ export function ProductDetails({ productData }: ProductPageProps){
   }
 
   const handleAddToCart = () => {
-      const item: CartData = {
+    let item: CartData;
+
+    if (productData.product_type === "variable") {
+      if (!selectedVariation) {
+        toast.error("Please select a variation before adding to cart.");
+        return; 
+      }
+      item = {
         id: productData.id,
+        cartId: productData.id + selectedVariation.attribute_value,
         name: productData.name,
-        price: productData.price,
+        price: parseFloat(selectedVariation.sale_price || "0"), 
         quantity: quantity,
         image: images[0],
-        color: selectedColor,
-      }
-  
-      CartManager.addItem(item);
-      setCartOpen(true)
-    };
+        attribute_name: selectedVariation.attribute_name,
+        attribute_value: selectedVariation.attribute_value, 
+      };
+    } else {
+      
+      item = {
+        id: productData.id,
+        cartId: productData.id,
+        name: productData.name,
+        price: parseFloat(productData.sale_price?.toString() || "0"),
+        quantity: quantity,
+        image: images[0],
+        attribute_name: productData.variations[0]?.attribute_name || "Default",
+        attribute_value: productData.variations[0]?.attribute_value || "default value",  
+      };
+    }
+
+    CartManager.addItem(item);
+    setCartOpen(true);
+    console.log(item)
+  };
   
 
 
@@ -163,35 +200,37 @@ export function ProductDetails({ productData }: ProductPageProps){
 
         {/* Product Details */}
         <div className="flex flex-col col-span-2 gap-4">
-          <div>
+        <div>
             <h1 className="text-2xl font-bold">{productData.name}</h1>
-            <p className="text-xl font-semibold">₹{productData.price}</p>
+            {productData.product_type === "variable" ? (
+              <p className="text-xl font-semibold">
+                {selectedVariation ? `₹${selectedVariation.sale_price}` : `Select a variation`}
+              </p>
+            ) : (
+              <p className="text-xl font-semibold">₹{productData.sale_price}</p>
+            )}
+            <p className="text-gray-600">{productData.description}</p>
           </div>
 
-          <div className="space-y-2">
-            <Label>Select Color</Label>
-            <RadioGroup
-              defaultValue={selectedColor}
-              onValueChange={setSelectedColor}
-              className="flex gap-2"
-            >
-              {colors.map(color => (
-                <div key={color.value} className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value={color.value}
-                    id={color.value}
-                    className="peer sr-only"
-                  />
-                  <Label
-                    htmlFor={color.value}
-                    className="rounded-md border-2 border-muted bg-popover px-3 py-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary"
-                  >
-                    {color.name}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
+          {/* Variations */}
+          {productData.product_type === "variable" && (
+            <div>
+              <h2 className="text-lg font-semibold">Select Variation</h2>
+              <RadioGroup value={selectedVariation?.variation_id} onValueChange={(value) => {
+                const variation = productData.variations.find(v => v.variation_id.toString() === value);
+                setSelectedVariation(variation || null);
+              }}>
+                {productData.variations.map((variation) => (
+                  <div key={variation.variation_id} className="flex items-center">
+                    <RadioGroupItem value={variation.variation_id.toString()} id={`variation-${variation.variation_id}`} />
+                    <Label htmlFor={`variation-${variation.variation_id}`} className="ml-2">
+                      {variation.attribute_value} - ₹{variation.sale_price}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>Quantity</Label>

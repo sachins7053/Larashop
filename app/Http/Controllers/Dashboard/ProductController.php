@@ -44,7 +44,9 @@ class ProductController extends Controller
 
     public function ProductDisplay($id): Response
     {   
-        $product = Product::find($id);
+        $product = Product::with(['variations' => function($query){
+            $query->leftJoin('attributes','attributes.attribute_id', 'product_variations.attribute_id')->select('attributes.*','product_variations.*');
+        }])->find($id);
         
         return Inertia::render('Frontend/ProductPage', compact('product'));
     }

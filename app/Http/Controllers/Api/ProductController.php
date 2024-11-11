@@ -100,13 +100,15 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $Product = Product::find($id);
+        $product = Product::with(['variations' => function($query){
+            $query->leftJoin('attributes','attributes.attribute_id', 'product_variations.attribute_id')->select('attributes.*','product_variations.*');
+        }])->find($id);
 
-        if (!$Product) {
+        if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        return response()->json($Product, 200);
+        return response()->json($product, 200);
     }
 
     public function update(Request $request, $id)
