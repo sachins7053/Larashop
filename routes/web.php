@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Route::get('/admin/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['role_or_permission:Admin|Partner'])->name('dashboard');
 
 Route::post('/upload', [FilesController::class, 'upload']);
 Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
@@ -34,8 +34,14 @@ Route::middleware('role_or_permission:Admin|Partner')->group(function () {
     Route::get('/admin/products', [ProductController::class, 'index'])->name('product.index');
     Route::get('/admin/product/add', [ProductController::class, 'add'])->name('product.add');
     Route::get('/admin/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
-    Route::get('/admin/product-categories', [ProductCategoryController::class, 'categories']);
+    Route::get('/admin/product-categories', [ProductCategoryController::class, 'categories'])->name('categories');
     Route::get('/admin/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
+    Route::get('/admin/partners', [ProfileController::class, 'index'])->name('partners.index');
+    Route::get('/admin/partner/{id}', [ProfileController::class, 'show'])->name('partners.show');
+    Route::get('/admin/partner/edit/{id}', [ProfileController::class, 'edit'])->name('partners.edit');
+    Route::get('/admin/users', [ProfileController::class, 'index'])->name('user.index');
+    Route::get('/admin/user/{id}', [ProfileController::class, 'show'])->name('user.show');
+    Route::get('/admin/user/edit/{id}', [ProfileController::class, 'edit'])->name('user.edit');
     Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/admin/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/admin/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

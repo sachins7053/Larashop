@@ -5,36 +5,27 @@ import { PageProps } from "@/types";
 import { ProductGrid } from "@/components/product-grid";
 
 interface Product {
-    id: string;
-    name: string;
-    price: number;
-    description: string;
-    content: string;
-    sale_price: number;
-    images : string[] ;
-    variations: Variation[];
-    // Add more fields based on your Product model
-}
-
-interface AttributeValue {
-  id: number;
-  value: string;
-  value_id: number;
-  variation_attribute_id: number;
-  variation_id: number;
-}
-
-interface Variation {
-  id: number;
-  price: number;
+  id: string;
+  name: string;
+  price: number | null;
+  description: string;
+  content: string;
   sale_price: number | null;
-  stock: number;
-  sku: string | null ;
-  variation_attributes: AttributeValue[];
-  value: string;
-  value_id: number;
-  variation_attribute_id: number;
-}
+  images: string[] | null;
+  variations: variation[];
+  product_type: string;
+
+  }
+
+  interface variation {
+    attribute_id: number;
+    attribute_name: string;
+    variation_id: string;
+    product_id: number;
+    price: string;
+    sale_price: string;
+    attribute_value: string;
+  }
 
 interface ProductGridData {
     id: number
@@ -50,8 +41,12 @@ interface ProductGridData {
 }
 
 
-export default function ProductShow ( {product, variations, productVariation  }:PageProps<{ product:Product; variations: Variation[]; productVariation:any }>) {
-  console.log(productVariation, product)
+export default function ProductShow ( {product }:PageProps<{ product:Product}>) {
+
+  useEffect(() => {
+    console.log(product);
+  },[product]);
+
     const [featuredProducts, setFeaturedProducts] = useState<ProductGridData[]>([])
     useEffect(() => {
         // Simulating API calls for different product queries
@@ -64,15 +59,15 @@ export default function ProductShow ( {product, variations, productVariation  }:
           
     
             setFeaturedProducts(featured.products)
-            console.log('Featured products:', featuredProducts)
+  
           } catch (error) {
             console.error('Error fetching products:', error)
           }
-          console.log(featuredProducts)
+  
         }
     
         fetchProducts()
-        console.log(featuredProducts)
+
       }, [])
 
 

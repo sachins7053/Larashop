@@ -7,12 +7,15 @@ import { PropsWithChildren, ReactNode, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 
 
+
+
 export default function Authenticated({
     header,
     children,
-}: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+}: PropsWithChildren<{ header?: ReactNode }> ) {
 
+    const user = usePage().props.auth.user;
+    const permission = usePage().props.auth.permissions;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -34,6 +37,29 @@ export default function Authenticated({
                                     active={route().current('dashboard')}
                                 >
                                     Dashboard
+                                </NavLink>
+                                <NavLink
+                                    href={route('product.index')}
+                                    active={route().current('product.index')}
+                                >
+                                    All Products
+                                </NavLink>
+                              
+                                    <NavLink
+                                        href={route('product.add')}
+                                        active={route().current('product.add')}
+
+                                    >
+                                
+                                    Add Products
+                                </NavLink>
+                       
+                                <NavLink
+                                    href={route('categories')}
+                                    active={route().current('categories')}
+                                    
+                                >
+                                    Categories
                                 </NavLink>
                             </div>
                         </div>

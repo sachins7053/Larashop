@@ -23,6 +23,11 @@ class RegisteredUserController extends Controller
         return Inertia::render('Auth/Register');
     }
 
+    public function createPartner(): Response
+    {
+        return Inertia::render('Auth/PartnerRegister');
+    }
+
     /**
      * Handle an incoming registration request.
      *
@@ -45,6 +50,29 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
         $user->assignRole('Admin');
         $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Admin')->permissions);
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
+    }
+    public function partnerStore(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'mobile' => 'required|string||max:255|unique:'.User::class,
+            'password' => ['required', Rules\Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+            'password' => Hash::make($request->password),
+        ]);
+
+        event(new Registered($user));
+        $user->assignRole('partner');
+        $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('partner')->permissions);
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));

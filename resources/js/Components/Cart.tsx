@@ -40,7 +40,7 @@ export function Cart(){
             ) : (
                 CartDatas.map(item => (
                 <div
-                  key={item.id}
+                  key={item.cartId}
                   className="flex items-center gap-4 rounded-lg border p-4"
                 >
                   <div className="relative h-20 w-20 overflow-hidden rounded-md bg-muted">
@@ -54,7 +54,7 @@ export function Cart(){
                   <div className="flex flex-1 flex-col gap-1">
                     <h3 className="font-medium">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Color: {item.color}
+                      {item.attribute_name}: {item.attribute_value}
                     </p>
                     <p className="font-medium">₹{item.price}</p>
                     <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export function Cart(){
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleUpdateItem(item.id, item.quantity - 1)}
+                        onClick={() => handleUpdateItem(item.cartId, item.quantity - 1)}
                       >
                         <MinusIcon className="h-4 w-4" />
                       </Button>
@@ -71,7 +71,7 @@ export function Cart(){
                         variant="outline"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleUpdateItem(item.id, item.quantity + 1)}
+                        onClick={() => handleUpdateItem(item.cartId, item.quantity + 1)}
                       >
                         <PlusIcon className="h-4 w-4" />
                       </Button>
@@ -81,7 +81,7 @@ export function Cart(){
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={() => handleRemoveItem(item.id)}
+                    onClick={() => handleRemoveItem(item.cartId)}
                   >
                     <X className="h-4 w-4" />
                   </Button>

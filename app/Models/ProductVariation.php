@@ -17,7 +17,9 @@ class ProductVariation extends BaseModel
         'attributes',
         'price',
         'sale_price',
-        'stock'
+        'stock',
+        'attribute_id',
+        'attribute_value'
     ];
 
     protected $casts = [

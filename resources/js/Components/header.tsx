@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/hover-card"
 import { Search, Heart, ShoppingCart, User, Store, Menu, ArrowLeft, ChevronRight, Truck } from "lucide-react"
 import { Cart } from './Cart';
+import { Dialog, DialogTrigger, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
+import { MobileOtpLogin } from './mobile-otp-login';
 
 export function Header() {
   const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
@@ -454,9 +456,17 @@ export function Header() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <MobileOtpLogin />
+                </DialogContent>
+              </Dialog>
+                
                 <Button variant="ghost" size="icon">
                   <Store className="h-5 w-5" />
                   <span className="sr-only">Find a Store</span>

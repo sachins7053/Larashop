@@ -24,15 +24,8 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
         Inertia::share([
             'appUrl' => config('app.url'), // This will pass `APP_URL` to your frontend
-            'auth' => function () {
-                    return [
-                        'user' => auth()->user() ? [
-                            'id' => auth()->user()->id,
-                            'roles' => auth()->user()->getRoleNames(),
-                            'permissions' => auth()->user()->getAllPermissions()->pluck('name'),
-                        ] : null,
-                    ];
-                },
+           
+           
         ]);
     }
 }
