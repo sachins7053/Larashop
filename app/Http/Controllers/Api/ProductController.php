@@ -80,7 +80,7 @@ class ProductController extends Controller
                     $value = AttributeValue::where('value', $attributeValue)->first();
                     if ($value) {
                         // Attach the attribute value to the variation
-                        $variation->attributeValues()->attach($value->id);
+                        $variation->VariationsAttributes()->attach($value->id);
                     }
                 }
             }

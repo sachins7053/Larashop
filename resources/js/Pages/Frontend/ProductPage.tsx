@@ -12,8 +12,28 @@ interface Product {
     content: string;
     sale_price: number;
     images : string[] ;
-
+    variations: Variation[];
     // Add more fields based on your Product model
+}
+
+interface AttributeValue {
+  id: number;
+  value: string;
+  value_id: number;
+  variation_attribute_id: number;
+  variation_id: number;
+}
+
+interface Variation {
+  id: number;
+  price: number;
+  sale_price: number | null;
+  stock: number;
+  sku: string | null ;
+  variation_attributes: AttributeValue[];
+  value: string;
+  value_id: number;
+  variation_attribute_id: number;
 }
 
 interface ProductGridData {
@@ -30,8 +50,8 @@ interface ProductGridData {
 }
 
 
-export default function ProductShow ( {product }:PageProps<{ product:Product}>) {
-
+export default function ProductShow ( {product, variations, productVariation  }:PageProps<{ product:Product; variations: Variation[]; productVariation:any }>) {
+  console.log(productVariation, product)
     const [featuredProducts, setFeaturedProducts] = useState<ProductGridData[]>([])
     useEffect(() => {
         // Simulating API calls for different product queries
@@ -66,6 +86,7 @@ export default function ProductShow ( {product }:PageProps<{ product:Product}>) 
         <>
         <Header />
         <ProductDetails productData={product} />
+        
 
         <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">
                         

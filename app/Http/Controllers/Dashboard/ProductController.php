@@ -44,8 +44,36 @@ class ProductController extends Controller
 
     public function ProductDisplay($id): Response
     {   
-        $product = Product::find($id);
+        \DB::enableQueryLog();
+        //$product = Product::find($id);
+        /*
+        $product = Product::where('products.id', $id) // Filter by product ID
+    ->leftJoin('product_variations', 'product_variations.product_id', '=', 'products.id')
+    ->leftJoin('variation_attributes', 'variation_attributes.variation_id', '=', 'product_variations.variation_id')
+    ->leftJoin('attribute_values', 'attribute_values.value_id','variation_attributes.value_id') 
+    ->leftJoin('attributes', 'attributes.attribute_id' ,'attribute_values.value_id')
+    ->select(
+        'products.*',
+        'product_variations.*',
+        'variation_attributes.*',
+        'attribute_values.*',
+        'attributes.*'
+    )
+    ->get(); */
         
+        $product = Product::with([
+            'variations' => function($query) {
+                $query->leftJoin('attribute_values', 'attribute_values.value_id = product_variations.value')->select('attribute_values.*')->get();
+            }
+        ])->find($id);
+        
+        //dd($product);
+        if (!$product) {
+            // Handle the case where the product is not found (optional)
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+        dd(\DB::getQueryLog());
+    
         return Inertia::render('Frontend/ProductPage', compact('product'));
     }
 

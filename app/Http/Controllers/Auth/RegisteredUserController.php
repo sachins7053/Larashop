@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
         $user->assignRole('Admin');
+        $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Admin')->permissions);
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
