@@ -13,14 +13,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
+    ->name('register');
+    
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+    Route::get('partner/register', [RegisteredUserController::class, 'createPartner']);
+    Route::post('partner/register', [RegisteredUserController::class, 'partnerStore'])->name('partnerRegister');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('partner/login', [AuthenticatedSessionController::class, 'create'])
+        ->name('partnerLogin');
+
+    Route::post('admin/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

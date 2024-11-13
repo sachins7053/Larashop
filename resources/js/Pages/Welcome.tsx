@@ -1,5 +1,4 @@
 'use client'
-
 import { useState, useEffect } from 'react'
 import { ProductGrid } from '@/components/product-grid';
 import { PageProps } from '@/types';
@@ -19,14 +18,13 @@ interface Product {
     discount: number
   }
 
-  
-
 export default function Welcome({
     auth,
     laravelVersion,
     phpVersion,
 }: PageProps<{ laravelVersion: string; phpVersion: string }>) {
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+    console.log('API Key:', process.env.REACT_APP_SMS_ALERT_API);
     useEffect(() => {
         // Simulating API calls for different product queries
         const fetchProducts = async () => {

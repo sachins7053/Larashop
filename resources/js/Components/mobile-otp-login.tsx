@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { sendOtp } from './otpService'
 import { Phone, Lock } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,7 +8,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function MobileOtpLogin() {
-  const [mobileNumber, setMobileNumber] = useState('')
+  const [mobileno, setMobileNumber] = useState('')
+  const [otpLength, setOtpLength] = useState<number>(10);
   const [otp, setOtp] = useState('')
   const [showOtpField, setShowOtpField] = useState(false)
   const [error, setError] = useState('')
@@ -15,17 +17,29 @@ export function MobileOtpLogin() {
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (!mobileNumber || mobileNumber.length < 10) {
+    if (!mobileno || mobileno.length < 10) {
       setError('Please enter a valid mobile number')
       return
     }
     try {
-      // Simulating an API call to send OTP
+
+      const sender = 'CVDEMO';
+      const template = 'Hello Ravi, Your OTP is [otp length="6"]';
+
+      const response = await sendOtp({
+        sender,
+        mobileno,
+        template,
+        otpLength
+      });
       await new Promise(resolve => setTimeout(resolve, 1000))
+      console.log(response)
+      console.log(response.data)
       setShowOtpField(true)
-      // In a real application, you would call your API to send the OTP here
-      console.log('OTP sent to', mobileNumber)
+      
+      console.log('OTP sent to', mobileno)
     } catch (err) {
+      console.error(err)
       setError('Failed to send OTP. Please try again.')
     }
   }
@@ -41,7 +55,7 @@ export function MobileOtpLogin() {
       // Simulating an API call to verify OTP
       await new Promise(resolve => setTimeout(resolve, 1000))
       // In a real application, you would call your API to verify the OTP here
-      console.log('OTP verified for', mobileNumber)
+      console.log('OTP verified for', mobileno)
       // Handle successful login (e.g., redirect to dashboard)
     } catch (err) {
       setError('Invalid OTP. Please try again.')
@@ -67,7 +81,7 @@ export function MobileOtpLogin() {
                   id="mobile"
                   type="tel"
                   placeholder="Enter mobile number"
-                  value={mobileNumber}
+                  value={mobileno}
                   onChange={(e) => setMobileNumber(e.target.value)}
                   className="rounded-l-none"
                   required

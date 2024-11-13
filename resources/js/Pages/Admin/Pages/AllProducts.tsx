@@ -1,6 +1,8 @@
 'use client'
 
 import axios from 'axios';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head } from '@inertiajs/react';
 import { useState,  useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Search, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -89,8 +91,16 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">All Products</h1>
+    
+    <AuthenticatedLayout
+            header={
+                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                    All Product
+                </h2>
+            }
+        >
+            <Head title="All Product" />
+    <div className="container bg-white rounded-lg shadow-lg mx-auto mt-8 px-4 py-8">
       
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div>
@@ -163,7 +173,7 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
                 <TableCell>{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.category}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
+                <TableCell>${product.price ? product.price.toFixed(2) : ''}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs ${
@@ -234,5 +244,6 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
         </div>
       </div>
     </div>
+    </AuthenticatedLayout>
   )
 }
