@@ -16,8 +16,11 @@ export default function Authenticated({
 
     const user = usePage().props.auth.user;
     const permission = usePage().props.auth.permissions;
+    const user_id = usePage().props.auth.user_id;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+
+        console.log(user_id)
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -60,6 +63,20 @@ export default function Authenticated({
                                     
                                 >
                                     Categories
+                                </NavLink>
+                                <NavLink
+                                    href={route('leads.index')}
+                                    active={route().current('leads.index')}
+                                    
+                                >
+                                    Leads
+                                </NavLink>
+                                <NavLink
+                                    href={route('leads.add')}
+                                    active={route().current('leads.add')}
+                                    
+                                >
+                                    Add Leads
                                 </NavLink>
                             </div>
                         </div>
@@ -165,6 +182,43 @@ export default function Authenticated({
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                                    href={route('product.index')}
+                                    active={route().current('product.index')}
+                                >
+                                    All Products
+                                </ResponsiveNavLink>
+                              
+                                    <ResponsiveNavLink
+                                        href={route('product.add')}
+                                        active={route().current('product.add')}
+
+                                    >
+                                
+                                    Add Products
+                                </ResponsiveNavLink>
+                       
+                                <ResponsiveNavLink
+                                    href={route('categories')}
+                                    active={route().current('categories')}
+                                    
+                                >
+                                    Categories
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('leads.index')}
+                                    active={route().current('leads.index')}
+                                    
+                                >
+                                    Leads
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    href={route('leads.add')}
+                                    active={route().current('leads.add')}
+                                    
+                                >
+                                    Add Leads
+                                </ResponsiveNavLink>
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">
