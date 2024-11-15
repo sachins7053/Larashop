@@ -26,4 +26,9 @@ class Leads extends Model
     {
         return $this->belongsTo(User::class, 'id');
     }
+
+    public function notes(){
+
+        return $this->hasMany(LeadNotes::class, 'lead_id');
+    }
 }

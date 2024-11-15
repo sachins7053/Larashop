@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,12 +11,8 @@ import { FormEventHandler } from 'react';
 import InputError from '@/components/InputError';
 import { toast } from '@/hooks/use-toast';
 
+export default function AddLead(){
 
-export default function EditLead(){
-    const leadData :any = usePage().props.lead
-
-    const Lead = leadData[0]
-    // console.log(Lead.customer_name)
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
     email: '',
@@ -51,7 +47,8 @@ export default function EditLead(){
       },
   })
 
-
+    // Here you would typically send the form data to your server
+    console.log('Form submitted')
   }
   return (
     <AuthenticatedLayout 

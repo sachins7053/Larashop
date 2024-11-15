@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Leads;
+use App\Models\LeadNotes;
 use App\Models\User;
 
 class LeadController extends Controller
@@ -18,9 +19,12 @@ class LeadController extends Controller
     }
     public function show($id) :Response {
 
-        $lead = Leads::where('leads.id', $id)->leftJoin('users', 'users.id', 'leads.user_id')->select('leads.*', 'users.name')->get();
+        $lead = Leads::where('leads.id', $id)->with(
+            'notes'
+        )
+        ->leftJoin('users', 'users.id', 'leads.user_id')->select('leads.*', 'users.name','users.mobile')->get();
         
-        return Inertia::render('Admin/Leads/EditLead',[ 'lead' => $lead]);
+        return Inertia::render('Admin/Leads/ViewLead',[ 'lead' => $lead]);
     }
     public function store(Request $request) :RedirectResponse{
 
@@ -42,7 +46,14 @@ class LeadController extends Controller
         
         return Inertia::render('Admin/Leads/AddLead');
     }
-    public function update() {
 
+    public function AddNote(Request $request) :RedirectResponse 
+    {
+        $note = LeadNotes::create([
+            'lead_id' => $request->id,
+            'note' => $request->note,
+        ]);
+
+        return redirect()->intended(route('leads.show', ['id' => $request->id] , absolute: false ));
     }
 }
