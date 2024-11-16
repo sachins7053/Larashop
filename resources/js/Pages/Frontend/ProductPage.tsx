@@ -1,3 +1,4 @@
+import Guest from "@/Layouts/GuestLayout";
 import { useState, useEffect } from "react";
 import { Header } from "@/components/header"
 import { ProductDetails } from "@/components/productDetails"
@@ -79,20 +80,20 @@ export default function ProductShow ( {product }:PageProps<{ product:Product}>) 
 
     return (
         <>
-        <Header />
-        <ProductDetails productData={product} />
-        
-
-        <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">
-                        
-                        <section className="mb-12">
-                            <ProductGrid
-                            products={featuredProducts}
-                            title="Featured Products"
-                            columns={{ sm: 2, md: 5, lg: 4 }}
-                            onToggleWishlist={handleToggleWishlist}
-                            />
-                        </section>
+          <Guest>
+              <div className="bg-white">
+                <ProductDetails productData={product} />
+                  <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">      
+                              <section className="mb-12">
+                                  <ProductGrid
+                                  products={featuredProducts}
+                                  title="Featured Products"
+                                  columns={{ sm: 2, md: 5, lg: 4 }}
+                                  onToggleWishlist={handleToggleWishlist}
+                                  />
+                              </section>
                     </div>
+                </div>
+            </Guest>
         </>
     )}

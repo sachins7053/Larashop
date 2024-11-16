@@ -10,6 +10,6 @@ class CartCheckoutCouponController extends Controller
 {
     public function checkout(): Response {
 
-        return Inertia::render('Checkout');
+        return Inertia::render('Frontend/Checkout');
     }
 }

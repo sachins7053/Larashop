@@ -257,7 +257,7 @@ export function ProductDetails({ productData }: ProductPageProps){
             <Button onClick={handleAddToCart} className="flex-1">
               Add to Cart
             </Button>
-            <Button onClick={handleAddToCart} variant="secondary" className="flex-1">
+            <Button onClick={handleAddToCart} variant="dark" className="flex-1">
               Buy Now
             </Button>
           </div>

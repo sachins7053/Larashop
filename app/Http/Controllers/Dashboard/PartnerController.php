@@ -21,9 +21,10 @@ class PartnerController extends Controller
     }
 
     public function change_status(Request $request, $id) :RedirectResponse {
-        $user = User::find($id);   
+        $user = User::where('id', $id)->first(); 
+        $status = (int)$request->status;
         $user->update([
-            'status' => $request->status
+            'status' => $status,
             ]);
             return redirect()->intended(route('partners.index', absolute: false));
             }

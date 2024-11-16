@@ -19,6 +19,7 @@ import { Search, Heart, ShoppingCart, User, Store, Menu, ArrowLeft, ChevronRight
 import { Cart } from './Cart';
 import { Dialog, DialogTrigger, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
 import { MobileOtpLogin } from './mobile-otp-login';
+import UserEmailLoginForm from './userEmailLoginForm';
 
 export function Header() {
   const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
@@ -463,7 +464,8 @@ export function Header() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <MobileOtpLogin />
+                  {/* <MobileOtpLogin /> */}
+                  <UserEmailLoginForm />
                 </DialogContent>
               </Dialog>
                 

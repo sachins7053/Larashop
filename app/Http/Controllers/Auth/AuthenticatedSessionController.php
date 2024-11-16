@@ -36,6 +36,15 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
+    public function customerLogin(LoginRequest $request): RedirectResponse
+    {
+        $request->customerAuthenticate();
+
+        $request->session()->regenerate();
+
+        return back();
+    }
+
     /**
      * Destroy an authenticated session.
      */
@@ -47,6 +56,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->intended(route('login', absolute: false));
     }
 }

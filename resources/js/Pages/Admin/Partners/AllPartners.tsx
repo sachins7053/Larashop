@@ -26,9 +26,6 @@ interface partner {
   updated_at: string;  
 }
 
-
-
-
 const Leadindex = () => {
 
   const Partners:any = usePage().props.partners
@@ -108,7 +105,7 @@ const Leadindex = () => {
   };
 
   const { data, setData, post, processing, errors, reset } = useForm({
-    status: 0,
+    status: '',
 });
 
 const handleSubmit :FormEventHandler = (e) => {
@@ -204,8 +201,8 @@ const handleSubmit :FormEventHandler = (e) => {
                       
                       <TableCell>{new Date(partner.created_at).toLocaleDateString()}</TableCell>
                       <TableCell>
-                        
-                        <Pencil onClick={() => handlePartnerRow(partner.id)} className='w-5' />
+                    
+                        <Pencil onClick={() => handlePartnerRow(partner.id)} className='w-5 pointer-events-auto' />
                      
                         
                         </TableCell>
@@ -218,14 +215,14 @@ const handleSubmit :FormEventHandler = (e) => {
                       <Dialog open={isOpen} onOpenChange={setIsOpen}>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Change Partner Status</DialogTitle>
+                            <DialogTitle className='mx-auto '>Change Partner Status</DialogTitle>
                             {/* <DialogDescription> {selectedPartnerId ? selectedPartnerId : ''}</DialogDescription> */}
                           </DialogHeader>
 
                           {/* Form inside the Dialog */}
                           <form onSubmit={handleSubmit}>
-                            <div>
-                            <Select onValueChange={(e:any) => setData('status', e.target.value)} value={data.status}>
+                            <div className='mb-3'>
+                            <Select onValueChange={(e:string) => setData('status', e)} value={data.status}>
                               <SelectTrigger className="w-[240px] mx-auto">
                                 <SelectValue placeholder="Change Status" />
                               </SelectTrigger>
@@ -239,10 +236,12 @@ const handleSubmit :FormEventHandler = (e) => {
 
                             </div>
                             <InputError message={errors.status} className='mt-2'/>
-                            <DialogFooter>
-                              <Button type="button" onClick={() => setIsOpen(false)}>
-                                Cancel
-                              </Button>
+                            <DialogFooter className='justify-center sm:justify-center'>
+                              
+                                <Button type="button" onClick={() => setIsOpen(false)}>
+                                  Cancel
+                                </Button>
+                       
                               <Button disabled={processing} type="submit">Submit</Button>
                             </DialogFooter>
                           </form>

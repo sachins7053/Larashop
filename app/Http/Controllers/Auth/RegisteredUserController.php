@@ -77,4 +77,27 @@ class RegisteredUserController extends Controller
 
         return redirect(route('dashboard', absolute: false));
     }
+    public function customerStore(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'mobile' => 'required|string||max:255|unique:'.User::class,
+            'password' => ['required', Rules\Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
+            'password' => Hash::make($request->password),
+        ]);
+
+        event(new Registered($user));
+        $user->assignRole('Customer');
+        $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Customer')->permissions);
+        Auth::login($user);
+
+        return redirect(route('customer.account', absolute: false));
+    }
 }

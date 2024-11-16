@@ -1,5 +1,6 @@
 import { Header } from "@/components/header"
 import { ProductDetails } from "@/components/productDetails"
+import Guest from "@/Layouts/GuestLayout";
 
 interface Product {
     id: string;
@@ -44,9 +45,10 @@ export default function ProductShow ({product}: ProductPageProps) {
     } 
     return (
         <>
-        <Header />
-        <ProductDetails productData={product}/>
+          <Guest>
+          <ProductDetails productData={product}/>
 
-      
+        
+          </Guest>
         </>
     )}

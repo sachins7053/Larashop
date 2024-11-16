@@ -1,5 +1,5 @@
 import { useState} from 'react'
-import { ShoppingCart, User, Lock, CreditCard, Trash2 } from 'lucide-react'
+import { ShoppingCart, CreditCard, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -7,10 +7,12 @@ import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useForm } from '@inertiajs/react'
+import { FormEventHandler } from 'react'
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    INDIAN_CURRENCY: string; // Add any other environment variables you need
+    INDIAN_CURRENCY: string; 
   }
 }
 
@@ -19,7 +21,7 @@ export function CheckoutPage() {
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null)
   const [paymentMethod, setPaymentMethod] = useState('credit-card')
-  const [customerDetails, setCustomerDetails] = useState({
+  const {data, setData, post, processing, errors, reset} = useForm({
     firstName: '',
     lastName: '',
     email: '',
@@ -28,6 +30,14 @@ export function CheckoutPage() {
     state: '',
     pincode: '',
   })
+
+  const handleCheckout :FormEventHandler = (e) =>{
+    e.preventDefault()
+
+    post(route('checkout'), {
+      onSuccess: () => reset('address','email','firstName','lastName','mobileNumber','pincode','state')
+    })
+  }
 
 
   const Currency = process.env.CURRENCY;
@@ -51,22 +61,16 @@ export function CheckoutPage() {
     setAppliedCoupon(null)
   }
 
-  const handleCheckout = () => {
-    // Simulating checkout process
-    alert('Checkout process initiated!')
-  }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <User className="mr-2" />
-                  {isLoggedIn ? 'Customer Details' : 'Login or Continue as Guest'}
+                    <p>Enter your Billing & Shipping details</p>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -77,8 +81,8 @@ export function CheckoutPage() {
                       <Label htmlFor="firstName">First Name</Label>
                       <Input
                         id="firstName"
-                        value={customerDetails.firstName}
-                        onChange={(e) => setCustomerDetails({...customerDetails, firstName: e.target.value})}
+                        value={data.firstName}
+                        onChange={(e) => setData('firstName', e.target.value)}
                         required
                       />
                     </div>
@@ -86,8 +90,8 @@ export function CheckoutPage() {
                       <Label htmlFor="lastName">Last Name</Label>
                       <Input
                         id="lastName"
-                        value={customerDetails.lastName}
-                        onChange={(e) => setCustomerDetails({...customerDetails, lastName: e.target.value})}
+                        value={data.lastName}
+                        onChange={(e) => setData({...data, lastName: e.target.value})}
                         required
                       />
                     </div>
@@ -97,8 +101,8 @@ export function CheckoutPage() {
                     <Input
                       id="email"
                       type="email"
-                      value={customerDetails.email}
-                      onChange={(e) => setCustomerDetails({...customerDetails, email: e.target.value})}
+                      value={data.email}
+                      onChange={(e) => setData({...data, email: e.target.value})}
                       required
                     />
                   </div>
@@ -107,8 +111,8 @@ export function CheckoutPage() {
                     <Input
                       id="mobileNumber"
                       type="tel"
-                      value={customerDetails.mobileNumber}
-                      onChange={(e) => setCustomerDetails({...customerDetails, mobileNumber: e.target.value})}
+                      value={data.mobileNumber}
+                      onChange={(e) => setData({...data, mobileNumber: e.target.value})}
                       required
                     />
                   </div>
@@ -116,15 +120,15 @@ export function CheckoutPage() {
                     <Label htmlFor="address">Address</Label>
                     <Input
                       id="address"
-                      value={customerDetails.address}
-                      onChange={(e) => setCustomerDetails({...customerDetails, address: e.target.value})}
+                      value={data.address}
+                      onChange={(e) => setData({...data, address: e.target.value})}
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="state">State</Label>
-                      <Select onValueChange={(value) => setCustomerDetails({...customerDetails, state: value})}>
+                      <Select onValueChange={(value) => setData({...data, state: value})}>
                         <SelectTrigger id="state">
                           <SelectValue placeholder="Select state" />
                         </SelectTrigger>
@@ -140,8 +144,8 @@ export function CheckoutPage() {
                       <Label htmlFor="pincode">Pincode</Label>
                       <Input
                         id="pincode"
-                        value={customerDetails.pincode}
-                        onChange={(e) => setCustomerDetails({...customerDetails, pincode: e.target.value})}
+                        value={data.pincode}
+                        onChange={(e) => setData({...data, pincode: e.target.value})}
                         required
                       />
                     </div>
@@ -242,6 +246,6 @@ export function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+   
   )
 }

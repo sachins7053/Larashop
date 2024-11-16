@@ -39,6 +39,7 @@ export default function Login({
             )}
 
             <form onSubmit={submit}>
+                    <InputError message={errors.email} className="mt-2" />
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
@@ -53,7 +54,6 @@ export default function Login({
                         onChange={(e) => setData('email', e.target.value)}
                     />
 
-                    <InputError message={errors.email} className="mt-2" />
                 </div>
 
                 <div className="mt-4">

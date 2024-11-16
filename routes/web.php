@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ProductCategoryController;
 use App\Http\Controllers\Dashboard\PartnerController;
 use App\Http\Controllers\Dashboard\LeadController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CartCheckoutCouponController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,18 +20,23 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
 Route::get('/admin/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['role_or_permission:Admin|Partner'])->name('dashboard');
 
 Route::post('/upload', [FilesController::class, 'upload']);
-Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/product/demo', [ProductController::class, 'ProductPage']);
 Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay']);
 Route::get('/category', [ProductController::class, 'Category']);
+Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
+
+Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
+    Route::get('/myaccount', [CustomerController::class, 'dashboard'])->name('customer.account');
+
+});
 
 Route::middleware('role_or_permission:Admin|Partner')->group(function () {
     Route::get('/admin/products', [ProductController::class, 'index'])->name('product.index');
