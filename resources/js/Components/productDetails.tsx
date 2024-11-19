@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { CartData, CartManager } from "@/hooks/CartManager"
 import { Cart } from "./Cart"
+import { usePage } from "@inertiajs/react"
 
 interface CartItem {
   cartId: string
@@ -52,6 +53,7 @@ interface ProductPageProps {
 }
 
 export function ProductDetails({ productData }: ProductPageProps){
+  const user  = usePage().props.auth.user
   if (!productData) {
     return <div>Loading...</div>; // or some fallback UI
   }
@@ -139,7 +141,7 @@ export function ProductDetails({ productData }: ProductPageProps){
       };
     }
 
-    CartManager.addItem(item);
+    CartManager.addItem(item, user.id);
     setCartOpen(true);
     console.log(item)
   };

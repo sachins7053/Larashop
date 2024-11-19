@@ -22,7 +22,7 @@ export class CartManager {
         localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    static addItem(item: CartData): void {
+    static addItem(item: CartData, userId:any): void {
         const cart = this.getCart();
         const existingItemIndex = cart.findIndex(CartData => CartData.cartId === item.cartId);
 
@@ -33,6 +33,7 @@ export class CartManager {
         }
 
         this.saveCart(cart);
+        this.saveCartToDatabase(userId, cart);
     }
 
     static updateItem(itemId: string, quantity: number): void {
@@ -49,10 +50,12 @@ export class CartManager {
         }
     }
 
-    static removeItem(itemId: string): void {
+    static removeItem(userId:string, itemId: string): void {
+        // let cartId = itemId.replace(/[^0-9]/g, "");
         const cart = this.getCart();
         const updatedCart = cart.filter(CartData => CartData.cartId !== itemId);
         this.saveCart(updatedCart);
+        this.removeCartItemDatabase(userId, itemId)
     }
 
     static clearCart(): void {
@@ -68,4 +71,116 @@ export class CartManager {
         const cart = this.getCart();
         return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     }
+
+    // Fetch cart from the database using userId
+    static async fetchCartFromDatabase(userId: string): Promise<CartData[]> {
+        // try {
+            const response = await fetch(`/api/usercart/${userId}/cart/${userId}`);
+            if (response) {
+                return await response.json();
+                console.log(response);
+            } else {
+                console.error("Failed to fetch cart from database");
+                return [];
+            }
+        // } catch (error) {
+        //     console.error("Error fetching cart from database:", error);
+        //     return [];
+        // }
+    }
+
+    // Sync local cart with database
+    static async syncCart(userId: string): Promise<void> {
+        const localCart = this.getCart();
+        const databaseCart = await this.fetchCartFromDatabase(userId);
+        console.log('Database Cart' , databaseCart);
+        // const updatedCart = localCart.map(item => {
+        //     const databaseItem = databaseCart.find(cartItem => cartItem.cartId === item.cartId);
+        //     if (databaseItem) {
+        //         return { ...item, quantity: databaseItem.quantity };
+        //         } else
+        //         return item;
+        //         });
+        const mergedCart = this.mergeCarts(localCart, databaseCart);
+        console.log('mergedCart', mergedCart);
+        // Save merged cart both locally and remotely
+        this.saveCart(mergedCart);
+        if(databaseCart.length > 0){
+            try {
+                const response = await fetch(`/api/usercart/${userId}/cart/${userId}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    //body: JSON.stringify(cart),
+                });
+                 console.log("Delete response", response)
+                if (!response.ok) {
+                    console.error("Failed to delete cart to database", response);
+                }
+            } catch (error) {
+                console.error("Error delete cart to database:", error);
+            }
+
+            await this.saveCartToDatabase(userId, mergedCart);
+        }else{
+        await this.saveCartToDatabase(userId, mergedCart);
+        }
+
+
+    }
+
+     // Merge local cart with database cart
+     private static mergeCarts(localCart: CartData[], databaseCart: CartData[]): CartData[] {
+        const cartMap = new Map<string, CartData>();
+
+        // Add database cart items to the map
+        for (const item of databaseCart) {
+            cartMap.set(item.cartId, { ...item });
+        }
+
+        // Merge local cart items into the map
+        for (const item of localCart) {
+            if (cartMap.has(item.cartId)) {
+                const existingItem = cartMap.get(item.cartId)!;
+                existingItem.quantity = item.quantity; // Combine quantities
+            } else {
+                cartMap.set(item.cartId, { ...item });
+            }
+        }
+
+        return Array.from(cartMap.values());
+    }
+
+    // Save cart to the database
+    static async saveCartToDatabase(userId: string, cart: CartData[]): Promise<void> {
+        try {
+            const response = await fetch(`/api/usercart/${userId}/cart`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(cart),
+            });
+            console.log('Send Cart data',JSON.stringify(cart))
+             console.log("response", response)
+            if (!response.ok) {
+                console.error("Failed to save cart to database", response);
+            }
+        } catch (error) {
+            console.error("Error saving cart to database:", error);
+        }
+    }
+
+    static async removeCartItemDatabase(userId:string, itemId:string){
+        try {
+            const response = await fetch(`/api/cart/item/${userId}/${itemId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                //body: JSON.stringify(cart),
+            });
+            if (!response.ok) {
+                console.error("Failed to delete cart Item to database", response);
+            }
+        } catch (error) {
+            console.error("Error delete cart Item to database:", error);
+        }
+    }
+    
 }

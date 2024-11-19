@@ -4,17 +4,20 @@ import { CartManager, CartData } from "@/hooks/CartManager"
 
 import { Button } from "@/components/ui/button"
 import { MinusIcon, PlusIcon, ShoppingCart, X } from "lucide-react"
+import { usePage } from "@inertiajs/react";
 
 export function Cart(){
+    const  user :any = usePage().props.auth.user;
     const [CartDatas, setCartDatas] = useState<CartData[]>(CartManager.getCart());
-
+    console.log('CartDataS',CartDatas)
     const handleUpdateItem = (itemId: string, quantity: number) => {
         CartManager.updateItem(itemId, quantity);
         setCartDatas(CartManager.getCart());
     };
 
-    const handleRemoveItem = (itemId: string) => {
-        CartManager.removeItem(itemId);
+    const handleRemoveItem = (userid:any ,itemId: string, ) => {
+      console.log("cart Item Id", itemId);
+        CartManager.removeItem(userid, itemId);
         setCartDatas(CartManager.getCart());
     };
 
@@ -81,10 +84,11 @@ export function Cart(){
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={() => handleRemoveItem(item.cartId)}
+                    onClick={() => {console.log("itemCartId",item.id,item.cartId); handleRemoveItem(user.id, item.cartId); }}
                   >
                     <X className="h-4 w-4" />
                   </Button>
+             
                 </div>
               )) 
             )}

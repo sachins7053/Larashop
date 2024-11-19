@@ -18,10 +18,13 @@ import {
 import { Search, Heart, ShoppingCart, User, Store, Menu, ArrowLeft, ChevronRight, Truck } from "lucide-react"
 import { Cart } from './Cart';
 import { Dialog, DialogTrigger, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog';
-import { MobileOtpLogin } from './mobile-otp-login';
 import UserEmailLoginForm from './userEmailLoginForm';
+import {usePage} from '@inertiajs/react';
+import { CartManager } from '@/hooks/CartManager';
+
 
 export function Header() {
+  const user:any = usePage().props.auth.user;
   const [cartIsOpen, setCartIsOpen] = useState<boolean>(false)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState(false)
@@ -30,6 +33,25 @@ export function Header() {
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
   const [searchResults, setSearchResults] = useState<string[]>([])
   const searchRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+   if(user) {
+     CartManager.syncCart(user.id);
+     console.log(user.id)
+    }
+  },[])
+
+  // Add inert to main content when sheets are open
+  useEffect(() => {
+    const mainContent = document.querySelector('main')
+    if (mainContent) {
+      if (cartIsOpen || isOpen) {
+        mainContent.setAttribute('inert', '')
+      } else {
+        mainContent.removeAttribute('inert')
+      }
+    }
+  }, [cartIsOpen, isOpen])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -301,8 +323,7 @@ export function Header() {
             <Sheet open={cartIsOpen} onOpenChange={setCartIsOpen}>
                     <SheetTrigger asChild>
                       <Button onClick={() => {
-                        setCartIsOpen;
-                        console.log("cart Displayed");
+                        setCartIsOpen(true);
                       }} variant="ghost" size="icon">
                         <ShoppingCart className="h-5 w-5" />
                         <span className="sr-only">Cart</span>
@@ -464,7 +485,6 @@ export function Header() {
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
-                  {/* <MobileOtpLogin /> */}
                   <UserEmailLoginForm />
                 </DialogContent>
               </Dialog>
@@ -482,8 +502,7 @@ export function Header() {
                   <Sheet open={cartIsOpen} onOpenChange={setCartIsOpen}>
                     <SheetTrigger asChild>
                       <Button onClick={() => {
-                        setCartIsOpen;
-                        console.log("cart Displayed");
+                        setCartIsOpen(true);
                       }} variant="ghost" size="icon">
                         <ShoppingCart className="h-5 w-5" />
                         <span className="sr-only">Cart</span>
@@ -556,22 +575,12 @@ export function Header() {
           </ul>
         </nav>
       </div>
-
-
-          
     </header>
-        
-    
     </>
-
-          
-
-            
   );
 }
 
 function renderMobileSubmenu(categories:any, activeSubmenu:any, setActiveSubmenu:any, setIsOpen:any) {
-  
   let currentLevel = categories
   for (const submenuName of activeSubmenu) {
     const foundCategory = currentLevel.find((cat:any )=> cat.name === submenuName)
