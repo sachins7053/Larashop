@@ -1,4 +1,4 @@
-// src/CartManager.ts
+import axios from "axios";
 
 export interface CartData {
     id: string;
@@ -67,5 +67,23 @@ export class CartManager {
     static getTotalPrice(): number {
         const cart = this.getCart();
         return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    }
+
+    static async syncCart(): Promise<void> {
+        const cart = this.getCart();
+        try {
+            await axios.post('/api/cart/sync', { cart });
+        } catch (error) {
+            console.error('Failed to sync cart:', error);
+        }
+    }
+
+    static async fetchCart(): Promise<void> {
+        try {
+            const { data: remoteCart } = await axios.get('/api/cart');
+            this.saveCart(remoteCart); 
+        } catch (error) {
+            console.error('Failed to fetch cart:', error);
+        }
     }
 }

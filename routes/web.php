@@ -34,6 +34,7 @@ Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
 
 Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
+
     Route::get('/myaccount', [CustomerController::class, 'dashboard'])->name('customer.account');
 
 });

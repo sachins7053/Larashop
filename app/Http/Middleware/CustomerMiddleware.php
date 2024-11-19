@@ -27,6 +27,11 @@ class CustomerMiddleware extends Middleware
             return redirect()->route('home');
 
         }
+
+        if (Auth::check()) {
+            // Pass the logged-in user's ID to the request
+            $request->merge(['user_id' => Auth::id()]);
+        }
         return $next($request);
     }
 }

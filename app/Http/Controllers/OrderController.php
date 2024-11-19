@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     public function store(Request $request)
-    {
+    {   
+        $user = auth()->user();
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'shipping_address' => 'required|string',
@@ -23,7 +24,7 @@ class OrderController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        // Calculate total amount
+    
         $totalAmount = 0;
         foreach ($request->items as $item) {
             $product = Product::find($item['product_id']);
@@ -33,7 +34,7 @@ class OrderController extends Controller
 
         // Create the order
         $order = Order::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'status' => 'pending',
             'total_amount' => $totalAmount,
             'shipping_address' => $request->shipping_address,
