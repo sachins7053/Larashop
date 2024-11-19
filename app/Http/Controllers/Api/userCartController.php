@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use Illuminate\Http\RedirectResponse;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -87,4 +88,9 @@ class userCartController extends Controller
 
         return response()->json(['message' => 'user cart delated']);
         }
+
+    public function place_order(Request $request): RedirectResponse{
+        
+        return redirect()->intended(route('home', absolute: false));
+    }
 }

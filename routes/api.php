@@ -20,16 +20,7 @@ Route::apiResource('categories', ProductCategoryController::class);
 Route::apiResource('files', FilesController::class);
 route::apiResource('usercart.cart', UserCartController::class);
 route::delete('cart/item/{userid}/{itemid}', [UserCartController::class, 'removeCartItem']);
-
-// Cart routes
-// Route::middleware('guest')->group(function () {
-//     Route::get('/cart/get/{userId}', [CartController::class, 'getCart']);
-
-//     Route::put('/cart/sync/{userId}', [CartController::class, 'syncCart']);
-//     Route::post('/cart/sync/{userId}', [CartController::class, 'syncCart']);
-//     Route::get('/cart/sync/{userId}', [CartController::class, 'syncCart']);
-//     Route::post('/cart/clear', [CartController::class, 'clearCart']);
-// });
+route::post('place-order', [UserCartController::class, 'place_order'])->name('checkout');
 
 Route::get('/product-category', [ProductCategoryController::class , 'CategoryProduct']);
 Route::get('/pro-cat', [ProductCategoryController::class , 'categories']);
