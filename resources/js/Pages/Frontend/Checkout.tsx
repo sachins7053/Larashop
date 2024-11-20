@@ -14,9 +14,6 @@ export default function Dashboard() {
 
                         {user? <CheckoutPage />: <div className="mx-auto justify-center my-5 md:p-5 bg-white max-w-md shadow-lg rounded-lg min-h-[400px]"><UserEmailLoginForm /></div>}
                     
-               
-            
-
         </Guest>
     );
 }

@@ -253,8 +253,8 @@ export default function Authenticated({
                 </header>
             )}
 
-            <main>{children}</main>
             <Toaster />
+            <main>{children}</main>
         </div>
     );
 }

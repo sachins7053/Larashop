@@ -31,6 +31,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'env'   => env('CURRENCY'),
             'auth' => [
                 'user' => $request->user(),
                 'user_id'=>auth()->user()? auth()->user()->id : null,

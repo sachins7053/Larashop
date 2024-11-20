@@ -17,40 +17,43 @@ class CartCheckoutCouponController extends Controller
         return Inertia::render('Frontend/Checkout');
     }
 
-    public function getCart()
+    public function syncCart(Request $request, $userId)
     {   
-        $user = Auth::user();
-        $cart = Cart::where('user_id', $user->id)->getAll();
-        // $cart = $user->cart()->get();
-        
-        return response()->json($cart);
-    }
+        // $userId = auth()->user();
 
-    public function syncCart(Request $request)
-    {
-        $userId = 1;
-        //$userId = $user->id;
-        // // Validate incoming cart data
-        $validated = $request->validate([
-            'cart' => 'required|array',
-            'cart.*.cartId' => 'required|numeric',
-            'cart.*.name' => 'required|string',
-            'cart.*.price' => 'required|numeric',
-            'cart.*.quantity' => 'required|integer|min:1',
-            'cart.*.attribute_name' => 'nullable|string',
-            'cart.*.attribute_value' => 'nullable|string',
-            'cart.*.image' => 'nullable|string',
-        ]);
+        // if($userId){
+        //     return response()->json(['error' => 'User not logged in'], 401);
+        // }
 
-        // $cartWithUserId = array_map(function($item) use ($user) {
-        //     return array_merge($item, ['user_id' => $user->id]);
-        // }, $validated['cart']);
+        // $validatedData = $request->validate([
+        //     'cart' => 'required|array',
+        //     'cart.*.id' => 'nullable|integer',
+        //     'cart.*.cartId' => 'required|string',
+        //     'cart.*.name' => 'required|string',
+        //     'cart.*.price' => 'required|numeric',
+        //     'cart.*.quantity' => 'required|integer|min:1',
+        //     'cart.*.image' => 'nullable|string',
+        //     'cart.*.attribute_name' => 'nullable|string',
+        //     'cart.*.attribute_value' => 'nullable|string',
+        // ]);
 
-       
-        // Cart::createMany($validated['cart']); // Replace with new cart
+        // // Remove old cart entries for the user
+        // Cart::where('user_id', $userId)->delete();
 
-        // return response()->json(['message' => 'Cart synchronized successfully.']);
+        // // Save the new cart items
+        // foreach ($validatedData['cart'] as $item) {
+        //     Cart::create([
+        //         'user_id' => $userId,
+        //         'cart_id' => $item['cartId'],
+        //         'name' => $item['name'],
+        //         'price' => $item['price'],
+        //         'quantity' => $item['quantity'],
+        //         'image' => $item['image'] ?? null,
+        //         'attribute_name' => $item['attribute_name'] ?? null,
+        //         'attribute_value' => $item['attribute_value'] ?? null,
+        //     ]);
+        // }
 
-        return response()->json(['message' => 'database user successfully', 'userId' => $request->all()]);
+        return response()->json(['message' => 'Cart updated successfully']);
     }
 }

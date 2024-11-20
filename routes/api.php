@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\CartCheckoutCouponController;
 use App\Http\Controllers\Api\TaxController;
 use App\Http\Controllers\FilesController;
+use App\Http\Controllers\Api\UserCartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,7 +19,9 @@ Route::apiResource('taxes', TaxController::class);
 Route::apiResource('categories', ProductCategoryController::class);
 //Route::apiResource('attributes', AttributeController::class);
 Route::apiResource('files', FilesController::class);
-route::apiResource('pro-variation', ProductVariation::class);
+route::apiResource('usercart.cart', UserCartController::class);
+route::delete('cart/item/{userid}/{itemid}', [UserCartController::class, 'removeCartItem']);
+route::post('place-order', [UserCartController::class, 'place_order'])->name('checkout');
 
 // Add auth:sanctum middleware to cart routes
     Route::get('/cart', [CartCheckoutCouponController::class, 'getCart']);
