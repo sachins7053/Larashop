@@ -15,6 +15,7 @@ class CartCheckoutCouponController extends Controller
 
     public function checkout(): Response {
         $user = Auth::user();
+    if($user){
         $cart = Cart::where('user_id', $user->id)->get();
         $coupon = request()->input('coupon');
         $cart->each(function ($item) use ($coupon) {
@@ -38,7 +39,8 @@ class CartCheckoutCouponController extends Controller
                             'coupon' => $coupon,
                             'user' => $user,
                         ]); 
-        // return Inertia::render('Frontend/Checkout');
+                    }
+        return Inertia::render('Frontend/Checkout');
     }
 
     public function syncCart(Request $request, $userId)

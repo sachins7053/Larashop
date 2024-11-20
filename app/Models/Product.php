@@ -65,5 +65,9 @@ class Product extends BaseModel
         return $this->belongsToMany(ProductCat::class, 'cat_product', 'product_id', 'category_id');
     }
 
+    public function orderitems(){
+        return $this->belongsTo(OrderItem::class, 'product_id', 'id');
+    }
+
    
 }

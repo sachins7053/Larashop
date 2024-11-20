@@ -6,6 +6,9 @@ use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Orders;
+use App\Models\OrderItems;
+use App\Models\User;
 
 class userCartController extends Controller
 {
@@ -89,8 +92,34 @@ class userCartController extends Controller
         return response()->json(['message' => 'user cart delated']);
         }
 
-    public function place_order(Request $request): RedirectResponse{
+    public function place_order(Request $request, $userid): RedirectResponse{
         
-        return redirect()->intended(route('home', absolute: false));
+        try {
+            
+           $order = Orders::create([
+                'user_id' => $userid,
+                'shipping_address' => $request->address,
+                'billing_address' => $request->address,
+                'total_amount' => $request->totalamount,
+            ]);
+            $cart = Cart::where('user_id', $userid)->get();
+            foreach ($cart as $item) {
+                OrderItems::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item->cartId,
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'subtotal' => $item->price * $item->quantity,
+                ]);
+                $item->delete();
+            }
+            return redirect()->intended(route('orders.details', [ 'id' => $order->id ]));
+
+        } catch (ValidationException $e) {
+            // Return a JSON response with the validation errors
+            return response()->json([
+                'errors' => $e->validator->errors(),
+            ], 422); // 422 Unprocessable Entity
+        }
     }
 }
