@@ -16,7 +16,7 @@ export function Cart(){
     };
 
     const handleRemoveItem = (userid:any ,itemId: string, ) => {
-      console.log("cart Item Id", itemId);
+
         CartManager.removeItem(userid, itemId);
         setCartDatas(CartManager.getCart());
     };

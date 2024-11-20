@@ -21,14 +21,16 @@ declare namespace NodeJS {
 
 export function CheckoutPage() {
   const Currency :any = usePage().props.env
+  const cartItems :any = usePage().props.cart
+  const user :any = usePage().props.auth.user
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null)
   const [paymentMethod, setPaymentMethod] = useState('credit-card')
   const {data, setData, post, processing, errors, reset} = useForm({
-    firstName: '',
+    firstName:  `${user.name}`,
     lastName: '',
-    email: '',
+    email: `${user.email}`,
     mobileNumber: '',
     address: '',
     state: '',
@@ -37,11 +39,10 @@ export function CheckoutPage() {
     country: '',
     paymentMethod: '',
   })
-console.log(Currency)
   const handleCheckout :FormEventHandler = (e) =>{
     e.preventDefault()
 
-    post(route('checkout'), {
+    post(route('checkout', {userid: user.id}), {
       onSuccess: () => {
         reset('address','email','firstName','lastName','mobileNumber','pincode','state')
         toast({
@@ -53,13 +54,7 @@ console.log(Currency)
   }
 
 
-
-  const cartItems = [
-    { id: 1, name: 'Premium Headphones', price: 199.99, quantity: 1 },
-    { id: 2, name: 'Wireless Mouse', price: 49.99, quantity: 2 },
-  ]
-
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const subtotal = cartItems.reduce((acc:any, item:any) => acc + item.price * item.quantity, 0)
   const tax = subtotal * 0.1 // Assuming 10% tax
   const discount = appliedCoupon ? 20 : 0 // Assuming a flat $20 discount for simplicity
   const total = subtotal + tax - discount
@@ -209,7 +204,7 @@ console.log(Currency)
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {cartItems.map((item) => (
+                      {cartItems.map((item:any) => (
                         <div key={item.id} className="flex justify-between items-center mb-4">
                           <span>{item.name} x {item.quantity}</span>
                           <span>{Currency}{(item.price * item.quantity).toFixed(2)}</span>
@@ -259,7 +254,7 @@ console.log(Currency)
                             </div>
                           </>
                         )}
-                        <Button disabled={processing} onClick={handleCheckout} className="w-full">
+                        <Button type="submit" disabled={processing} onClick={handleCheckout} className="w-full">
                           Place Order
                         </Button>
                       </div>

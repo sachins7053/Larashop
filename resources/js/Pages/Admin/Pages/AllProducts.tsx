@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, usePage, Link } from '@inertiajs/react';
 import { useState,  useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Edit, Search, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -11,8 +11,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
 } from "@/components/ui/table"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { toast } from "@/hooks/use-toast"
 import { PageProps } from '@/types';
-
     /*// Mock data for demonstration
     const mockProducts = [
     { id: 1, name: 'Product 1', category: 'Electronics', price: 99.99, stock: 50, status: 'Active' },
@@ -37,11 +39,14 @@ interface Product {
   }
 
 export default function AllProductsPage( { product }: PageProps <{ product : string[] }> ) {
+  const currency:any = usePage().props.env;
     const [mockProducts, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('')
     const [categoryFilter, setCategoryFilter] = useState('All')
-    const [statusFilter, setStatusFilter] = useState('All')
+    const [statusFilter, setStatusFilter] = useState('All') 
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+    const [productToDelete, setProductToDelete] = useState<number | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
     const [pagination, setPagination] = useState({
             current_page: 1,
@@ -88,7 +93,40 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
   const handleDelete = (productId: number) => {
     // Implement delete functionality
     console.log(`Delete product with ID: ${productId}`)
+    setProductToDelete(productId)
+    setIsDeleteDialogOpen(true)
   }
+  const handleDeleteConfirm = async () => {
+    if (productToDelete === null) return
+
+    // Simulate API call
+    try {
+      // In a real application, you would make an API call here
+      // await deleteProduct(productToDelete)
+
+        const response = await axios.delete('/api/products/' + productToDelete);
+         // Adjust based on API response structure
+      
+      // For this example, we'll just remove the product from the local state
+      setProducts(mockProducts.filter(product => product.id !== productToDelete))
+        
+      toast({
+        title: "Product deleted",
+        description: "The product has been successfully deleted.",
+        variant: "success",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was an error deleting the product. Please try again.",
+        variant: "destructive",
+      })
+    }
+
+    setIsDeleteDialogOpen(false)
+    setProductToDelete(null)
+  }
+
 
   return (
     
@@ -173,21 +211,23 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
                 <TableCell>{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.category}</TableCell>
-                <TableCell>${product.price ? product.price.toFixed(2) : ''}</TableCell>
+                <TableCell>{currency}{product.price ? product.price.toFixed(2) : ''}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 rounded-full text-xs ${
-                    product.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    product.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                   }`}>
                     {product.status}
                   </span>
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-2">
+                    <Link href={route('product.edit', {id: product.id})}>
                     <Button variant="outline" size="sm" onClick={() => handleEdit(product.id)}>
                       <Edit className="w-4 h-4" />
                       <span className="sr-only">Edit</span>
                     </Button>
+                    </Link>
                     <Button variant="outline" size="sm" onClick={() => handleDelete(product.id)}>
                       <Trash2 className="w-4 h-4" />
                       <span className="sr-only">Delete</span>
@@ -243,6 +283,21 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
           </Button>
         </div>
       </div>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the product from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
     </AuthenticatedLayout>
   )

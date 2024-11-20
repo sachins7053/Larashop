@@ -14,7 +14,31 @@ class CartCheckoutCouponController extends Controller
     
 
     public function checkout(): Response {
-        return Inertia::render('Frontend/Checkout');
+        $user = Auth::user();
+        $cart = Cart::where('user_id', $user->id)->get();
+        $coupon = request()->input('coupon');
+        $cart->each(function ($item) use ($coupon) {
+            $item->update
+            (
+                $item->quantity > 0 &&
+                $item->price > 0 &&
+                $coupon &&
+                $coupon->code === 'DISCOUNT_10'
+                ? [
+                    'price' => $item->price * 0.9,
+                    'discount' => 10,
+                    ]
+                    : [
+                        'price' => $item->price
+                        ]
+                        );
+                        });
+                        return Inertia::render('Frontend/Checkout', [
+                            'cart' => $cart,
+                            'coupon' => $coupon,
+                            'user' => $user,
+                        ]); 
+        // return Inertia::render('Frontend/Checkout');
     }
 
     public function syncCart(Request $request, $userId)

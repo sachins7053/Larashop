@@ -21,7 +21,7 @@ Route::apiResource('categories', ProductCategoryController::class);
 Route::apiResource('files', FilesController::class);
 route::apiResource('usercart.cart', UserCartController::class);
 route::delete('cart/item/{userid}/{itemid}', [UserCartController::class, 'removeCartItem']);
-route::post('place-order', [UserCartController::class, 'place_order'])->name('checkout');
+route::post('place-order/{userid}', [UserCartController::class, 'place_order'])->name('checkout')->middleware('auth:sanctum');
 
 // Add auth:sanctum middleware to cart routes
     Route::get('/cart', [CartCheckoutCouponController::class, 'getCart']);

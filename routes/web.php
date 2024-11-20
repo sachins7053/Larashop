@@ -33,9 +33,13 @@ Route::get('/category', [ProductController::class, 'Category']);
 Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
+
 Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
 
     Route::get('/myaccount', [CustomerController::class, 'dashboard'])->name('customer.account');
+    Route::get('/myaccount/orders', [CustomerController::class, 'orders'])->name('customer.orders');
+    Route::get('/myaccount/orders/{orderid}', [CustomerController::class, 'Order_details'])->name('orders.details');
+    Route::get('/myaccount/profile', [CustomerController::class, 'profile'])->name('customer.profile');
 
 });
 
