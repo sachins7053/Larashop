@@ -7,6 +7,7 @@ use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ProductCategoryController;
 use App\Http\Controllers\Dashboard\PartnerController;
 use App\Http\Controllers\Dashboard\LeadController;
+use App\Http\Controllers\Dashboard\OrderController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CartCheckoutCouponController;
 use Illuminate\Foundation\Application;
@@ -33,7 +34,7 @@ Route::get('/category', [ProductController::class, 'Category']);
 Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
-
+ROute::get('login', [CustomerController::class, 'dashboard']);
 Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
 
     Route::get('/myaccount', [CustomerController::class, 'dashboard'])->name('customer.account');
@@ -58,6 +59,9 @@ Route::middleware('role_or_permission:Admin|Partner')->group(function () {
     Route::get('/admin/partner/{id}', [PartnerController::class, 'show'])->name('partners.show');
     Route::post('/admin/partner/change_status/{id}', [PartnerController::class, 'change_status'])->name('partners.status');
     Route::get('/admin/partner/edit/{id}', [PartnerController::class, 'edit'])->name('partners.edit');
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('order.index');
+    Route::get('/admin/order/{id}', [OrderController::class, 'show'])->name('order.show');
+    Route::put('/admin/order/{id}', [OrderController::class, 'change_status'])->name('order.statusChange');
     Route::get('/admin/users', [ProfileController::class, 'index'])->name('user.index');
     Route::get('/admin/user/{id}', [ProfileController::class, 'show'])->name('user.show');
     Route::get('/admin/user/edit/{id}', [ProfileController::class, 'edit'])->name('user.edit');

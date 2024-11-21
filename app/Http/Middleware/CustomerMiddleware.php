@@ -19,6 +19,7 @@ class CustomerMiddleware extends Middleware
     protected $rootView = 'app';
 
 
+
     public function handle(Request $request, Closure $next): Response
     {   
 

@@ -8,18 +8,19 @@ import {
     CardTitle,
   } from "@/components/ui/card"
   
-import { Link } from "@inertiajs/react"
+import { Link, usePage } from "@inertiajs/react"
 
 import { Separator } from '@/components/ui/separator';
 
 export default function CustomerLayout({ children }: PropsWithChildren) {
+      const user:any = usePage().props.auth.user;
   return (
-
+   
     <div className='flex max-w-7xl flex-col md:flex-row mx-auto p-3 gap-3'>
         <div className='w-full md:w-1/4 px-2'>
             <Card>
                 <CardHeader>
-                    <CardTitle>Dashboard</CardTitle>
+                    <CardTitle className='text-lg md:text-xxl font-bold text-center'>Welcome {user.name}</CardTitle>
                     <CardDescription></CardDescription>
                 </CardHeader>
                 <CardContent>

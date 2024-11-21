@@ -14,7 +14,7 @@ class CustomerController extends Controller
 {
     public function dashboard(): Response {
 
-        return Inertia::render('CustomerPanel/Dashboard');
+        return Inertia::render('Frontend/CustomerPanel/Dashboard');
 
     }
 
@@ -37,5 +37,9 @@ class CustomerController extends Controller
     public function profile() : Response{
         $user = User::where('id', auth()->user()->id)->get();
         return Inertia::render('Frontend/CustomerPanel/ProfileEdit', ['user' => $user]);
+    }
+
+    public function login() : Response{
+
     }
 }

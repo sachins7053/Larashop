@@ -51,7 +51,7 @@ class LoginRequest extends FormRequest
 
         $user = Auth::user();
 
-        if($user->status === 0 || $user->hasRole('partner')) { 
+        if($user->status === 1 || $user->hasRole('partner')) { 
             Auth::logout(); 
             RateLimiter::hit($this->throttleKey()); 
     

@@ -217,17 +217,10 @@ export function CheckoutPage() {
                 <CardContent>
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="credit-card" id="credit-card" />
-                      <Label htmlFor="credit-card">Credit Card</Label>
+                      <RadioGroupItem value="cash-on-delivery" id="Cash_on_Delivery" />
+                      <Label htmlFor="Cash_on_Delivery">Cash On Delivery</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="paypal" id="paypal" />
-                      <Label htmlFor="paypal">PayPal</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="bank-transfer" id="bank-transfer" />
-                      <Label htmlFor="bank-transfer">Bank Transfer</Label>
-                    </div>
+                    
                   </RadioGroup>
                   <InputError message={errors.paymentMethod} />
                 </CardContent>

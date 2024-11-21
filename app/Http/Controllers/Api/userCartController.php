@@ -113,7 +113,7 @@ class userCartController extends Controller
                 ]);
                 $item->delete();
             }
-            return redirect()->intended(route('orders.details', [ 'id' => $order->id ]));
+            return redirect()->intended(route('orders.details', [  $order->id ]));
 
         } catch (ValidationException $e) {
             // Return a JSON response with the validation errors

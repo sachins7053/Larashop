@@ -138,7 +138,7 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
             }
         >
             <Head title="All Product" />
-    <div className="container bg-white rounded-lg shadow-lg mx-auto mt-8 px-4 py-8">
+    <div className="container bg-white rounded-lg max-w-7xl shadow-lg mx-auto mt-8 px-4 py-8">
       
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div>
