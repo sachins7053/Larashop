@@ -18,7 +18,7 @@ class RolesAndPermissions extends Seeder
 
         // Define all permissions
         $permissions = [
-            'manage users', 'manage vendors', 'manage products', 'update product', 'delete product', 'manage orders',
+            'manage users', 'manage vendors', 'manage Agent',  'manage products', 'update product', 'delete product', 'manage orders',
             'manage categories', 'manage payments', 'manage discounts', 'manage settings',
             'manage analytics', 'assign roles', 'view system logs', 'manage own products',
             'manage own orders', 'manage stock', 'update stock levels', 'manage own profile', 'view own reports', 'view sales reports',
@@ -34,7 +34,7 @@ class RolesAndPermissions extends Seeder
             'customer sales escalations', 'approve vendor payouts', 'audit transactions',
             'training support staff', 'manage product variants', 'set product visibility',
             'generate order reports', 'monitor delivery', 'apply vendor discounts',
-            'create promotions', 'generate vendor finance reports', 'coordinate with vendors',
+            'create promotions', 'generate vendor finance reports', 'coordinate with vendors', 'view lead', 'add lead', 'Edit Lead'
         ];
 
         // Create permissions
@@ -86,6 +86,9 @@ class RolesAndPermissions extends Seeder
             'Product Manager (Vendor)' => [
                 'manage own products', 'update product', 'delete product',
             ],
+            'Agent' => [
+                'view lead', 'add lead' ,
+            ]
             
         ];
 

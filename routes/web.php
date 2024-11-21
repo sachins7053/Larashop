@@ -52,7 +52,7 @@ Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(funct
 });
 
 
-Route::middleware('role_or_permission:Admin|Partner')->group(function () {
+Route::middleware('role_or_permission:Admin|Agent')->group(function () {
     Route::get('/partner/dashboard', function () {
         return Inertia::render('PartnerPanel/PartnerDashboard');
     })->name('partner.dashboard');

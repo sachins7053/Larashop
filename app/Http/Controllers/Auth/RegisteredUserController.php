@@ -71,7 +71,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-        $user->assignRole('partner');
+        $user->assignRole('Partner');
         $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('partner')->permissions);
         //Auth::login($user);
 

@@ -1,16 +1,26 @@
 <?php
 
 namespace App\Providers;
-
+use App\Listeners\AgentRegisteredListener;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+use App\Events\RoleSpecificEvent;
+use App\Listeners\HandleRoleSpecificEvent;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
+
+     protected $listen = [
+        RoleSpecificEvent::class => [
+            HandleRoleSpecificEvent::class,
+        ],
+    ];
+
+
     public function register(): void
     {
         //
@@ -27,5 +37,7 @@ class AppServiceProvider extends ServiceProvider
            
            
         ]);
+
+      
     }
 }

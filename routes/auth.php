@@ -83,6 +83,25 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
+
+    Route::get('partner/verify-email', PartnerEmailVerificationPromptController::class)
+        ->name('partner-verification.notice');
+    
+    Route::get('partner/verify-email/{id}/{hash}', PartnerVerifyEmailController::class)
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('partner-verification.verify');
+
+    Route::post('partner/email/verification-notification', [PartnerEmailVerificationNotificationController::class, 'store'])
+        ->middleware('throttle:6,1')
+        ->name('partner-verification.send');
+
+    Route::get('partner/confirm-password', [PartnerConfirmablePasswordController::class, 'show'])
+        ->name('partner-password.confirm');
+
+    Route::post('partner/confirm-password', [PartnerConfirmablePasswordController::class, 'store']);
+
+    Route::put('partner/password', [PartnerPasswordController::class, 'update'])->name('partner-password.update');
+
     Route::post('partner-logout', [PartnerAuthenticatedSessionController::class, 'destroy'])
         ->name('partner.logout');
 });

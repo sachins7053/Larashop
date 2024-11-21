@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('sale_price', 10, 2)->nullable();
             $table->string('sku')->nullable();
-            $table->integar('stock')->nullable();
+            $table->string('stock')->nullable();
             $table->timestamps();
         });
     }

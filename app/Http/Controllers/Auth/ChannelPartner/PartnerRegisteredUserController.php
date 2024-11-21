@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth\ChannelPartner;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Events\RoleSpecificEvent;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,8 +52,8 @@ class PartnerRegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-        $user->assignRole('partner');
+        $user->assignRole('Agent');
+        event(new RoleSpecificEvent($user, 'Agent'));
         $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Admin')->permissions);
         // Auth::login($user);
 
@@ -64,16 +64,17 @@ class PartnerRegisteredUserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'mobile' => 'required|string||max:255|unique:'.User::class,
+            'mobile' => 'required|numeric|digits:10|unique:'.User::class,
             'password' => ['required', Rules\Password::defaults()],
             
         ]);
 
         if($request->has('document')){
             $document = $request->file('document');
+            if($document){
             $documentName = time().'.'.$document->getClientOriginalExtension();
             $path = $document->store("uploads/$documentName", 'public');
-            
+            }
         }
 
         $user = User::create([
@@ -83,12 +84,12 @@ class PartnerRegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
-        $user->assignRole('partner');
-        $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('partner')->permissions);
+        $user->assignRole('Agent');
+        event(new RoleSpecificEvent($user, 'Agent'));
+        $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Agent')->permissions);
         //Auth::login($user);
 
-        return redirect(route('partnerlogin', absolute: false));
+        return redirect(route('partner-verification.notice', absolute: false));
     }
 
 }
