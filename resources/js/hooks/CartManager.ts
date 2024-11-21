@@ -22,7 +22,7 @@ export class CartManager {
         localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    static addItem(item: CartData, userId:any): void {
+    static addItem(item: CartData, userId?:any): void {
         const cart = this.getCart();
         const existingItemIndex = cart.findIndex(CartData => CartData.cartId === item.cartId);
 
@@ -33,7 +33,9 @@ export class CartManager {
         }
 
         this.saveCart(cart);
+        if (userId){
         this.saveCartToDatabase(userId, cart);
+        }
     }
 
     static updateItem(itemId: string, quantity: number): void {
@@ -50,12 +52,14 @@ export class CartManager {
         }
     }
 
-    static removeItem(userId:string, itemId: string): void {
+    static removeItem( itemId: string, userId?:string): void {
         // let cartId = itemId.replace(/[^0-9]/g, "");
         const cart = this.getCart();
         const updatedCart = cart.filter(CartData => CartData.cartId !== itemId);
         this.saveCart(updatedCart);
+        if (userId){
         this.removeCartItemDatabase(userId, itemId)
+        }
     }
 
     static clearCart(): void {

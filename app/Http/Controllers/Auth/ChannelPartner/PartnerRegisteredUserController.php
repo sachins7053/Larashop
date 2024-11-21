@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth\ChannelPartner;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -13,19 +13,15 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class RegisteredUserController extends Controller
+class PartnerRegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      */
-    public function create(): Response
-    {
-        return Inertia::render('Auth/Register');
-    }
 
     public function createPartner(): Response
     {
-        return Inertia::render('Auth/PartnerRegister');
+        return Inertia::render('Auth/Partner/PartnerRegister');
     }
 
     /**
@@ -39,7 +35,16 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'mobile' => 'required|numeric|digits:10|unique:'.User::class,
+            'document'=> 'mimes:pdf,jpg,jpeg,png,gif,svg|max:2048',
         ]);
+
+        if($request->hasFile('document')){
+            $document = $request->file('document');
+            $documentName = time().'.'.$document->getClientOriginalExtension();
+            $path = $document->store("uploads/$documentName", 'public');
+        
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -48,7 +53,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-        $user->assignRole('Admin');
+        $user->assignRole('partner');
         $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Admin')->permissions);
         // Auth::login($user);
 
@@ -61,7 +66,15 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'mobile' => 'required|string||max:255|unique:'.User::class,
             'password' => ['required', Rules\Password::defaults()],
+            
         ]);
+
+        if($request->has('document')){
+            $document = $request->file('document');
+            $documentName = time().'.'.$document->getClientOriginalExtension();
+            $path = $document->store("uploads/$documentName", 'public');
+            
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -75,29 +88,7 @@ class RegisteredUserController extends Controller
         $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('partner')->permissions);
         //Auth::login($user);
 
-        return redirect(route('login', absolute: false));
+        return redirect(route('partnerlogin', absolute: false));
     }
-    public function customerStore(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'mobile' => 'required|string||max:255|unique:'.User::class,
-            'password' => ['required', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'password' => Hash::make($request->password),
-        ]);
-
-        event(new Registered($user));
-        $user->assignRole('Customer');
-        $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Customer')->permissions);
-        Auth::login($user);
-
-        return redirect(route('customer.account', absolute: false));
-    }
 }

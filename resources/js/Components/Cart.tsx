@@ -7,6 +7,7 @@ import { MinusIcon, PlusIcon, ShoppingCart, X } from "lucide-react"
 import { usePage } from "@inertiajs/react";
 
 export function Cart(){
+ 
     const  user :any = usePage().props.auth.user;
     const [CartDatas, setCartDatas] = useState<CartData[]>(CartManager.getCart());
     console.log('CartDataS',CartDatas)
@@ -15,9 +16,9 @@ export function Cart(){
         setCartDatas(CartManager.getCart());
     };
 
-    const handleRemoveItem = (userid:any ,itemId: string, ) => {
+    const handleRemoveItem = (itemId: string, userid?:any ,) => {
 
-        CartManager.removeItem(userid, itemId);
+        CartManager.removeItem( itemId, userid,);
         setCartDatas(CartManager.getCart());
     };
 

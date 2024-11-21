@@ -49,16 +49,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        $user = Auth::user();
+        // $user = Auth::user();
 
-        if($user->status === 1 || $user->hasRole('partner')) { 
-            Auth::logout(); 
-            RateLimiter::hit($this->throttleKey()); 
+        // if($user->status === 0 || $user->hasRole('partner')) { 
+        //     Auth::logout(); 
+        //     RateLimiter::hit($this->throttleKey()); 
     
-            throw ValidationException::withMessages([
-                'email' => 'Your account is not verified or is pending admin approval.',
-            ]);
-        }
+        //     throw ValidationException::withMessages([
+        //         'email' => 'Your account is not verified or is pending admin approval.',
+        //     ]);
+        // }
 
         RateLimiter::clear($this->throttleKey());
     }

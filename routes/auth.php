@@ -9,6 +9,16 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+
+use App\Http\Controllers\Auth\ChannelPartner\PartnerAuthenticatedSessionController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerConfirmablePasswordController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerEmailVerificationNotificationController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerEmailVerificationPromptController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerNewPasswordController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerPasswordController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerPasswordResetLinkController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerRegisteredUserController;
+use App\Http\Controllers\Auth\ChannelPartner\PartnerVerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -17,8 +27,19 @@ Route::middleware('guest')->group(function () {
     
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('partner/register', [RegisteredUserController::class, 'createPartner']);
-    Route::post('partner/register', [RegisteredUserController::class, 'partnerStore'])->name('partnerRegister');
+    Route::get('partner/register', [PartnerRegisteredUserController::class, 'createPartner'])->name('partnerRegister');
+    Route::post('partner/register', [PartnerRegisteredUserController::class, 'partnerStore']);
+    Route::get('partner/login', [PartnerAuthenticatedSessionController::class, 'createPartner'])->name('partnerlogin');
+    Route::post('partner/login', [PartnerAuthenticatedSessionController::class, 'store']);  
+    Route::get('partner/forgot-password', [PartnerPasswordResetLinkController::class, 'create'])
+        ->name('partner-password.request');
+    Route::post('partner/forgot-password', [PartnerPasswordResetLinkController::class, 'store'])
+        ->name('partner-password.email');    
+    Route::get('partner/reset-password/{token}', [partnerNewPasswordController::class, 'create'])
+        ->name('partner-password.reset');
+    Route::post('partner/reset-password', [PartnerNewPasswordController::class, 'store'])
+        ->name('partner-password.store');
+
     Route::post('customer/login', [AuthenticatedSessionController::class, 'customerLogin'])->name('customerLogin');
     Route::post('customer/register', [RegisteredUserController::class, 'customerStore'])->name('customerRegister');
 
@@ -61,4 +82,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::post('partner-logout', [PartnerAuthenticatedSessionController::class, 'destroy'])
+        ->name('partner.logout');
 });

@@ -19,7 +19,7 @@ interface FormData {
   }
 
 export default function Register() {
-    const [step, setStep] = useState(1)
+   
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         name: '',
         email: '',
@@ -39,9 +39,6 @@ export default function Register() {
       setData((prev:any )=> ({ ...prev, document: e.target.files![0] }))
     }
   }
-
-  const handleNext = () => setStep(prev => Math.min(prev + 1, 5))
-  const handlePrev = () => setStep(prev => Math.max(prev - 1, 1))
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,12 +60,7 @@ export default function Register() {
                         <CardDescription>Register or login to your account</CardDescription>
                         </CardHeader>
                         <CardContent>
-                        <Tabs defaultValue="register">
-                            <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="register">Register</TabsTrigger>
-                            <TabsTrigger value="login">Login</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="register">
+                       
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="space-y-2">
                                 <Label htmlFor="name">Name</Label>
@@ -78,11 +70,11 @@ export default function Register() {
                                     value={data.name} 
                                     onChange={handleInputChange} 
                                     required 
-                                    disabled={step < 1}
+                                    
                                 />
                                 <InputError message={errors.name} className="mt-2" />
                                 </div>
-                                {step >= 2 && (
+                               
                                 <div className="space-y-2">
                                     <Label htmlFor="email">Email</Label>
                                     <Input 
@@ -92,12 +84,11 @@ export default function Register() {
                                     value={data.email} 
                                     onChange={handleInputChange} 
                                     required 
-                                    disabled={step < 2}
+                                   
                                     />
                                     <InputError message={errors.email} className="mt-2" />
                                 </div>
-                                )}
-                                {step >= 3 && (
+                            
                                 <div className="space-y-2">
                                     <Label htmlFor="mobile">Phone Number</Label>
                                     <Input 
@@ -107,12 +98,11 @@ export default function Register() {
                                     value={data.mobile} 
                                     onChange={handleInputChange} 
                                     required 
-                                    disabled={step < 3}
+                                  
                                     />
                                     <InputError message={errors.mobile} className="mt-2" />
                                 </div>
-                                )}
-                                {step >= 4 && (
+                            
                                 <div className="space-y-2">
                                     <Label htmlFor="mobile">Password</Label>
                                     <Input 
@@ -122,12 +112,11 @@ export default function Register() {
                                     value={data.password} 
                                     onChange={handleInputChange} 
                                     required 
-                                    disabled={step < 4}
+                                 
                                     />
                                     <InputError message={errors.password} className="mt-2" />
                                 </div>
-                                )}
-                                {/* {step >= 5 && (
+                             
                                 <div className="space-y-2">
                                     <Label htmlFor="document">Upload Document</Label>
                                     <Input 
@@ -135,35 +124,18 @@ export default function Register() {
                                     name="document" 
                                     type="file" 
                                     onChange={handleFileChange}  
-                                    disabled={step < 5}
+                                    
                                     />
                                     <InputError message={errors.document} className="mt-2" />
                                 </div>
-                                )} */}
+                           
                                 <div className="flex justify-between">
-                                {step > 1 && <Button type="button" onClick={handlePrev}>Previous</Button>}
-                                {step < 4 ? (
-                                    <Button type="button" onClick={handleNext}>Next</Button>
-                                ) : (
-                                    <Button type="submit" disabled={processing}>Submit</Button>
-                                )}
+                               
+                                <Button type="submit" disabled={processing}>Submit</Button>
+                             
                                 </div>
                             </form>
-                            </TabsContent>
-                            <TabsContent value="login">
-                            <form className="space-y-4">
-                                <div className="space-y-2">
-                                <Label htmlFor="login-email">Email</Label>
-                                <Input id="login-email" type="email" required />
-                                </div>
-                                <div className="space-y-2">
-                                <Label htmlFor="login-password">Password</Label>
-                                <Input id="login-password" type="password" required />
-                                </div>
-                                <Button type="submit" className="w-full">Login</Button>
-                            </form>
-                            </TabsContent>
-                        </Tabs>
+                            
                         </CardContent>
                     </Card>
                     </div>

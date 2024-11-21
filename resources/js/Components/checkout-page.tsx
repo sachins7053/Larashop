@@ -128,6 +128,8 @@ export function CheckoutPage() {
                         <Label htmlFor="firstName">First Name</Label>
                         <Input
                           id="firstName"
+                          type="text"
+                          name="firstname"
                           value={data.firstName}
                           onChange={(e) => setData('firstName', e.target.value)}
                           required
@@ -138,6 +140,8 @@ export function CheckoutPage() {
                         <Label htmlFor="lastName">Last Name</Label>
                         <Input
                           id="lastName"
+                          type="text"
+                          name="lastname"
                           value={data.lastName}
                           onChange={(e) => setData({ ...data, lastName: e.target.value })}
                           required
@@ -150,6 +154,7 @@ export function CheckoutPage() {
                       <Input
                         id="email"
                         type="email"
+                        name="email"
                         value={data.email}
                         onChange={(e) => setData({ ...data, email: e.target.value })}
                         required
@@ -161,6 +166,7 @@ export function CheckoutPage() {
                       <Input
                         id="phone"
                         type="tel"
+                        name="phone"
                         value={data.phone}
                         onChange={(e) => setData({ ...data, phone: e.target.value })}
                         required
@@ -171,6 +177,8 @@ export function CheckoutPage() {
                       <Label htmlFor="address">Address</Label>
                       <Input
                         id="address"
+                        type="text"
+                        name="address"
                         value={data.address}
                         onChange={(e) => setData({ ...data, address: e.target.value })}
                         required
@@ -180,14 +188,41 @@ export function CheckoutPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="state">State</Label>
-                        <Select onValueChange={(value) => setData({ ...data, state: value })}>
+                        <Select name="state" defaultValue='Delhi' onValueChange={(value) => setData({ ...data, state: value })}>
                           <SelectTrigger id="state">
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="ca">California</SelectItem>
-                            <SelectItem value="ny">New York</SelectItem>
-                            <SelectItem value="tx">Texas</SelectItem>
+                              <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
+                              <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
+                              <SelectItem value="Assam">Assam</SelectItem>
+                              <SelectItem value="Bihar">Bihar</SelectItem>
+                              <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
+                              <SelectItem value="Delhi">Delhi</SelectItem>
+                              <SelectItem value="Goa">Goa</SelectItem>
+                              <SelectItem value="Gujarat">Gujarat</SelectItem>
+                              <SelectItem value="Haryana">Haryana</SelectItem>
+                              <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
+                              <SelectItem value="Jharkhand">Jharkhand</SelectItem>
+                              <SelectItem value="Karnataka">Karnataka</SelectItem>
+                              <SelectItem value="Kerala">Kerala</SelectItem>
+                              <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
+                              <SelectItem value="Maharashtra">Maharashtra</SelectItem>
+                              <SelectItem value="Manipur">Manipur</SelectItem>
+                              <SelectItem value="Meghalaya">Meghalaya</SelectItem>
+                              <SelectItem value="Mizoram">Mizoram</SelectItem>
+                              <SelectItem value="Nagaland">Nagaland</SelectItem>
+                              <SelectItem value="Odisha">Odisha</SelectItem>
+                              <SelectItem value="Punjab">Punjab</SelectItem>
+                              <SelectItem value="Rajasthan">Rajasthan</SelectItem>
+                              <SelectItem value="Sikkim">Sikkim</SelectItem>
+                              <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
+                              <SelectItem value="Telangana">Telangana</SelectItem>
+                              <SelectItem value="Tripura">Tripura</SelectItem>
+                              <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
+                              <SelectItem value="Uttarakhand">Uttarakhand</SelectItem>
+                              <SelectItem value="West Bengal">West Bengal</SelectItem>
+
                             {/* Add more states as needed */}
                           </SelectContent>
                         </Select>
@@ -197,6 +232,8 @@ export function CheckoutPage() {
                         <Label htmlFor="pincode">Pincode</Label>
                         <Input
                           id="pincode"
+                          type="number"
+                          name='pincode'
                           value={data.pincode}
                           onChange={(e) => setData({ ...data, pincode: e.target.value })}
                           required
@@ -215,9 +252,9 @@ export function CheckoutPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <RadioGroup  value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="cash-on-delivery" id="Cash_on_Delivery" />
+                      <RadioGroupItem value="Cash On Delivery" id="Cash_on_Delivery" />
                       <Label htmlFor="Cash_on_Delivery">Cash On Delivery</Label>
                     </div>
                     

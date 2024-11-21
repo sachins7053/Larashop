@@ -31,7 +31,8 @@ export default function ResetPassword({
     return (
         <GuestLayout>
             <Head title="Reset Password" />
-
+            <div className='max-w-xl mx-auto bg-white rounded shadow-sm p-4 my-2'>
+            <h1 className='text-xl md:text-3xl font-bold text-gray-800 mb-4'>Reset Password</h1>
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
@@ -95,6 +96,7 @@ export default function ResetPassword({
                     </PrimaryButton>
                 </div>
             </form>
+            </div>
         </GuestLayout>
     );
 }

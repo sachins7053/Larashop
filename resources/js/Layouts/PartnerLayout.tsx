@@ -115,12 +115,12 @@ export default function Authenticated({
 
                                     <Dropdown.Content>
                                         <Dropdown.Link
-                                            href={route('profile.edit')}
+                                            href={route('partner-profile.edit')}
                                         >
                                             Profile
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href={route('logout')}
+                                            href={route('partner.logout')}
                                             method="post"
                                             as="button"
                                         >
@@ -182,34 +182,11 @@ export default function Authenticated({
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink
-                            href={route('dashboard')}
-                            active={route().current('dashboard')}
+                            href={route('partner.dashboard')}
+                            active={route().current('partner.dashboard')}
                         >
                             Dashboard
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                                    href={route('product.index')}
-                                    active={route().current('product.index')}
-                                >
-                                    All Products
-                                </ResponsiveNavLink>
-                              
-                                    <ResponsiveNavLink
-                                        href={route('product.add')}
-                                        active={route().current('product.add')}
-
-                                    >
-                                
-                                    Add Products
-                                </ResponsiveNavLink>
-                       
-                                <ResponsiveNavLink
-                                    href={route('categories')}
-                                    active={route().current('categories')}
-                                    
-                                >
-                                    Categories
-                                </ResponsiveNavLink>
+                       </ResponsiveNavLink>
                                 <ResponsiveNavLink
                                     href={route('leads.index')}
                                     active={route().current('leads.index')}
@@ -237,12 +214,12 @@ export default function Authenticated({
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
+                            <ResponsiveNavLink href={route('partner-profile.edit')}>
                                 Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
-                                href={route('logout')}
+                                href={route('partner.logout')}
                                 as="button"
                             >
                                 Log Out

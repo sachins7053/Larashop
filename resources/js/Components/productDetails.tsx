@@ -77,31 +77,16 @@ export function ProductDetails({ productData }: ProductPageProps){
   const sections = {
     overview: {
       title: "Overview",
-      content: "Modern table lamp with wooden base and fabric shade...",
+      content: productData.description,
     },
-    merchantDetails: {
-      title: "Merchant Details",
-      content: "Sold and fulfilled by Premium Lighting Store...",
-    },
-    careInstructions: {
-      title: "Care & Instructions",
-      content: "Clean with soft, dry cloth. Avoid harsh chemicals...",
-    },
+
     deliveryInstallation: {
       title: "Delivery & Installation",
-      content: "Free delivery within 5-7 business days...",
-    },
-    warranty: {
-      title: "Warranty",
-      content: "1 year manufacturer warranty on electrical components...",
+      content: "Free delivery within 10-15 business days...",
     },
     termsConditions: {
       title: "Terms And Conditions",
       content: "Standard terms and conditions apply...",
-    },
-    faqs: {
-      title: "FAQ's",
-      content: "Frequently asked questions about the product...",
     },
     disclaimer: {
       title: "Disclaimer",
@@ -140,10 +125,9 @@ export function ProductDetails({ productData }: ProductPageProps){
         attribute_value: productData.variations[0]?.attribute_value || "default value",  
       };
     }
-
-    CartManager.addItem(item, user.id);
+   
+    user? CartManager.addItem(item, user.id) : CartManager.addItem(item)
     setCartOpen(true);
-    console.log(item)
   };
   
 

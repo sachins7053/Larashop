@@ -32,10 +32,11 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'env'   => env('CURRENCY'),
+            'roles' => $request->user()? $request->user()->getRoleNames() : [],
             'auth' => [
                 'user' => $request->user(),
                 'user_id'=>auth()->user()? auth()->user()->id : null,
-                 'roles' => auth()->user()? auth()->user()->getRoleNames() : [],
+                 'roles' => auth()->user()? auth()->user()->getRoleNames()->pluck('name') : [],
                  'permissions' =>auth()->user()? auth()->user()->getAllPermissions()->pluck('name') : [],
             ],
         ];

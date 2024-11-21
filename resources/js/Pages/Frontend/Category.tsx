@@ -1,7 +1,7 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import { ProductArchive } from '@/components/components-product-archive'
+import Guest from '@/Layouts/GuestLayout'
 
 interface ProductGridData {
   id: number
@@ -61,17 +61,19 @@ export default function CategoryPage(data: any) {
   };
 
   return (
-    <div>
-      <ProductArchive
-        initialProducts={initialProducts}
-        fetchMoreProducts={fetchMoreProducts}  // Pass the updated fetchMoreProducts function
-        title={`Category: ${category.name || 'Unknown Category'}`}
-      />
-      
-      {/* Optionally, you can show a "Load More" button or auto-fetch */}
-      {!allProductsLoaded && (
-        <button onClick={() => fetchMoreProducts(startIndex, startIndex + 2)}>Load More</button>
-      )}
-    </div>
+    <Guest>
+          <div>
+            <ProductArchive
+              initialProducts={initialProducts}
+              fetchMoreProducts={fetchMoreProducts}  // Pass the updated fetchMoreProducts function
+              title={`Category: ${category.name || 'Unknown Category'}`}
+            />
+            
+            {/* Optionally, you can show a "Load More" button or auto-fetch */}
+            {!allProductsLoaded && (
+              <button onClick={() => fetchMoreProducts(startIndex, startIndex + 2)}>Load More</button>
+            )}
+          </div>
+    </Guest>
   )
 }
