@@ -14,7 +14,12 @@ class AppServiceProvider extends ServiceProvider
      * Register any application services.
      */
 
+
+
      protected $listen = [
+        \Illuminate\Auth\Events\Registered::class => [
+            \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
+        ],
         RoleSpecificEvent::class => [
             HandleRoleSpecificEvent::class,
         ],

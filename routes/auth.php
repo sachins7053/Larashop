@@ -83,7 +83,6 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
-
     Route::get('partner/verify-email', PartnerEmailVerificationPromptController::class)
         ->name('partner-verification.notice');
     

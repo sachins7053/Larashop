@@ -1,8 +1,9 @@
 import PartnerLayout from '@/Layouts/PartnerLayout';
 import { Head } from '@inertiajs/react';
 import { Button } from "@/components/ui/button"
-
 export default function PartnerDashboard() {
+
+
     return (
         <PartnerLayout
             header={

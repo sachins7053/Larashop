@@ -4,6 +4,7 @@ export interface User {
     email: string;
     email_verified_at?: string;
     roles: string[];
+    status:number;
 }
 
 

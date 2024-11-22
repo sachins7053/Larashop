@@ -16,14 +16,13 @@ export default function Authenticated({
 
     const user = usePage().props.auth.user;
     const roles = usePage().props.roles;
-    const user_id = usePage().props.auth.user_id;
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
         // console.log("user", user)
         console.log("permission", roles)
         // console.log("user_id", user_id)
 
-        
+    
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="border-b border-gray-100 bg-white">
@@ -37,41 +36,8 @@ export default function Authenticated({
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                { roles.includes('Admin') && (
-                                    <>
-                                    <NavLink
-                                        href={route('dashboard')}
-                                        active={route().current('dashboard')}
-                                    >
-                                        Dashboard
-                                    </NavLink>
-                                    <NavLink
-                                        href={route('product.index')}
-                                        active={route().current('product.index')}
-                                    >
-                                        All Products
-                                    </NavLink>
-                                    <NavLink
-                                        href={route('product.add')}
-                                        active={route().current('product.add')}
-                                    >
-                                        Add Products
-                                    </NavLink>
-                                    <NavLink
-                                        href={route('categories')}
-                                        active={route().current('categories')}
-                                    >
-                                        Categories
-                                    </NavLink>
-                                    <NavLink
-                                        href={route('leads.index')}
-                                        active={route().current('leads.index')}
-                                    >
-                                        Leads
-                                    </NavLink>
-                                    </>
-                                    )} 
-                                    { (roles.includes('Admin') || roles.includes('Partner')) && (
+                               
+                                    {  user.status=== 1 && (
                                     <>
                                     <NavLink
                                     href={route('leads.add')}
@@ -187,8 +153,10 @@ export default function Authenticated({
                         >
                             Dashboard
                        </ResponsiveNavLink>
+                        {user.status === 1 && (
+                            <>
                                 <ResponsiveNavLink
-                                    href={route('leads.index')}
+                                    href={route('partner-leads.index')}
                                     active={route().current('leads.index')}
                                     
                                 >
@@ -201,6 +169,8 @@ export default function Authenticated({
                                 >
                                     Add Leads
                                 </ResponsiveNavLink>
+                                </>
+                            )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">
@@ -238,7 +208,12 @@ export default function Authenticated({
             )}
 
             <Toaster />
-            <main>{children}</main>
+            { user.status === 0 ? 
+            <div className="bg-amber-500 text-white p-4 shadow rounded-lg max-w-2xl mx-auto my-3">
+                <h2 className="text-lg font-bold mb-2">Your account is Pending got Admin Approval. </h2>
+                <p className="text-sm">Please wait until admin approve your account to access the dashboard.</p>
+            </div>    
+            : <main>{children}</main>} 
         </div>
     );
 }

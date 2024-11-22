@@ -56,6 +56,7 @@ Route::middleware('role_or_permission:Admin|Agent')->group(function () {
     Route::get('/partner/dashboard', function () {
         return Inertia::render('PartnerPanel/PartnerDashboard');
     })->name('partner.dashboard');
+    Route::get('/partner/leads', [LeadController::class, 'index'])->name('partner-leads.index');
     Route::get('/partner/lead/add', [LeadController::class, 'add'])->name('leads.add');
     Route::post('/partner/lead/add', [LeadController::class, 'store'])->name('leads.store');
     Route::get('/partner/profile', [ProfileController::class, 'edit'])->name('partner-profile.edit');

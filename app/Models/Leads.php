@@ -5,8 +5,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 class Leads extends Model
-{
-    use HasFactory;
+{   
+    protected $casts = [
+        'image_url' => 'array', // Automatically cast to an array when retrieving
+    ];
+
+    use HasFactory; 
     protected $table = "leads";
     protected $fillable = [
         'user_id',
@@ -22,9 +26,9 @@ class Leads extends Model
         'updated_at'
         ];
 
-        public function users()
+        public function user()
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function notes(){

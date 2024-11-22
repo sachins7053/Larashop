@@ -77,6 +77,8 @@ class PartnerRegisteredUserController extends Controller
             }
         }
 
+
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -85,11 +87,13 @@ class PartnerRegisteredUserController extends Controller
         ]);
 
         $user->assignRole('Agent');
-        event(new RoleSpecificEvent($user, 'Agent'));
         $user->syncPermissions(\Spatie\Permission\Models\Role::findByName('Agent')->permissions);
-        //Auth::login($user);
+        
+        event(new RoleSpecificEvent($user, 'Agent'));
+        $user->AgentsendEmailVerificationNotification();
+        Auth::login($user);
 
-        return redirect(route('partner-verification.notice', absolute: false));
+        return redirect()->route('partner-verification.notice');
     }
 
 }

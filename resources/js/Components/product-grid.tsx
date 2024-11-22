@@ -69,23 +69,20 @@ export function ProductGrid({
       {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
       <div className={`grid ${getGridColumns()} gap-6`}>
         {products.map((product) => (
-          <div key={product.id} className="bg-card text-card-foreground rounded shadow-md overflow-hidden">
+          <div key={product.id} className="overflow-hidden">
             <div className="relative">
-              <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover" />
-              <Badge className="absolute top-2 right-2 bg-primary text-primary-foreground">
-                {product.discount}% OFF
-              </Badge>
+              <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover text-card-foreground rounded hover:shadow-lg shadow-sm" />
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 left-2 text-primary-foreground bg-primary/80 hover:bg-primary/90"
-                onClick={() => toggleWishlist(product)}
+                className="absolute top-2 left-2 text-primary-foreground"
+                
                 aria-label={wishlist.includes(product.id) ? "Remove from wishlist" : "Add to wishlist"}
               >
-                <Heart className={wishlist.includes(product.id) ? "fill-current" : ""} />
+                <Heart onClick={() => toggleWishlist(product)} className={wishlist.includes(product.id) ? "fill-current" : ""} />
               </Button>
             </div>
-            <div className="p-4">
+            <div className="py-1">
               <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.title}</h3>
 
               <div className="flex items-center justify-between">
@@ -94,7 +91,8 @@ export function ProductGrid({
                     ₹{product.price.toFixed(2)}
                   </span>
                   <span className="text-primary font-bold">
-                    ₹{product.sale_price ? product.sale_price.toFixed(2) : null}
+                    ₹{product.sale_price ? product.sale_price.toFixed(2) : null} {product.sale_price ? <Badge className="bg-green-600 text-gray-50">{product.discount} % OFF</Badge> : null }
+          
                   </span>
                 </div>
                 <div className="flex items-center mb-2">

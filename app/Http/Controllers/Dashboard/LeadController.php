@@ -19,14 +19,28 @@ class LeadController extends Controller
     }
     public function show($id) :Response {
 
-        $lead = Leads::where('leads.id', $id)->with(
-            'notes'
-        )
-        ->leftJoin('users', 'users.id', 'leads.user_id')->select('leads.*', 'users.name','users.mobile')->get();
+        $lead = Leads::with('user','notes')->find($id);
+
+        $lead->image_url = array_map(function ($image) {
+            return asset('storage/' . $image); // Assuming your images are stored in 'storage/app/public/'
+        }, $lead->image_url);
         
         return Inertia::render('Admin/Leads/ViewLead',[ 'lead' => $lead]);
     }
     public function store(Request $request) :RedirectResponse{
+
+        if($request->has('images')){
+            $images = $request->file('images');
+            $imagesArray = [];
+            if($images){
+                foreach($images as $image){
+                    $imageName = time().'.'.$image->getClientOriginalExtension();
+                    $path =$image->store("uploads/$imageName", 'public');
+                    $imagesArray[] = $path;
+                }
+            }
+
+        }
 
         $lead = Leads::create([
             'user_id' => auth()->user()->id,
@@ -34,12 +48,12 @@ class LeadController extends Controller
             'customer_email' => $request->email,
             'mobile_no' => $request->mobile,
             'lead_details' => $request->details,
-            'image_url' => $request->image,
+            'image_url' => $imagesArray,
             'link' => $request->link,
 
         ]);
 
-        return redirect()->intended(route('leads.index', absolute: false));
+        return redirect()->intended(route('partner.dashboard', absolute: false));
         
     }
     public function add() :Response {

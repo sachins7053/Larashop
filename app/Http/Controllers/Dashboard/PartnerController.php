@@ -13,7 +13,7 @@ class PartnerController extends Controller
 {
     public function index(): Response 
     {
-        $partners = User::role('partner')->get();
+        $partners = User::role('agent')->get();
 
         return Inertia::render('Admin/Partners/AllPartners', ['partners' => $partners]);
 

@@ -115,7 +115,7 @@ export default function Welcome({
                             <ProductGrid
                             products={featuredProducts}
                             title="Featured Products"
-                            columns={{ sm: 2, md: 5, lg: 4 }}
+                            columns={{ sm: 2, md: 4, lg: 4 }}
                             onAddToCart={handleAddToCart}
                             onToggleWishlist={handleToggleWishlist}
                             />

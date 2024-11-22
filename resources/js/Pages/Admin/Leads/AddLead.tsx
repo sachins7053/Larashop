@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { Head, useForm } from '@inertiajs/react';
-import { useState } from 'react'
+import { Head, useForm, usePage, } from '@inertiajs/react';
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,14 +11,15 @@ import { FormEventHandler } from 'react';
 import InputError from '@/components/InputError';
 import { toast } from '@/hooks/use-toast';
 
-export default function AddLead(){
 
+export default function AddLead(){
+      const user = usePage().props.auth.user;
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
     email: '',
     mobile: '',
     details: '',
-    image: '',
+    images: [] as File[],
     link: '',
 });
 
@@ -27,8 +28,17 @@ export default function AddLead(){
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setImages(Array.from(e.target.files))
+      setData('images', Array.from(e.target.files))
     }
   }
+  console.log(images)
+
+  useEffect(()=> {
+ 
+    console.log("images", images)
+    console.log("Data Images", data.images)
+
+  },[handleImageChange])
 
   const handleSubmit :FormEventHandler = (e) => {
     e.preventDefault()
@@ -36,7 +46,7 @@ export default function AddLead(){
     post(route('leads.add'), {
       onFinish: () => { 
         
-        reset('name', 'email','mobile', 'details', 'image', 'link')
+        reset('name', 'email','mobile', 'details', 'images', 'link')
         toast({
           variant: "success",
           title: "Your enquiry has been submitted",
@@ -50,6 +60,24 @@ export default function AddLead(){
     // Here you would typically send the form data to your server
     console.log('Form submitted')
   }
+      if(user.status === 0) {
+        return (
+          <AuthenticatedLayout 
+          header={
+              <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                  Add New Lead
+              </h2>
+          }
+          >
+          <Head title="Add new Lead" />
+                <div className="bg-amber-500 text-white p-4 shadow rounded-lg max-w-2xl mx-auto my-3">
+                <h2 className="text-lg font-bold mb-2">Your account is Pending got Admin Approval. </h2>
+                <p className="text-sm">Please wait until admin approve your account to access the dashboard.</p>
+            </div> 
+          </AuthenticatedLayout>
+    )
+      }
+
   return (
     <AuthenticatedLayout 
     header={
@@ -139,7 +167,7 @@ export default function AddLead(){
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 10MB</p>
                 </div>
-                <Input id="images" type="file" className="hidden" onChange={handleImageChange} multiple accept="image/*" />
+                <Input id="images" name="images" type="file" className="hidden" onChange={handleImageChange} multiple accept="image/*" />
               </Label>
             </div>
             {images.length > 0 && (
