@@ -88,7 +88,7 @@ export default function ProductShow ( {product }:PageProps<{ product:Product}>) 
                                   <ProductGrid
                                   products={featuredProducts}
                                   title="Featured Products"
-                                  columns={{ sm: 2, md: 5, lg: 4 }}
+                                  columns={{ sm: 2, md: 4, lg: 4 }}
                                   onToggleWishlist={handleToggleWishlist}
                                   />
                               </section>

@@ -70,8 +70,8 @@ export function ProductGrid({
       <div className={`grid ${getGridColumns()} gap-6`}>
         {products.map((product) => (
           <div key={product.id} className="overflow-hidden">
-            <div className="relative">
-              <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover text-card-foreground rounded hover:shadow-lg shadow-sm" />
+            <div className="relative transition duration-500 rounded hover:shadow-md overflow-hidden group">
+              <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover text-card-foreground rounded hover:shadow-xl shadow-sm group-hover:scale-110 transform-gpu transition duration-500 ease-in-out delay-150" />
               <Button
                 variant="ghost"
                 size="icon"
@@ -91,7 +91,7 @@ export function ProductGrid({
                     ₹{product.price.toFixed(2)}
                   </span>
                   <span className="text-primary font-bold">
-                    ₹{product.sale_price ? product.sale_price.toFixed(2) : null} {product.sale_price ? <Badge className="bg-green-600 text-gray-50">{product.discount} % OFF</Badge> : null }
+                    {product.sale_price ? '₹' + product.sale_price.toFixed(2) : null} {product.sale_price ? <Badge className="bg-green-600 text-gray-50">{product.discount} % OFF</Badge> : null }
           
                   </span>
                 </div>
