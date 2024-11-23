@@ -31,12 +31,9 @@ export default function AddLead(){
       setData('images', Array.from(e.target.files))
     }
   }
-  console.log(images)
 
   useEffect(()=> {
  
-    console.log("images", images)
-    console.log("Data Images", data.images)
 
   },[handleImageChange])
 

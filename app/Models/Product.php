@@ -10,6 +10,10 @@ class Product extends BaseModel
 {
     use HasFactory;
 
+    protected $casts = [
+        'images' => 'array',
+    ];
+
     protected $table = 'products';
 
     protected $fillable = [

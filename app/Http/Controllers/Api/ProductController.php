@@ -40,13 +40,21 @@ class ProductController extends Controller
         $slug = Product::generateUniqueSlug($request->name);
         // Create the Product in the database
         $product = Product::create([
-            'name' => $request->name,
+            'name' => $request->productName,
             'slug' => $slug,
             'description' => $request->description,
             'price' => $request->price,
             'sale_price' => $request->sale_price,
             'content' => $request->content,
-            'images' => $request->images
+            'quantity' => $request->quantity,
+            'wide' => $request->wide,
+            'height' => $request->height,
+            'length' => $request->length,
+            'weight' => $request->weight,
+            
+            'images' => $request->images,
+            'sku' => $request->sku,
+            'status' => $request->status,
         ]);
 
         $categories = json_decode($request->input('categories'), true);

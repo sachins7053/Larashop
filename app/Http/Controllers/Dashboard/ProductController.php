@@ -19,13 +19,9 @@ class ProductController extends Controller
     
     public function add(): Response 
     {   
-        $categories = ProductCat::get()->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-            ];
-        });
-        return Inertia::render('Admin/Pages/AddProduct' , ['categories' => $categories]);
+        $categories = ProductCat::all();
+        
+        return Inertia::render('Admin/Pages/AddNewProduct' , ['categories' => $categories]);
     }
 
     public function Edit($id): Response 
