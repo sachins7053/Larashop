@@ -11,7 +11,7 @@ export function Media({data, setData} :any) {
   useEffect(() => {
     
     const images = mainImage ? [mainImage, ...galleryImages] : [...galleryImages];
-    setData('images',{ images})
+    setData('images', images)
   }, [mainImage, galleryImages, setData])
 
   return (

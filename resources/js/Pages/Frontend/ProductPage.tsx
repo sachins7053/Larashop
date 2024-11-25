@@ -12,7 +12,7 @@ interface Product {
   description: string;
   content: string;
   sale_price: number | null;
-  images: string[] | null;
+  images: string[] | [];
   variations: variation[];
   product_type: string;
 

@@ -40,7 +40,7 @@ interface ProductData {
   name: string;
   description: string;
   content: string;
-  images: string[] | null;
+  images: string[] | [];
   variations: Variation[];
   price: number | null; // Normal price
   sale_price: number | null; // Sale price
@@ -67,6 +67,7 @@ export function ProductDetails({ productData }: ProductPageProps){
   //const [activeSection, setActiveSection] = React.useState<string | null>(null)
 
   const images :string[] = typeof productData.images === 'string' ? JSON.parse(productData.images) :[]
+
   const colors = [
     { name: "Grey", value: "grey" },
     { name: "Blue", value: "blue" },
@@ -136,7 +137,7 @@ export function ProductDetails({ productData }: ProductPageProps){
   const checkDelivery = () => {
     // Simulate delivery check
     if (pincode.length === 6) {
-      setDeliveryInfo("Delivery available in 5-7 business days")
+      setDeliveryInfo("Delivery available in 10-15 business days")
       toast.success("Delivery available in your area!")
     } else {
       setDeliveryInfo("Please enter a valid pincode")
@@ -153,8 +154,8 @@ export function ProductDetails({ productData }: ProductPageProps){
         <div className="col-span-3 ">
           <div className="flex sticky top-0 gap-4">
             <div className="flex flex-col gap-4">
-            {Array.isArray(images) && images.length > 0 ? (
-              images.map((src, index) => (
+            {Array.isArray(productData.images) && productData.images.length > 0 ? (
+              productData.images.map((src, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
@@ -175,7 +176,7 @@ export function ProductDetails({ productData }: ProductPageProps){
           </div>
               <div className="relative flex-1 overflow-hidden rounded-lg">
                 <img
-                  src={images[selectedImage]}
+                  src={productData?.images[selectedImage] }
                   alt="Main product image"
                   className="object-cover shadow-lg rounded-lg"
                   

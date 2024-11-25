@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Product;
 use App\Models\ProductCat;
+use App\Models\BulkFileUpload;
 
 
 class ProductController extends Controller
@@ -51,4 +52,39 @@ class ProductController extends Controller
     {
         return Inertia::render('Frontend/Category');
     }
+
+    public function bulkUploadForm(Request $request): Response{
+        return Inertia::render('Admin/Pages/BulkProductUpload');
+    }
+
+
+    public function bulkUpload(Request $request)
+            {
+                $request->validate([
+                    'excel_file' => 'required|mimes:xlsx,xls',
+                    'images_zip' => 'nullable|mimes:zip',
+                ]);
+            
+                // Upload Excel File
+                $excelPath = $request->file('excel_file')->store('temp/uploads');
+            
+                $fileUpload = BulkFileUpload::create([
+                    'file_name' => $request->file('excel_file')->getClientOriginalName(),
+                    'status' => 'pending',
+                ]);
+            
+                // Dispatch Job for Excel Processing with fileUpload ID
+                ProcessProductExcel::dispatch($excelPath, $fileUpload->id);
+            
+                return response()->json(['message' => 'Files uploaded successfully. Processing in the background.'], 200);
+            }
+        
+            public function bulkUploadStatus()
+                {
+                    $fileUploads = FileUpload::latest()->get();
+
+                    return Inertia::render('UploadStatus', [
+                        'fileUploads' => $fileUploads,
+                    ]);
+                }
 }

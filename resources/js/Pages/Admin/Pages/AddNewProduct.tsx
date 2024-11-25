@@ -1,7 +1,7 @@
 import React from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { Head } from '@inertiajs/react'
-import { ProductAddForm } from '@/components/ProductAddForm.tsx/ProductAddForm'
+import { ProductAddForm } from '@/components/ProductAddForm/ProductAddForm'
 
 
 

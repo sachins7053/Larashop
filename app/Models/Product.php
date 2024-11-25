@@ -66,8 +66,9 @@ class Product extends BaseModel
 
     public function categories()
     {
-        return $this->belongsToMany(ProductCat::class, 'cat_product', 'product_id', 'category_id');
+        return $this->belongsToMany(ProductCat::class, 'cat_product', 'category_id', 'product_id');
     }
+
 
     public function orderitems(){
         return $this->belongsTo(OrderItem::class, 'product_id', 'id');

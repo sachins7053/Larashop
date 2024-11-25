@@ -15,5 +15,12 @@ class ProductCatLinking extends Model
        
     ];
 
+    public function cat(){
+        return $this->hasOne(ProductCat::class, 'category_id', 'id');
+    }
+    public function products(){
+        return $this->hasOne(Product::class, 'product_id', 'id');
+    }
+
   
 }

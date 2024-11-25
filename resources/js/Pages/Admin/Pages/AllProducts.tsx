@@ -35,7 +35,13 @@ interface Product {
     status: string;
     price: number;
     stock: number;
+    categories: Category[];
     // Add other properties as needed
+  }
+
+  interface Category {
+    id: number;
+    name: string;
   }
 
 export default function AllProductsPage( { product }: PageProps <{ product : string[] }> ) {
@@ -64,7 +70,8 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
 
         try {
             const response = await axios.get('/api/products');
-            setProducts(response.data); // Adjust based on API response structure
+            setProducts(response.data); 
+            console.log(response.data)
         } catch (error) {
             console.error("Error fetching products:", error);
         } finally {
@@ -138,108 +145,108 @@ export default function AllProductsPage( { product }: PageProps <{ product : str
             }
         >
             <Head title="All Product" />
-    <div className="container bg-white rounded-lg max-w-7xl shadow-lg mx-auto mt-8 px-4 py-8">
+    <div className="container bg-white rounded-lg max-w-7xl shadow-lg mx-auto my-8 min-h-screen px-4 py-8">
+ 
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div>
+                <Label htmlFor="search" className="sr-only">
+                  Search Products
+                </Label>
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Input
+                    id="search"
+                    placeholder="Search products..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="category" className="sr-only">
+                  Filter by Category
+                </Label>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Filter by Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="status" className="sr-only">
+                  Filter by Status
+                </Label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="Filter by Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statuses.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Stock</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>{product.id}</TableCell>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell>{product.categories?.map((category:Category) => category.name)}</TableCell>
+                      <TableCell>{currency}{product.price ? product.price.toFixed(2) : ''}</TableCell>
+                      <TableCell>{product.stock}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          product.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }`}>
+                          {product.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Link href={route('product.edit', {id: product.id})}>
+                          <Button variant="outline" size="sm" onClick={() => handleEdit(product.id)}>
+                            <Edit className="w-4 h-4" />
+                            <span className="sr-only">Edit</span>
+                          </Button>
+                          </Link>
+                          <Button variant="outline" size="sm" onClick={() => handleDelete(product.id)}>
+                            <Trash2 className="w-4 h-4" />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
       
-      <div className="grid md:grid-cols-3 gap-4 mb-6">
-        <div>
-          <Label htmlFor="search" className="sr-only">
-            Search Products
-          </Label>
-          <div className="relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <Input
-              id="search"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
-          </div>
-        </div>
-        <div>
-          <Label htmlFor="category" className="sr-only">
-            Filter by Category
-          </Label>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger id="category">
-              <SelectValue placeholder="Filter by Category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label htmlFor="status" className="sr-only">
-            Filter by Status
-          </Label>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger id="status">
-              <SelectValue placeholder="Filter by Status" />
-            </SelectTrigger>
-            <SelectContent>
-              {statuses.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{currency}{product.price ? product.price.toFixed(2) : ''}</TableCell>
-                <TableCell>{product.stock}</TableCell>
-                <TableCell>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    product.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {product.status}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Link href={route('product.edit', {id: product.id})}>
-                    <Button variant="outline" size="sm" onClick={() => handleEdit(product.id)}>
-                      <Edit className="w-4 h-4" />
-                      <span className="sr-only">Edit</span>
-                    </Button>
-                    </Link>
-                    <Button variant="outline" size="sm" onClick={() => handleDelete(product.id)}>
-                      <Trash2 className="w-4 h-4" />
-                      <span className="sr-only">Delete</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
       <div className="flex items-center justify-between mt-6">
         <div className="text-sm text-gray-500">
           Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, filteredProducts.length)} of {filteredProducts.length} products

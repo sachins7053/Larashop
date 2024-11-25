@@ -8,14 +8,15 @@ use App\Models\Product;
 use App\Models\ProductCatLinking;
 use App\Models\ProductAttribute;
 use App\Models\ProductVariations;
-use  App\Models\VariationAttribute;
-use  App\Models\AttributeValue;
+use App\Models\VariationAttribute;
+use App\Models\AttributeValue;
+
 
 
 class ProductController extends Controller
 {
     public function index(){
-        $products = Product::get();
+        $products = Product::with('categories')->get();
         if($products){
             return response()->json($products, 200);  // return the Product data with HTTP status 200 (OK)
         } 
@@ -57,14 +58,19 @@ class ProductController extends Controller
             'status' => $request->status,
         ]);
 
-        $categories = json_decode($request->input('categories'), true);
-        foreach($categories as $category){
-            $cat = \App\Models\ProductCatLinking::create([
-                'category_id' => $category,
-                'product_id' =>  $product->id,
-                //'attributes' => json_encode($variationData['attributes']),
-            ]);
-        }
+        ProductCatLinking::Create([
+            'product_id' => $product->id,
+            'category_id' => $request->category,
+        ]);
+
+        // $categories = json_decode($request->input('categories'), true);
+        // foreach($categories as $category){
+        //     $cat = \App\Models\ProductCatLinking::create([
+        //         'category_id' => $category,
+        //         'product_id' =>  $product->id,
+        //         //'attributes' => json_encode($variationData['attributes']),
+        //     ]);
+        // }
 
         if ($request->has('variations')) {
             $variations = json_decode($request->input('variations'), true);
@@ -160,4 +166,6 @@ class ProductController extends Controller
 
                 return response()->json(['message' => 'Product deleted successfully'], 200);
             }
+
+            
 }

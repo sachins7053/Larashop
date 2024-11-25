@@ -68,6 +68,9 @@ Route::middleware('role_or_permission:Admin|Agent')->group(function () {
 Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/admin/products', [ProductController::class, 'index'])->name('product.index');
     Route::get('/admin/product/add', [ProductController::class, 'add'])->name('product.add');
+    Route::get('/admin/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');
+    Route::post('/admin/product/bulkuploading', [ProductController::class, 'bulkUpload']);
+    Route::get('/admin/product/bulkuploadstatus', [ProductController::class, 'bulkUploadStatus'])->name('bulkproduct.status');
     Route::get('/admin/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
     Route::get('/admin/product-categories', [ProductCategoryController::class, 'categories'])->name('categories');
     Route::get('/admin/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);

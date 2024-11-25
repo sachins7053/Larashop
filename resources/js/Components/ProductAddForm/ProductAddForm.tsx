@@ -10,6 +10,8 @@ import { DimensionsAndShipping } from "./DimensionsAndShipping"
 import { AdvancedOptions } from "./AdvancedOptions"
 import { useForm } from "@inertiajs/react"
 import { Inertia } from "@inertiajs/inertia"
+import { toast } from "@/hooks/use-toast"
+
 
 type ProductFormData = {
 productName: string
@@ -89,7 +91,13 @@ export function ProductAddForm() {
     // to submit the form data to the server
     post(route('products.store'), {
       onFinish: () => {
-        reset('productName',)
+        reset();
+        toast({
+          variant: "success",
+          title: "Product Submitted Successfully",
+        })
+        // Inerti`a.visit('/admin/products');
+        
 
       }
       
