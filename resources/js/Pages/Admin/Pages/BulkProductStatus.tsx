@@ -1,3 +1,7 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head } from '@inertiajs/react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 
 type FileUpload = {
@@ -12,35 +16,52 @@ type FileUpload = {
 };
 
 export default function UploadStatus({ fileUploads }: { fileUploads: FileUpload[] }) {
+    console.log(fileUploads)
+
     return (
-        <div>
-            <h1 className="text-2xl font-bold">Upload Status</h1>
-            <table className="min-w-full border-collapse border border-gray-200 mt-4">
-                <thead>
-                    <tr>
-                        <th className="border border-gray-200 p-2">File Name</th>
-                        <th className="border border-gray-200 p-2">Status</th>
-                        <th className="border border-gray-200 p-2">Total Listings</th>
-                        <th className="border border-gray-200 p-2">Successful</th>
-                        <th className="border border-gray-200 p-2">Failed</th>
-                        <th className="border border-gray-200 p-2">Error</th>
-                        <th className="border border-gray-200 p-2">Uploaded At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {fileUploads.map((file) => (
-                        <tr key={file.id}>
-                            <td className="border border-gray-200 p-2">{file.file_name}</td>
-                            <td className="border border-gray-200 p-2">{file.status}</td>
-                            <td className="border border-gray-200 p-2">{file.total_listings ?? '-'}</td>
-                            <td className="border border-gray-200 p-2">{file.successful_listings ?? '-'}</td>
-                            <td className="border border-gray-200 p-2">{file.failed_listings ?? '-'}</td>
-                            <td className="border border-gray-200 p-2">{file.error_message ?? '-'}</td>
-                            <td className="border border-gray-200 p-2">{new Date(file.created_at).toLocaleString()}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <AuthenticatedLayout
+
+                header={
+                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                    Bulk Product Upload Status
+                    </h2>
+                }
+        >
+            <Head title="Bulk Upload Status"/>
+            <Card className="container max-w-6xl mx-auto roudned shadow my-8 p-4 pt-6">
+                    <CardHeader>
+                        <CardTitle>Product File Status</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                            <Table>
+                                    <TableHeader>
+                                            <TableRow>
+                                            <TableHead>File Name</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Total Listings</TableHead>
+                                            <TableHead>Successful</TableHead>
+                                            <TableHead>Failed</TableHead>
+                                            <TableHead>Error</TableHead>
+                                            <TableHead>Uploaded At</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                            
+                                <TableBody>
+                                    {fileUploads.map((file) => (
+                                        <TableRow key={file.id}>
+                                            <TableCell>{file.file_name}</TableCell>
+                                            <TableCell>{file.status}</TableCell>
+                                            <TableCell>{file.total_listings ?? '-'}</TableCell>
+                                            <TableCell>{file.successful_listings ?? '-'}</TableCell>
+                                            <TableCell>{file.failed_listings ?? '-'}</TableCell>
+                                            <TableCell>{file.error_message ?? '-'}</TableCell>
+                                            <TableCell>{new Date(file.created_at).toLocaleString()}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                    </CardContent>
+            </Card>
+        </AuthenticatedLayout>
     );
 }

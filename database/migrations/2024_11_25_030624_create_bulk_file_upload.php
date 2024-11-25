@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('bulk_file_upload', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users', 'id')->onDelete('cascade');
             $table->string('file_name');
+            $table->string('file_path');
             $table->enum('status', ['pending', 'processing', 'completed', 'failed']);
             $table->integer('total_listings')->nullable();
             $table->integer('successful_listings')->nullable();

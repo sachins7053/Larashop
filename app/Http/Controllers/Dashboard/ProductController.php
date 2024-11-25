@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Product;
 use App\Models\ProductCat;
 use App\Models\BulkFileUpload;
+use App\Jobs\ProcessProductExcel;
 
 
 class ProductController extends Controller
@@ -58,32 +62,37 @@ class ProductController extends Controller
     }
 
 
-    public function bulkUpload(Request $request)
-            {
+    public function bulkUpload(Request $request) : RedirectResponse
+            {   
+                
                 $request->validate([
-                    'excel_file' => 'required|mimes:xlsx,xls',
-                    'images_zip' => 'nullable|mimes:zip',
+                    'file' => 'required|mimes:xlsx,xls,csv',
+                    'zip_file' => 'nullable|mimes:zip',
                 ]);
-            
+
                 // Upload Excel File
-                $excelPath = $request->file('excel_file')->store('temp/uploads');
-            
+                $excelPath = $request->file('file')->store('temp/uploads', 'public');
+                
                 $fileUpload = BulkFileUpload::create([
-                    'file_name' => $request->file('excel_file')->getClientOriginalName(),
+                    
+                    'file_name' => $request->file('file')->getClientOriginalName(),
+                    'user_id' => auth()->user()->id,
+                    'file_path' => $excelPath,
                     'status' => 'pending',
                 ]);
-            
+                
                 // Dispatch Job for Excel Processing with fileUpload ID
-                ProcessProductExcel::dispatch($excelPath, $fileUpload->id);
-            
-                return response()->json(['message' => 'Files uploaded successfully. Processing in the background.'], 200);
+                
+                    ProcessProductExcel::dispatch($excelPath, $fileUpload->id);
+                    return redirect()->intended(route('bulkproduct.status', absolute:false));
+                
             }
         
             public function bulkUploadStatus()
                 {
-                    $fileUploads = FileUpload::latest()->get();
+                    $fileUploads = BulkFileUpload::Latest()->get();
 
-                    return Inertia::render('UploadStatus', [
+                    return Inertia::render('Admin/Pages/BulkProductStatus', [
                         'fileUploads' => $fileUploads,
                     ]);
                 }

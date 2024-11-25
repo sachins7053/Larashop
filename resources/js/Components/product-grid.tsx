@@ -67,7 +67,7 @@ export function ProductGrid({
   return (
     <div className="w-full">
       {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
-      <div className={`grid ${getGridColumns()} gap-6`}>
+      <div className={`grid ${getGridColumns()} gap-6 gap-y-12`}>
         {products.map((product) => (
           <div key={product.id} className="overflow-hidden">
             <div className="relative transition duration-500 rounded hover:shadow-md overflow-hidden group">

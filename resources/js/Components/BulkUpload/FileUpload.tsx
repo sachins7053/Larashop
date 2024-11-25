@@ -3,11 +3,11 @@ import { motion } from 'framer-motion'
 import { Upload, FileSpreadsheet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-interface FileUploadProps {
-  onUpload: (file: File) => void
-}
+// interface FileUploadProps {
+//   onUpload: (file: File) => void
+// }
 
-export function FileUpload({ onUpload }: FileUploadProps) {
+export function FileUpload({ setData }: any) {
   const [dragActive, setDragActive] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -40,7 +40,7 @@ export function FileUpload({ onUpload }: FileUploadProps) {
 
   const handleFile = (file: File) => {
     setFileName(file.name)
-    onUpload(file)
+    setData('file',file)
   }
 
   return (

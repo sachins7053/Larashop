@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('images')->nullable();
             $table->text('video_media')->nullable();
             $table->string('sku', 191)->nullable();
+            $table->string('material', 191)->nullable();
             $table->unsignedInteger('order')->default(0);
             $table->unsignedInteger('quantity')->nullable();
             $table->unsignedTinyInteger('allow_checkout_when_out_of_stock')->default(0);

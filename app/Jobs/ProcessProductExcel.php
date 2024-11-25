@@ -18,15 +18,16 @@ class ProcessProductExcel implements ShouldQueue
 
     use InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $filePath;
+    protected $filePath, $fileUploadId;
 
 
     /**
      * Create a new job instance.
      */
-    public function __construct($filePath)
+    public function __construct($filePath, $fileUploadId)
     {
-        $this->filepath = $filePath;        
+        $this->filePath = $filePath;
+        $this->fileUploadId = $fileUploadId;        
     }
 
     /**
@@ -34,17 +35,19 @@ class ProcessProductExcel implements ShouldQueue
      */
     public function handle(): void
     {
-        $fileUpload = FileUpload::find($this->fileUploadId);
+        $fileUpload = BulkFileUpload::find($this->fileUploadId);
     $fileUpload->update(['status' => 'processing']);
+   
 
     try {
         // Process the Excel file
+       
         $path = Storage::path($this->filePath);
         $data = Excel::toCollection([], $path)->first();
-        
         $totalListings = $data->count();
         $successfulListings = 0;
         $failedListings = 0;
+       
 
         foreach ($data as $row) {
             try {
@@ -60,12 +63,12 @@ class ProcessProductExcel implements ShouldQueue
             }
         }
 
-        $fileUpload->update([
-            'status' => 'completed',
-            'total_listings' => $totalListings,
-            'successful_listings' => $successfulListings,
-            'failed_listings' => $failedListings,
-        ]);
+                $fileUpload->update([
+                    'status' => 'completed',
+                    'total_listings' => $totalListings,
+                    'successful_listings' => $successfulListings,
+                    'failed_listings' => $failedListings,
+                ]);
 
     } catch (\Exception $e) {
         $fileUpload->update([

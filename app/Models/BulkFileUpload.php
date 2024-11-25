@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class BulkFileUpload extends Model
 {
-    protected $table = 'bulk_file_uploads';
+    protected $table = 'bulk_file_upload';
     protected $fillable = [
         'user_id',
         'file_name',
+        'file_path',
         'uploaded_at',
         'status',
         'total_listings',

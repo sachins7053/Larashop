@@ -24,7 +24,7 @@ export default function Authenticated({
         Inertia.visit('/admin/login');
     }
 
-    console.log("user_id", user)
+    
         
     return (
         <div className="min-h-screen bg-gray-100">
