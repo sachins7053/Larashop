@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Dashboard;
-
+use Illuminate\Support\Facades\Response as LaravelResponse;
 use App\Http\Controllers\Controller;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
@@ -13,6 +13,10 @@ use App\Models\Product;
 use App\Models\ProductCat;
 use App\Models\BulkFileUpload;
 use App\Jobs\ProcessProductExcel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\BulkProductUpload;
+
+
 
 
 class ProductController extends Controller
@@ -61,6 +65,12 @@ class ProductController extends Controller
         return Inertia::render('Admin/Pages/BulkProductUpload');
     }
 
+    public function csvDownload(Request $request) {
+
+        return Excel::download(new BulkProductUpload, 'product_bulk_upload.xlsx');
+
+    }
+
 
     public function bulkUpload(Request $request) : RedirectResponse
             {   
@@ -80,10 +90,11 @@ class ProductController extends Controller
                     'file_path' => $excelPath,
                     'status' => 'pending',
                 ]);
+              
                 
                 // Dispatch Job for Excel Processing with fileUpload ID
                 
-                    ProcessProductExcel::dispatch($excelPath, $fileUpload->id);
+                    ProcessProductExcel::dispatch($fileUpload);
                     return redirect()->intended(route('bulkproduct.status', absolute:false));
                 
             }

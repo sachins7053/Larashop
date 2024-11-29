@@ -99,7 +99,7 @@ export function CategorySelector({ onSelect }: CategorySelectorProps) {
       </div>
       {selectedPath.length > 0 && (
         <Button variant="ghost" onClick={handleBack} className="mt-4">
-          Back
+          Change Category
         </Button>
       )}
     </div>

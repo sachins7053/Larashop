@@ -74,5 +74,10 @@ class Product extends BaseModel
         return $this->belongsTo(OrderItem::class, 'product_id', 'id');
     }
 
+    public static function getFillableAttributes()
+    {
+        return (new static)->getFillable();
+    }
+
    
 }

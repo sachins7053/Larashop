@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\response;
+
+
 class CartController extends Controller
 {
     // public function index()
@@ -72,9 +74,9 @@ class CartController extends Controller
     //     return response()->json(['message' => 'Cart cleared successfully']);
     // }  
     
-    public function removeCartItem($userid , $itemId){
-        // $cart = Cart::where('user_id', $userid)->orWhere('id', $itemId)->delete();
+    // public function removeCartItem($userid , $itemId){
+    //     // $cart = Cart::where('user_id', $userid)->orWhere('id', $itemId)->delete();
 
-        return response()->json(['message' => 'user cart delated']);
-        }
+    //     return response()->json(['message' => 'user cart delated']);
+    //     }
 }

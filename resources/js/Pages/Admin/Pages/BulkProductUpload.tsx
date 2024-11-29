@@ -7,8 +7,14 @@ import { FileUpload } from '@/components/BulkUpload/FileUpload'
 import { ImageZipUpload } from '@/components/BulkUpload/ZipImageUpload'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { useForm } from '@inertiajs/react'
+import { useForm, Link } from '@inertiajs/react'
 import { toast } from '@/hooks/use-toast'
+import Template from '@/components/BulkUpload/Template'
+import InputError from '@/components/InputError'
+
+interface FilesType {
+  type : string| undefined | null
+}
 
 export default function AdminBulkUpload() {
   const [step, setStep] = useState(1)
@@ -16,7 +22,11 @@ export default function AdminBulkUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedZipFile, setSelectedZipFile] = useState<File | null>(null)
   const [isStepFulfilled, setIsStepFulfilled] = useState(false)
-
+  const [template, setTemplate] = useState(false)
+  
+  let file : FilesType = {
+    type: null
+  }
   const { data, setData, post, processing, errors, reset } = useForm({
     category : selectedCategory,
     file : '',
@@ -27,6 +37,7 @@ export default function AdminBulkUpload() {
 
   const handleCategorySelect = (category: string[]) => {
     setSelectedCategory(category)
+    setTemplate(true)
     setIsStepFulfilled(true)
   }
 
@@ -45,7 +56,9 @@ export default function AdminBulkUpload() {
     setStep(4)
     setIsStepFulfilled(false)
     e.preventDefault()
-    post(route('bulkproduct.add'), {
+
+
+        post(route('bulkproduct.add'), {
       onFinish: () => {
         reset();
         toast({
@@ -58,7 +71,7 @@ export default function AdminBulkUpload() {
       
     });
     console.log('selected Category: ', selectedCategory)
-    console.log('Product file uploaded:', selectedFile?.name)
+    console.log('Product file uploaded:', data?.file)
     console.log('Image zip file uploaded:', selectedZipFile?.name)
   }
 
@@ -76,12 +89,15 @@ export default function AdminBulkUpload() {
     }
   }
 
+
+
   return (
     <Authenticatedlayout>
         <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-amber-100 p-8">
           <Card className="max-w-4xl mx-auto">
             <CardContent className="p-6">
               <h1 className="text-3xl font-bold text-center mb-8">Bulk Product Upload</h1>
+              <InputError message={errors.file} className="mb-4" />
               <div className="flex justify-center mb-8">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="flex items-center">
@@ -107,6 +123,9 @@ export default function AdminBulkUpload() {
                 >
                   <h2 className="text-xl font-semibold mb-4">Select Category</h2>
                   <CategorySelector onSelect={handleCategorySelect} />
+                  {template === true && (
+                    <Template  />
+                  )}
                 </motion.div>
               )}
               {step === 2 && (

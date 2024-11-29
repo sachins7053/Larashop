@@ -26,7 +26,7 @@ import { PageProps } from '@/types';
     ] */
 
 const categories = ['All', 'Electronics', 'Clothing', 'Home & Garden', 'Books']
-const statuses = ['All', 'Active', 'Inactive']
+const statuses = ['All', 'Published', 'Inactive']
 
 interface Product {
     id: number;

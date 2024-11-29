@@ -16,7 +16,7 @@ class BulkFileUpload extends Model
         'total_listings',
         'success_listings',
         'failed_listings',
-        'error_messages',
+        'error_message',
         'error_codes',
         'error_logs',
         'processed_listings',

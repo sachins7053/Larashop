@@ -41,6 +41,7 @@ export function FileUpload({ setData }: any) {
   const handleFile = (file: File) => {
     setFileName(file.name)
     setData('file',file)
+    console.log(file)
   }
 
   return (

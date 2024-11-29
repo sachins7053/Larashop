@@ -16,7 +16,7 @@ use App\Models\AttributeValue;
 class ProductController extends Controller
 {
     public function index(){
-        $products = Product::with('categories')->get();
+        $products = Product::Latest()->with('categories')->get();
         if($products){
             return response()->json($products, 200);  // return the Product data with HTTP status 200 (OK)
         } 
