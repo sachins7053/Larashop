@@ -3,11 +3,9 @@ import { motion } from 'framer-motion'
 import { Upload, FileArchive } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-interface ImageZipUploadProps {
-  onUpload: (file: File) => void
-}
 
-export function ImageZipUpload({ onUpload }: ImageZipUploadProps) {
+
+export function ImageZipUpload({ setData }:any) {
   const [dragActive, setDragActive] = useState(false)
   const [fileName, setFileName] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -41,7 +39,7 @@ export function ImageZipUpload({ onUpload }: ImageZipUploadProps) {
   const handleFile = (file: File) => {
     if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
       setFileName(file.name)
-      onUpload(file)
+      setData('zip_file',file)
     } else {
       alert('Please upload a zip file')
     }

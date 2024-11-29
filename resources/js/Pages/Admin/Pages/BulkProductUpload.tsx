@@ -30,7 +30,7 @@ export default function AdminBulkUpload() {
   const { data, setData, post, processing, errors, reset } = useForm({
     category : selectedCategory,
     file : '',
-    zip_file : selectedZipFile,
+    zip_file : '',
   
   });
   
@@ -72,7 +72,7 @@ export default function AdminBulkUpload() {
     });
     console.log('selected Category: ', selectedCategory)
     console.log('Product file uploaded:', data?.file)
-    console.log('Image zip file uploaded:', selectedZipFile?.name)
+    console.log('Image zip file uploaded:', data?.zip_file)
   }
 
   const handleBack = () => {
@@ -145,7 +145,7 @@ export default function AdminBulkUpload() {
                   transition={{ duration: 0.5 }}
                 >
                   <h2 className="text-xl font-semibold mb-4">Upload Image Zip File</h2>
-                  <ImageZipUpload onUpload={handleZipFileSelect} />
+                  <ImageZipUpload setData={setData} />
                 </motion.div>
               )}
               {step === 4 && (

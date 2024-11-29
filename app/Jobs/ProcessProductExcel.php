@@ -11,6 +11,7 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 use Illuminate\Support\Facades\Log;
 use App\Models\BulkFileUpload;
 use App\Models\Product;
+use App\Models\File;
 use App\imports\BulkProductImport;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Maatwebsite\Excel\Facades\Excel;
@@ -22,16 +23,16 @@ class ProcessProductExcel implements ShouldQueue
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $filePath, $fileUpload;
+    protected  $fileUpload, $zipFilePath;
 
 
     /**
      * Create a new job instance.
      */
-    public function __construct(BulkFileUpload $fileUpload)
+    public function __construct(BulkFileUpload $fileUpload, $zipFilePath)
     {
-        // $this->filePath = $filePath;
         $this->fileUpload = $fileUpload;        
+        $this->zipFilePath = $zipFilePath;
     }
 
     /**
@@ -40,63 +41,88 @@ class ProcessProductExcel implements ShouldQueue
     public function handle(): void
     {   
       $Path = storage_path('app/public/' . $this->fileUpload->file_path);
-    //   \Log::info("File path: " . $filePath);
-      
-        Excel::import(new BulkProductImport, $Path);
+      Excel::import(new BulkProductImport, $Path);
+
+    
+      $this->processImages($this->zipPath);
+
+    //   $zipPath = storage_path('app/public/' . $this->zipFilePath);
+
+    //   $this->extractZipFile($this->zipPath, $zipPath);
+    // //   \Log::info("File path: " . $filePath);
+    // $this->processImages($excelData[0], $extractedPath);
+
+
         $this->fileUpload->status = 'completed';
         $this->fileUpload->save();
-    //     $fileUpload = BulkFileUpload::find($this->fileUploadId);
-    // $fileUpload->update(['status' => 'processing']);
-   
-
-    // try {
-    //     // Process the Excel file
-       
-    //     $path = Storage::disk('public')->path($this->filePath);
-    //     $rows = SimpleExcelReader::create($path)->fromSheetName("Sheet1")->getRows()
-    //             ->filter(function(array $rowProperties) {
-    //                 return strlen($rowProperties['name']) > 5;
-    //              });
-
-    //     $totalListings = $rows->count();
-    //     $successfulListings = 0;
-    //     $failedListings = 0;
-       
-
-    //     foreach ($rows as $row) {
-    //         try {
-    //             // Assume your import logic goes here
-    //             $slug = Product::generateUniqueSlug($row['name']);
-    //             Product::create([
-                    
-    //                 'name' => $row['name'], 
-    //                 'slug' => $slug,
-    //                 'sku' => $row['sku'],
-    //                 'description' => $row['description']
-    //                 ]
-    //             );
-    //             $successfulListings++;
-    //         } catch (\Exception $e) {
-    //             $failedListings++;
-    //             Log::error("Row failed: " . $e->getMessage());
-    //         }
-    //     }
-
-    //             $fileUpload->update([
-    //                 'status' => 'completed',
-    //                 'total_listings' => $totalListings,
-    //                 'successful_listings' => $successfulListings,
-    //                 'failed_listings' => $failedListings,
-    //             ]);
-
-    // } catch (\Exception $e) {
-    //     $fileUpload->update([
-    //         'status' => 'failed',
-    //         'error_message' => $e->getMessage(),
-    //     ]);
-    // }
-
-    // // Clean up
-    // Storage::delete($this->filePath);
+ 
     }
+
+                protected function extractZipFile($zipPath, $destinationPath)
+                {
+                    $zip = new \ZipArchive;
+                    if ($zip->open($zipPath) === TRUE) {
+                        $zip->extractTo($destinationPath);
+                        $zip->close();
+                    } else {
+                        throw new \Exception("Failed to extract ZIP file.");
+                    }
+                }
+
+                protected function processImages($zipPath)
+                {
+                    // Extract ZIP
+                    $destinationFolder = now()->format('Y-m');
+                    $extractedPath = storage_path("app/public/uploads/$destinationFolder");
+                    $this->extractZipFile($zipPath, $extractedPath);
+                
+                    $skus = Product::pluck('sku')->toArray(); // Fetch all SKUs from the database
+                
+                    foreach ($skus as $sku) {
+                        $folderPath = $extractedPath . '/' . $sku;
+                
+                        if (is_dir($folderPath)) {
+                            $images = scandir($folderPath);
+                
+                            $imagePaths = []; // To collect image paths
+                
+                            foreach ($images as $image) {
+                                $filePath = $folderPath . '/' . $image;
+                
+                                if (in_array(pathinfo($image, PATHINFO_EXTENSION), ['jpg', 'png', 'jpeg'])) {
+                                    // Move file to public/uploads/{year-month}
+                                    $newPath = "uploads/$destinationFolder/" . $image;
+                                    $publicPath = storage_path("app/public/$newPath");
+                
+                                    if (!file_exists(dirname($publicPath))) {
+                                        mkdir(dirname($publicPath), 0755, true);
+                                    }
+                
+                                    copy($filePath, $publicPath);
+                
+                                    // Save image to Files database (optional)
+                                    $fileRecord = new Files();
+                                    $fileRecord->filename = pathinfo($image, PATHINFO_BASENAME);
+                                    $fileRecord->original_name = $image;
+                                    $fileRecord->file_type = mime_content_type($filePath);
+                                    $fileRecord->file_path = "storage/$newPath";
+                                    $fileRecord->size = filesize($filePath);
+                                    $fileRecord->save();
+                
+                                    // Add the image path to the array
+                                    $imagePaths[] = "storage/$newPath";
+                                }
+                            }
+                
+                            // Update the product table with image array
+                            Product::where('sku', $sku)->update([
+                                'images' => json_encode($imagePaths), // Store as JSON array
+                            ]);
+                
+                            echo "Updated images for SKU: $sku.\n";
+                        } else {
+                            echo "No folder found for SKU: $sku\n";
+                        }
+                    }
+                }
 }

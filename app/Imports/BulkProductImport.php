@@ -29,7 +29,7 @@ class BulkProductImport implements ToCollection, WithHeadingRow
                 'description' => $row['description'],
             ]);
         } else {
-            // Handle the case where 'name' doesn't exist
+           
             Log::warning("Missing 'name' field in row: " . json_encode($row));
         }
         }

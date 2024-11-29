@@ -82,6 +82,7 @@ class ProductController extends Controller
 
                 // Upload Excel File
                 $excelPath = $request->file('file')->store('temp/uploads', 'public');
+                $zipPath = $request->file('zip_file')->store('temp/uploads' , 'public');
                 
                 $fileUpload = BulkFileUpload::create([
                     
@@ -94,7 +95,7 @@ class ProductController extends Controller
                 
                 // Dispatch Job for Excel Processing with fileUpload ID
                 
-                    ProcessProductExcel::dispatch($fileUpload);
+                    ProcessProductExcel::dispatch($fileUpload , $zipPath);
                     return redirect()->intended(route('bulkproduct.status', absolute:false));
                 
             }
