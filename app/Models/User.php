@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\VerifyEmail;
+use App\Notifications\VerifyVendorEmail;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Leads;
@@ -20,7 +21,11 @@ class User extends Authenticatable implements MustVerifyEmail
         
         $this->notify(new VerifyEmail);
 
+    }
+    public function VendorVerificationEmail()
+    {       
         
+        $this->notify(new VerifyEmail);
 
     }
 
@@ -75,5 +80,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function orders() {
         return $this->hasMany(Orders::class, 'user_id');
+    }
+
+    public function vendor(){
+        return $this->hasOne(Vendor::class, 'user_id');
     }
 }

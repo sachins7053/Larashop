@@ -3,6 +3,7 @@
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Dashboard\Vendor\ProductController as VendorProductController;
 use App\Http\Controllers\Dashboard\ProductController;
 use App\Http\Controllers\Dashboard\ProductCategoryController;
 use App\Http\Controllers\Dashboard\PartnerController;
@@ -28,7 +29,7 @@ Route::get('/admin/dashboard', function () {
 })->middleware(['role_or_permission:Admin'])->name('dashboard');
 
 route::get('/404', function () {
-    return view('errors.404');
+    return Inertia::render('404');
     })->name('404');
 
 
@@ -55,16 +56,26 @@ Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(funct
 });
 
 
-Route::middleware('role_or_permission:Admin|Agent')->group(function () {
-    Route::get('/partner/dashboard', function () {
+Route::prefix('partner')->middleware('role_or_permission:Admin|Agent')->group(function () {
+    Route::get('/dashboard', function () {
         return Inertia::render('PartnerPanel/PartnerDashboard');
     })->name('partner.dashboard');
-    Route::get('/partner/leads', [LeadController::class, 'index'])->name('partner-leads.index');
-    Route::get('/partner/lead/add', [LeadController::class, 'add'])->name('leads.add');
-    Route::post('/partner/lead/add', [LeadController::class, 'store'])->name('leads.store');
-    Route::get('/partner/profile', [ProfileController::class, 'edit'])->name('partner-profile.edit');
-    Route::patch('/partner/profile', [ProfileController::class, 'update'])->name('partner-profile.update');
-    Route::delete('/partner/profile', [ProfileController::class, 'destroy'])->name('partner-profile.destroy');
+    Route::get('/leads', [LeadController::class, 'index'])->name('partner-leads.index');
+    Route::get('/lead/add', [LeadController::class, 'add'])->name('leads.add');
+    Route::post('/lead/add', [LeadController::class, 'store'])->name('leads.store');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('partner-profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('partner-profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('partner-profile.destroy');
+});
+
+Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(function () {
+    
+    Route::get('/dashboard', [VendorProductController::class, 'dashboard'])->name('vendor.dashboard');
+    Route::get('/products', [VendorProductController::class, 'index'])->name('vendorproduct.index');
+    Route::get('/product/edit/{id}', [VendorProductController::class, 'Edit'])->name('vendor.product.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('vendor-profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('vendor-profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('vendor-profile.destroy');
 });
 
 

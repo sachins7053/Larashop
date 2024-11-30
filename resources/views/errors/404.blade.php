@@ -58,6 +58,9 @@ a:hover {
     background-color: #e6482e;
 }
     </style>
+    <script>
+        window.location.href = "{{ route('404') }}";
+    </script>
 </head>
 
 <body>
