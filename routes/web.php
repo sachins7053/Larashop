@@ -27,6 +27,9 @@ Route::get('/admin/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['role_or_permission:Admin'])->name('dashboard');
 
+route::get('/404', function () {
+    return view('errors.404');
+    })->name('404');
 
 
 

@@ -78,7 +78,7 @@ export function ProductDetails({ productData }: ProductPageProps){
   const sections = {
     overview: {
       title: "Overview",
-      content: productData.description,
+      content: productData.content,
     },
 
     deliveryInstallation: {

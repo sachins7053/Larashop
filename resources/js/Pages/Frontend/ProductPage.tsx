@@ -15,6 +15,8 @@ interface Product {
   images: string[] | [];
   variations: variation[];
   product_type: string;
+  discount: number | null;
+
 
   }
 
@@ -28,52 +30,9 @@ interface Product {
     attribute_value: string;
   }
 
-interface ProductGridData {
-    id: number
-    title: string
-    images: string
-    price: number
-    salePrice: number | null
-    sale_price: number | null
-    rating: number
-    discount: number
-
-    // Add more fields based on your Product model
-}
-
-
-export default function ProductShow ( {product }:PageProps<{ product:Product}>) {
-
-  useEffect(() => {
-    console.log(product);
-  },[product]);
-
-    const [featuredProducts, setFeaturedProducts] = useState<ProductGridData[]>([])
-    useEffect(() => {
-        // Simulating API calls for different product queries
-        const fetchProducts = async () => {
-          try {
-            // In a real application, these would be separate API calls
-            const featuredResponse = await fetch('https://dummyjson.com/products?limit=10')
+export default function ProductShow ( {product, relatedProducts }:PageProps<{ product:Product; relatedProducts:Product[] }>) {
     
-            const featured = await featuredResponse.json()
-          
-    
-            setFeaturedProducts(featured.products)
-  
-          } catch (error) {
-            console.error('Error fetching products:', error)
-          }
-  
-        }
-    
-        fetchProducts()
-
-      }, [])
-
-
-    
-      const handleToggleWishlist = (product: ProductGridData) => {
+      const handleToggleWishlist = (product: any) => {
         // Implement wishlist toggle logic
         console.log('Toggling wishlist:', product)
       }
@@ -86,8 +45,8 @@ export default function ProductShow ( {product }:PageProps<{ product:Product}>) 
                   <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">      
                               <section className="mb-12">
                                   <ProductGrid
-                                  products={featuredProducts}
-                                  title="Featured Products"
+                                  products={relatedProducts}
+                                  title="Related Products"
                                   columns={{ sm: 2, md: 4, lg: 4 }}
                                   onToggleWishlist={handleToggleWishlist}
                                   />

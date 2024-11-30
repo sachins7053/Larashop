@@ -4,18 +4,19 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 interface Product {
-  id: number
-  title: string
-  images: string
-  price: number
-  salePrice: number | null
-  rating: number
-  discount: number
-  sale_price: number | null
+  id: string | number;
+  name: string;
+  price: number | null;
+  description: string;
+  content: string;
+  sale_price: number | null;
+  images: string[] | [];
+  discount: number | null;
+  product_type: string;
 }
 
 interface ProductGridProps {
-  products?: Product[]
+  products?: Product[] 
   title?: string
   columns?: {
     sm?: number
@@ -37,11 +38,11 @@ export function ProductGrid({
   const [wishlist, setWishlist] = useState<number[]>([])
 
   const toggleWishlist = (product: Product) => {
-    setWishlist(prev => 
-      prev.includes(product.id) 
-        ? prev.filter(id => id !== product.id)
-        : [...prev, product.id]
-    )
+    // setWishlist(prev => 
+    //   prev.includes(product.id) 
+    //     ? prev.filter(id => id !== product.id)
+    //     : [...prev, product.id]
+    // )
     onToggleWishlist?.(product)
   }
 
@@ -71,26 +72,26 @@ export function ProductGrid({
         {products.map((product) => (
           <div key={product.id} className="overflow-hidden">
             <div className="relative transition duration-500 rounded hover:shadow-md overflow-hidden group">
-              <img src="https://ii1.pepperfry.com/media/catalog/product/t/a/494x544/tahara-queen-size-bed-in-virola-wood-finish-with-hydraulic-strorage-tahara-queen-size-bed-in-virola--fqd3dn.jpg" alt={product.title} className="w-full object-cover text-card-foreground rounded hover:shadow-xl shadow-sm group-hover:scale-110 transform-gpu transition duration-500 ease-in-out delay-150" />
+              <img src={product.images[0]} alt={product.name} className="w-full object-cover text-card-foreground rounded hover:shadow-xl shadow-sm group-hover:scale-110 transform-gpu transition duration-500 ease-in-out delay-150" />
               <Button
                 variant="ghost"
                 size="icon"
                 className="absolute top-2 left-2 text-primary-foreground"
                 
-                aria-label={wishlist.includes(product.id) ? "Remove from wishlist" : "Add to wishlist"}
+                aria-label={wishlist ? "Remove from wishlist" : "Add to wishlist"}
               >
-                <Heart onClick={() => toggleWishlist(product)} className={wishlist.includes(product.id) ? "fill-current" : ""} />
+                <Heart onClick={() => toggleWishlist(product)} className={wishlist ? "fill-current" : ""} />
               </Button>
             </div>
             <div className="py-1">
-              <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.title}</h3>
+              <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.name}</h3>
 
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-muted-foreground line-through text-sm mr-2">
-                    ₹{product.price.toFixed(2)}
+                    ₹{product?.price?.toFixed(2)}
                   </span>
-                  <span className="text-primary font-bold">
+                  <span className="text-gray-900 font-bold">
                     {product.sale_price ? '₹' + product.sale_price.toFixed(2) : null} {product.sale_price ? <Badge className="bg-green-600 text-gray-50">{product.discount} % OFF</Badge> : null }
           
                   </span>

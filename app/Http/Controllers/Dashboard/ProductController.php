@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -47,13 +48,21 @@ class ProductController extends Controller
     }
 
 
-    public function ProductDisplay($id): Response
+    public function ProductDisplay($id)
     {   
-        $product = Product::with(['variations' => function($query){
+        $product = Product::with(['categories.products','variations' => function($query){
             $query->leftJoin('attributes','attributes.attribute_id', 'product_variations.attribute_id')->select('attributes.*','product_variations.*');
         }])->find($id);
+
+        $relatedProducts = Product::with('categories.product')
+        ->where('id', '!=', $product->id) // Exclude the current product
+        ->get();
+
+        if (!$product) {
+            return Redirect::route('404');
+        }
         
-        return Inertia::render('Frontend/ProductPage', compact('product'));
+        return Inertia::render('Frontend/ProductPage', compact('product', 'relatedProducts'));
     }
 
     public function Category(): Response

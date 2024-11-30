@@ -4,14 +4,15 @@ import { ProductGrid } from '@/components/product-grid';
 
 
 interface ProductGridData {
-    id: number
-    title: string
-    images: string
-    price: number
-    salePrice: number | null
-    rating: number
-    discount: number
-    sale_price: number | null
+    id: string | number;
+    name: string;
+    price: number | null;
+    description: string;
+    content: string;
+    sale_price: number | null;
+    images: string[] | [];
+    discount: number | null;
+    product_type: string;
 
     // Add more fields based on your Product model
 }

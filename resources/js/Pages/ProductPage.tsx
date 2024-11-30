@@ -26,10 +26,11 @@ interface Product {
     }
 
 interface ProductPageProps {
-    product: Product; // Define productData as part of the props
+    product: Product;
+    relatedProduct: Product | null; // Define relatedProductData as part of the props
   }
 
-export default function ProductShow ({product}: ProductPageProps) {
+export default function ProductShow ({product , relatedProduct}: ProductPageProps) {
 
 
     product ={

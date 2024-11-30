@@ -26,7 +26,15 @@ class BulkProductImport implements ToCollection, WithHeadingRow
                 'name' => $row['name'],
                 'slug' => $slug,
                 'sku' => $row['sku'],
-                'description' => $row['description'],
+                'description' => $row['name'],
+                'content' => $row['description'],
+                'price' => $row['price'],
+                'quantity' => $row['quantity'],
+                'weight' => $row['weight'],
+                'height' => $row['height'],
+                'wide' => $row['width'],
+                'length' => $row['length'],
+                
             ]);
         } else {
            

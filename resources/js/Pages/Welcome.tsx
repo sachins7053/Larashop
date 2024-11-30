@@ -9,14 +9,15 @@ import Footer from '@/components/Footer';
 import Guest from '@/Layouts/GuestLayout';
 
 interface Product {
-    id: number
-    title: string
-    images: string
-    price: number
-    salePrice: number | null
-    sale_price: number | null
-    rating: number
-    discount: number
+  id: string | number;
+  name: string;
+  price: number | null;
+  description: string;
+  content: string;
+  sale_price: number | null;
+  images: string[] | [];
+  discount: number | null;
+  product_type: string;
   }
 
 export default function Welcome({
