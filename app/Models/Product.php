@@ -79,5 +79,9 @@ class Product extends BaseModel
         return (new static)->getFillable();
     }
 
+    public function vendor(){
+        return $this->belongsTo(Vendor::class, 'id', 'store_id');
+    }
+
    
 }

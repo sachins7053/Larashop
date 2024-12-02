@@ -54,7 +54,7 @@ return new class extends Migration
             $table->unsignedInteger('maximum_order_quantity')->default(0);
             $table->unsignedTinyInteger('notify_attachment_updated')->default(0);
             $table->unsignedBigInteger('specification_table_id')->nullable();
-            $table->unsignedBigInteger('store_id')->nullable();
+            $table->foreignId('store_id')->constrained('vendors', 'id')->nullable();
             $table->unsignedBigInteger('approved_by')->default(0);
             $table->timestamps();
 

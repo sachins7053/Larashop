@@ -6,6 +6,39 @@ import { Link, usePage, } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { Inertia } from '@inertiajs/inertia';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
+
+const menuItems = [
+    {
+        title: 'Dashboard',
+        href: route('dashboard'),
+        active: route().current('dashboard')
+      },
+    {
+      title: 'Products',
+      submenu: [
+        { title: 'All Products', href: route('products.index') },
+        { title: 'Add New Product', href: route('product.add') },
+        { title: 'Categories', href: route('categories') },
+      ],
+    },
+    {
+      title: 'Leads',
+      submenu: [
+        { title: 'All Leads', href: route('leads.index') },
+        { title: 'Add New lead', href: route('leads.add') },
+        { title: 'Service 3', href: '/service-3' },
+      ],
+    },
+    {
+        title: 'Vendors',
+        href: route('vendor.index'),
+        active: route().current('vendor.index')
+      },
+   
+  ]
 
 
 
@@ -39,6 +72,7 @@ export default function Authenticated({
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                               
                                 { roles.includes('Admin') && (
                                     <>
                                     <NavLink
@@ -48,39 +82,118 @@ export default function Authenticated({
                                         Dashboard
                                     </NavLink>
                                     <NavLink
-                                        href={route('product.index')}
-                                        active={route().current('product.index')}
+                                        href={route('order.index')}
+                                        active={route().current('order.index')}
                                     >
-                                        All Products
+                                        Orders
                                     </NavLink>
-                                    <NavLink
-                                        href={route('product.add')}
-                                        active={route().current('product.add')}
-                                    >
-                                        Add Products
-                                    </NavLink>
+                                    <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md">
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                            >
+                                                Products
+
+                                                <svg
+                                                    className="-me-0.5 ms-2 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content>
+                                        <Dropdown.Link
+                                            href={route('product.index')}
+                                        >
+                                            All Products
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route('product.add')}
+                                            method="get"
+                                            as="button"
+                                        >
+                                            All New Product
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route('bulkproduct.add')}
+                                            method="get"
+                                            as="button"
+                                        >
+                                            Add Bulk Product
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route('bulkproduct.status')}
+                                            method="get"
+                                            as="button"
+                                        >
+                                            Bulk Product Status
+                                        </Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>  
                                     <NavLink
                                         href={route('categories')}
                                         active={route().current('categories')}
                                     >
                                         Categories
                                     </NavLink>
-                                    <NavLink
-                                        href={route('leads.index')}
-                                        active={route().current('leads.index')}
+                                    
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <span className="inline-flex rounded-md">
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                            >
+                                                Leads
+
+                                                <svg
+                                                    className="-me-0.5 ms-2 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clipRule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </Dropdown.Trigger>
+
+                                    <Dropdown.Content>
+                                        <Dropdown.Link
+                                            href={route('leads.index')}
+                                        >
+                                            All Leads
+                                        </Dropdown.Link>
+                                        <Dropdown.Link
+                                            href={route('leads.add')}
+                                            method="post"
+                                            as="button"
+                                        >
+                                            Add new Lead
+                                        </Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                                <NavLink
+                                        href={route('vendor.index')}
+                                        active={route().current('vendor.index')}
                                     >
-                                        Leads
+                                        Vendors
                                     </NavLink>
-                                    </>
-                                    )} 
-                                    { (roles.includes('Admin') || roles.includes('Partner')) && (
-                                    <>
-                                    <NavLink
-                                    href={route('leads.add')}
-                                    active={route().current('leads.add')}
-                                >
-                                    Add Leads
-                                </NavLink>
                                     </>
                                 ) }
 

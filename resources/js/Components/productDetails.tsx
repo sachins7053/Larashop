@@ -109,7 +109,7 @@ export function ProductDetails({ productData }: ProductPageProps){
         name: productData.name,
         price: parseFloat(selectedVariation.sale_price || "0"), 
         quantity: quantity,
-        image: images[0],
+        image: images[0] || "",
         attribute_name: selectedVariation.attribute_name,
         attribute_value: selectedVariation.attribute_value, 
       };
@@ -121,7 +121,7 @@ export function ProductDetails({ productData }: ProductPageProps){
         name: productData.name,
         price: parseFloat(productData.sale_price?.toString() || "0"),
         quantity: quantity,
-        image: images[0],
+        image: images[0] || "",
         attribute_name: productData.variations[0]?.attribute_name || "Default",
         attribute_value: productData.variations[0]?.attribute_value || "default value",  
       };
@@ -176,7 +176,7 @@ export function ProductDetails({ productData }: ProductPageProps){
           </div>
               <div className="relative flex-1 overflow-hidden rounded-lg">
                 <img
-                  src={productData?.images[selectedImage] }
+                  src={productData?.images == null ? 'https://drive.google.com/uc?id=1Y7U1QRLKCrlzkOB1ExNujr2DjBc_0a7n' : productData.images[selectedImage] }
                   alt="Main product image"
                   className="object-cover shadow-lg rounded-lg"
                   

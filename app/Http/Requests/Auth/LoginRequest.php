@@ -48,11 +48,7 @@ class LoginRequest extends FormRequest
                 'email' => trans('auth.failed'),
             ]);
         }
-        $route = $request->route()->getName();
-        dd($route);
-        if ($this->isNotLoggedInForGroup($route)) {
-            return redirect($this->getLoginPageForGroup($route));
-        }
+
 
         // $user = Auth::user();
 
@@ -68,40 +64,9 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-    protected function isNotLoggedInForGroup($route)
-    {
-        if (str_contains($route, 'partner')) {
-            return !auth()->check();
-        }
 
-        if (str_contains($route, 'admin')) {
-            return !auth('admin')->check();
-        }
 
-        if (str_contains($route, 'vendor')) {
-            return !auth('vendor')->check();
-        }
 
-        return false; // Default case
-    }
-
-    protected function getLoginPageForGroup($route)
-    {
-        if (str_contains($route, 'partner')) {
-            return route('partnerlogin');
-            dd($route);
-        }
-
-        if (str_contains($route, 'admin')) {
-            return route('login');
-        }
-
-        if (str_contains($route, 'vendor')) {
-            return route('vendor.login');
-        }
-
-        return route('login'); // Default case
-    }
 
     public function customerAuthenticate(): void
     {

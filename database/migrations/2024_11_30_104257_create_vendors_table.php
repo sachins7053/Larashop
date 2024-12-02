@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('address_proof')->nullable(); 
             $table->string('brand_name')->nullable(); 
             $table->text('additional_info')->nullable(); 
+            $table->integer('status')->default(0); 
             $table->timestamps(); 
         });
     }

@@ -38,7 +38,7 @@ route::get('/404', function () {
 
 Route::post('/upload', [FilesController::class, 'upload']);
 Route::get('/product/demo', [ProductController::class, 'ProductPage']);
-Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay']);
+Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay'])->name('product.slug');
 Route::get('/category', [ProductController::class, 'Category']);
 Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
@@ -96,6 +96,9 @@ Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/admin/partner/{id}', [PartnerController::class, 'show'])->name('partners.show');
     Route::post('/admin/partner/change_status/{id}', [PartnerController::class, 'change_status'])->name('partners.status');
     Route::get('/admin/partner/edit/{id}', [PartnerController::class, 'edit'])->name('partners.edit');
+    Route::get('/admin/vendors', [AdminController::class, 'vendors'])->name('vendor.index');
+    Route::get('/admin/vendor/{id}', [AdminController::class, 'vendorShow'])->name('vendor.show');
+    Route::put('/admin/vendor/{id}', [AdminController::class, 'vendorEdit'])->name('vendor.edit');
     Route::get('/admin/orders', [OrderController::class, 'index'])->name('order.index');
     Route::get('/admin/order/{id}', [OrderController::class, 'show'])->name('order.show');
     Route::put('/admin/order/{id}', [OrderController::class, 'change_status'])->name('order.statusChange');

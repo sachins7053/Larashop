@@ -34,11 +34,12 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'env'   => env('CURRENCY'),
             'roles' => $request->user()? $request->user()->getRoleNames() : [],
+            'vendorId' => $request->user() ? $request->user()->vendor ? $request->user()->vendor->id : null : null,
             'auth' => [
                 'user' => $request->user(),
                 'user_id'=>auth()->user()? auth()->user()->id : null,
-                 'roles' => auth()->user()? auth()->user()->getRoleNames()->pluck('name') : [],
-                 'permissions' =>auth()->user()? auth()->user()->getAllPermissions()->pluck('name') : [],
+                
+                 'permissions' =>auth()->user()? auth()->user()->getAllPermissions() : [],
             ],
         ];
     }

@@ -18,10 +18,11 @@ class Vendor extends Model
         'address_proof',
         'brand_name',
         'additional_info',
+        'status',
     ];
 
     public function products(){
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, 'store_id', 'id');
     }
 
     public function orders(){
