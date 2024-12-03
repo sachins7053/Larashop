@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\File;
+use Inertia\Response;
+use Inertia\Inertia;
 
 class FilesController extends Controller
 {
@@ -16,6 +18,18 @@ class FilesController extends Controller
             ];
         });
         return response()->json($files);
+    }
+    public function AllFiles():Response {
+        $files = File::get()->map(function ($file) {
+            return [
+                'id' => $file->id,
+                'title' => $file->original_name,
+                'alt' => $file->original_name,
+                'url' => asset( $file->file_path),
+            ];
+        });
+     
+        return Inertia::render('Admin/Pages/MediaFile',compact('files'));
     }
 
 

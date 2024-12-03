@@ -80,36 +80,37 @@ Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(fu
 });
 
 
-Route::middleware('role_or_permission:Admin')->group(function () {
-    Route::get('/admin/products', [ProductController::class, 'index'])->name('product.index');
-    Route::get('/admin/product/add', [ProductController::class, 'add'])->name('product.add');
-    Route::get('/admin/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');
-    Route::post('/admin/product/bulkuploading', [ProductController::class, 'bulkUpload']);
-    Route::get('/admin/product/csv-downloading', [ProductController::class, 'csvDownload'])->name('download.csv');
-    Route::get('/admin/product/bulkuploadstatus', [ProductController::class, 'bulkUploadStatus'])->name('bulkproduct.status');
-    Route::get('/admin/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
-    Route::patch('/admin/product/edit/{id}', [ProductController::class, 'Update'])->name('product.update');
-    Route::get('/admin/product-categories', [ProductCategoryController::class, 'categories'])->name('categories');
-    Route::get('/admin/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
-    Route::get('/admin/leads', [LeadController::class, 'index'])->name('leads.index');
-    Route::get('/admin/lead/view/{id}', [LeadController::class, 'show'])->name('leads.show');
-    Route::post('/admin/lead/note/{id}', [LeadController::class, 'AddNote'])->name('leads.Note');
-    Route::get('/admin/partners', [PartnerController::class, 'index'])->name('partners.index');
-    Route::get('/admin/partner/{id}', [PartnerController::class, 'show'])->name('partners.show');
-    Route::post('/admin/partner/change_status/{id}', [PartnerController::class, 'change_status'])->name('partners.status');
-    Route::get('/admin/partner/edit/{id}', [PartnerController::class, 'edit'])->name('partners.edit');
-    Route::get('/admin/vendors', [AdminController::class, 'vendors'])->name('vendor.index');
-    Route::get('/admin/vendor/{id}', [AdminController::class, 'vendorShow'])->name('vendor.show');
-    Route::put('/admin/vendor/{id}', [AdminController::class, 'vendorEdit'])->name('vendor.edit');
-    Route::get('/admin/orders', [OrderController::class, 'index'])->name('order.index');
-    Route::get('/admin/order/{id}', [OrderController::class, 'show'])->name('order.show');
-    Route::put('/admin/order/{id}', [OrderController::class, 'change_status'])->name('order.statusChange');
-    Route::get('/admin/users', [ProfileController::class, 'index'])->name('user.index');
-    Route::get('/admin/user/{id}', [ProfileController::class, 'show'])->name('user.show');
-    Route::get('/admin/user/edit/{id}', [ProfileController::class, 'edit'])->name('user.edit');
-    Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/admin/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/admin/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function () {
+    Route::get('/products', [ProductController::class, 'index'])->name('product.index');
+    Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
+    Route::get('/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');
+    Route::post('/product/bulkuploading', [ProductController::class, 'bulkUpload']);
+    Route::get('/product/csv-downloading', [ProductController::class, 'csvDownload'])->name('download.csv');
+    Route::get('/product/bulkuploadstatus', [ProductController::class, 'bulkUploadStatus'])->name('bulkproduct.status');
+    Route::get('/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
+    Route::patch('/product/edit/{id}', [ProductController::class, 'Update'])->name('product.update');
+    Route::get('/product-categories', [ProductCategoryController::class, 'categories'])->name('categories');
+    Route::get('/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
+    Route::get('/media', [FilesController::class, 'AllFiles'])->name('files.index');
+    Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
+    Route::get('/lead/view/{id}', [LeadController::class, 'show'])->name('leads.show');
+    Route::post('/lead/note/{id}', [LeadController::class, 'AddNote'])->name('leads.Note');
+    Route::get('/partners', [PartnerController::class, 'index'])->name('partners.index');
+    Route::get('/partner/{id}', [PartnerController::class, 'show'])->name('partners.show');
+    Route::post('/partner/change_status/{id}', [PartnerController::class, 'change_status'])->name('partners.status');
+    Route::get('/partner/edit/{id}', [PartnerController::class, 'edit'])->name('partners.edit');
+    Route::get('/vendors', [AdminController::class, 'vendors'])->name('vendor.index');
+    Route::get('/vendor/{id}', [AdminController::class, 'vendorShow'])->name('vendor.show');
+    Route::put('/vendor/{id}', [AdminController::class, 'vendorEdit'])->name('vendor.edit');
+    Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
+    Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.show');
+    Route::put('/order/{id}', [OrderController::class, 'change_status'])->name('order.statusChange');
+    Route::get('/users', [ProfileController::class, 'index'])->name('user.index');
+    Route::get('/user/{id}', [ProfileController::class, 'show'])->name('user.show');
+    Route::get('/user/edit/{id}', [ProfileController::class, 'edit'])->name('user.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
