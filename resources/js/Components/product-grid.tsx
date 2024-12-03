@@ -72,7 +72,7 @@ export function ProductGrid({
         {products.map((product) => (
           <div key={product.id} className="overflow-hidden">
             <div className="relative transition duration-500 rounded hover:shadow-md overflow-hidden group">
-              <img src={product?.images == null ? "" : product.images[0]} alt={product.name} className="w-full object-cover text-card-foreground rounded hover:shadow-xl shadow-sm group-hover:scale-110 transform-gpu transition duration-500 ease-in-out delay-150" />
+              <img src={product?.images == null ? "" : product.images[0]} alt={product.name} className="w-full object-cover text-card-foreground rounded hover:shadow-xl shadow-sm group-hover:scale-110 transform-gpu transition duration-500 ease-in-out delay-150 min-h-52" />
               <Button
                 variant="ghost"
                 size="icon"

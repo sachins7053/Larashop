@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -29,5 +29,15 @@ class AdminController extends Controller
         $vendor = head($vendors); 
       
         return Inertia::render('Admin/Vendors/VendorDetails', compact('vendor'));
+    }
+
+    public function vendorEdit(Request $request, Vendor $id) : RedirectResponse{
+
+        
+        $id->status = $request->status;
+        $id->save();
+
+        return redirect()->back();
+
     }
 }

@@ -15,7 +15,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import FileUploader from '@/components/file-uploader';
 import { useToast } from "@/hooks/use-toast"
 import { PageProps } from '@/types';
-import {useForm} from '@inertiajs/react';
 
 interface Product {
     id: number;
@@ -24,8 +23,9 @@ interface Product {
     description: string;
     content: string;
     sale_price: string;
-    images : string[] | null;
+    images : string | Blob | null;
 
+    // Add more fields based on your Product model
 }
 
 
@@ -36,10 +36,14 @@ const brands = ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
 
 export default function EditProduct( {product }:PageProps<{ product:Product}> ) {
     const { toast } = useToast()
-   
+    const [productName, setProductName] = useState(product.name);
+    const [shortDescription, setShortDescription] = useState(product.description);
+    const [fullDescription, setFullDescription] = useState(product.content);
+    const [mrpPrice, setMrpPrice] = useState<string>(product.price);
+    const [salePrice, setSalePrice] = useState<string>(product.sale_price);    
     const [isVariableProduct, setIsVariableProduct] = useState(false)
-    const [mainImage, setMainImage] = useState<string>(product.images === null ? '' : product.images[0] )
-    const [galleryImages, setGalleryImages] = useState<string[]>(product.images === null ? [] : product.images)
+    const [mainImage, setMainImage] = useState('')
+    const [galleryImages, setGalleryImages] = useState<string[]>([])
 
     //const [attributeGroups, setAttributeGroups] = useState([]);
     //const [variations, setVariations] = useState([]);
@@ -122,50 +126,52 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
       setVariations(variations.filter((_, i) => i !== index))
     }
 
-    const {data , setData, put, processing, errors} = useForm({
-
-        id: product.id ,
-        name: product.name || '',
-        price: product.price || '',
-        description: product.description || '',
-        content: product.content || '',
-        sale_price: product.sale_price || '',
-        images : product.images || ''
-
-    })
-
-    const handleChange = (e:any) => {
-        setData(e.target.name, e.target.value);  // Dynamically set field value based on input name
-    };
-
     const handleSubmit = async (e:any) => {
         e.preventDefault();
-        
-
-        put( '/api/products') , {
-
-            onError : (errors:any) => {
-                console.log(errors)
-
-                toast({
-                    variant: "destructive",
-                    title: "There is an error",
-                  })
-            },
-
-            onSuccess : () => {
-
-                toast({
-                    variant: "success",
-                    title: "Your Product has been updated",
-                  })
-
-            }, 
-
-        
-
+        const formData = new FormData();
+    
+        formData.append("name", productName);
+        formData.append("description", shortDescription);
+        formData.append("content", fullDescription);
+        formData.append("price", mrpPrice);
+        formData.append("sale_price", salePrice);
+        //formData.append('images', mainImage)
+    //    formData.append("isVariableProduct", String(isVariableProduct));
+    //    formData.append("category", category);
+    //    formData.append("brand", brand);
+        formData.append("status", productStatus);
+    
+        if (mainImage) {
+          formData.append("images", mainImage);
         }
         
+    //    galleryImages.forEach((image, index) => {
+    //      formData.append(`galleryImages[${index}]`, image);
+    //    });
+    
+    //    formData.append("attributeGroups", JSON.stringify(attributeGroups));
+        formData.append("variations", JSON.stringify(variations));
+    
+        try {
+            const response = await axios.post("/api/products", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+              });
+
+              toast({
+                variant: "success",
+                title: "Product Submitted Successfully",
+                description: "There was a problem with your request.",
+              })
+          console.log("Product saved:", response.data);
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: "There was a problem with your request.",
+              })
+            console.log(Array.from(formData.entries()));
+          console.error("Error saving product:", error);
+        }
       };
   
 
@@ -184,28 +190,28 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
                 <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-6">
                     <div className="md:col-span-2 space-y-6 p-6 bg-white rounded-lg">
                     <div>
-                        <Label htmlFor="productName">Product Name </Label>
-                        <Input name="name" onChange={handleChange} value={data.name} id="productName" placeholder="Enter product name" />
+                        <Label htmlFor="productName">Product Name {product.name}</Label>
+                        <Input onChange={(event) => setProductName(event.target.value)} value={product.name} id="productName" placeholder="Enter product name" />
                     </div>
 
                     <div>
                         <Label htmlFor="shortDescription">Short Description</Label>
-                        <Input onChange={(event) => setData('description' ,event.target.value)} value={data.description} id="shortDescription" placeholder="Enter short description" />
+                        <Input onChange={(event) => setShortDescription(event.target.value)} value={product.description} id="shortDescription" placeholder="Enter short description" />
                     </div>
 
                     <div>
                         <Label htmlFor="fullDescription">Full Description</Label>
-                        <Textarea onChange={(event) => setData('content',event.target.value)} value={data.content} id="fullDescription" placeholder="Enter full product description" className="min-h-[200px]" />
+                        <Textarea onChange={(event) => setFullDescription(event.target.value)} value={product.content} id="fullDescription" placeholder="Enter full product description" className="min-h-[200px]" />
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                         <Label htmlFor="mrpPrice">MRP Price</Label>
-                        <Input onChange={(event) => setData('price' ,event.target.value)} value={data.price} id="mrpPrice" type="number" placeholder="0.00" />
+                        <Input onChange={(event) => setMrpPrice(event.target.value)} value={product.price} id="mrpPrice" type="number" placeholder="0.00" />
                         </div>
                         <div>
                         <Label htmlFor="salePrice">Sale Price</Label>
-                        <Input onChange={(event) => setData('sale_price', event.target.value)} value={data.sale_price}  id="salePrice" type="number" placeholder="0.00" />
+                        <Input onChange={(event) => setSalePrice(event.target.value)} value={product.sale_price}  id="salePrice" type="number" placeholder="0.00" />
                         </div>
                     </div>
 
@@ -340,7 +346,7 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
                         <h2 className="text-xl font-semibold mb-4">Product Images</h2>
                         <div className="space-y-4">
                             <div>
-                            <Label>Main Product Image</Label>
+                            <Label htmlFor="mainImage">Main Product Image</Label>
                             <div className="mt-2">
                                 
                                 <FileUploader 
@@ -357,7 +363,7 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
                             </div>
 
                             <div>
-                            <Label >Gallery Images</Label>
+                            <Label htmlFor="galleryImages">Gallery Images</Label>
                             <div className="mt-2">
                                 
                                 <FileUploader 

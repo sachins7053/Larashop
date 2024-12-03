@@ -51,8 +51,8 @@ const AllVendors = ({vendors}:any) => {
                 <TableCell> {vendor.gst_number}  </TableCell>
                 <TableCell>{new Date(vendor.created_at).toLocaleDateString()} {new Date(vendor.created_at).toLocaleTimeString()}</TableCell>
                 <TableCell>
-                <Badge variant={vendor.status == "0" ? "success" : vendor.status == "1" ? "outline" : vendor.status == "2" ? "warning"  :  "destructive" }>
-                        {vendor.status == "0" ? "Pending" : vendor.status == "1" ? "Active" : vendor.status == "2" ? "Temparary Ban"  :  "Banned" }
+                <Badge variant={vendor.status == "Pending" ? "success" : vendor.status == "Active" ? "outline" : vendor.status == "Temporary Ban" ? "warning"  :  "destructive" }>
+                        {vendor.status }
                   </Badge>
                 </TableCell>
                 <TableCell>

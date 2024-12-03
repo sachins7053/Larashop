@@ -42,6 +42,8 @@ class ProductController extends Controller
         //return Inertia::render('Admin/Pages/AddProduct');
     }
 
+
+
     public function ProductPage(): Response
     {
         return Inertia::render('ProductPage');
@@ -68,6 +70,13 @@ class ProductController extends Controller
     public function Category(): Response
     {
         return Inertia::render('Frontend/Category');
+    }
+
+    public function search(Request $request) :Response {
+        $keyword = $request->query('keyword');
+        $products = Product::where('name', 'like', '%' . $keyword . '%')->with('categories', 'variations')->get();
+        // dd($products);
+        return Inertia::render('Frontend/Search', compact( 'keyword','products'));
     }
 
     public function bulkUploadForm(Request $request): Response{

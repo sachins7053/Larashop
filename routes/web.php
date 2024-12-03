@@ -42,8 +42,9 @@ Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay'])->nam
 Route::get('/category', [ProductController::class, 'Category']);
 Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
 Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
+Route::get('/search', [ProductController::class, 'Search'])->name('search');
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
-ROute::get('login', [CustomerController::class, 'dashboard']);
+Route::get('login', [CustomerController::class, 'dashboard']);
 
 
 Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
@@ -87,6 +88,7 @@ Route::middleware('role_or_permission:Admin')->group(function () {
     Route::get('/admin/product/csv-downloading', [ProductController::class, 'csvDownload'])->name('download.csv');
     Route::get('/admin/product/bulkuploadstatus', [ProductController::class, 'bulkUploadStatus'])->name('bulkproduct.status');
     Route::get('/admin/product/edit/{id}', [ProductController::class, 'Edit'])->name('product.edit');
+    Route::patch('/admin/product/edit/{id}', [ProductController::class, 'Update'])->name('product.update');
     Route::get('/admin/product-categories', [ProductCategoryController::class, 'categories'])->name('categories');
     Route::get('/admin/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
     Route::get('/admin/leads', [LeadController::class, 'index'])->name('leads.index');

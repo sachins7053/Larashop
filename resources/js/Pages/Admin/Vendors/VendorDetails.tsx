@@ -12,20 +12,21 @@ import {toast} from "@/hooks/use-toast"
 import { useState } from "react"
 
 export default function OrderDetails({vendor}:any) {
-  console.log(vendor)
+  // console.log(vendor)
     const currency:any = usePage().props.env
     const userProps = usePage().props.auth
-    console.log(userProps)
+    // console.log(userProps)
     const { data, setData, put, processing, errors, } = useForm({
         status: ''
     });
 
-    const [status, setStatus] = useState(data.status || vendor?.status == 0 ? 'Pending' : vendor?.status == 1 ? 'Active' : 'Banned');
+    const [status, setStatus] = useState(data.status || vendor.status || "Pending");
 
 
     const handleChangeStatus :FormEventHandler = (e:any) => {
         e.preventDefault();
-        setData('status', e.target.value); 
+
+        console.log(data)
         
         put(route('vendor.edit', {id: vendor.id}), {
             onFinish: () => { 
@@ -33,7 +34,7 @@ export default function OrderDetails({vendor}:any) {
              
               toast({
                 variant: "success",
-                title: "Order Status Has Been Updated",
+                title: "Vendor Status Has Been Changed",
               })
       
       
@@ -131,15 +132,19 @@ export default function OrderDetails({vendor}:any) {
                            
                                 <RadioGroup defaultValue={status} onChange={(e:any) => setData('status', e.target.value)}>
                                     <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="0" id="pending" />
+                                    <RadioGroupItem value="Pending" id="pending" />
                                     <Label htmlFor="pending">Pending</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="1" id="Active" />
+                                    <RadioGroupItem value="Active" id="Active" />
                                     <Label htmlFor="Active">Active</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="2" id="Ban" />
+                                    <RadioGroupItem value="Temporary Ban" id="Temporary Ban" />
+                                    <Label htmlFor="Temporary Ban">Temporary Ban</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="Ban" id="Ban" />
                                     <Label htmlFor="Ban">Banned</Label>
                                     </div>
                                 </RadioGroup>

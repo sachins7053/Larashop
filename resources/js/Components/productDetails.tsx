@@ -176,7 +176,7 @@ export function ProductDetails({ productData }: ProductPageProps){
           </div>
               <div className="relative flex-1 overflow-hidden rounded-lg">
                 <img
-                  src={productData?.images == null ? 'https://drive.google.com/uc?id=1Y7U1QRLKCrlzkOB1ExNujr2DjBc_0a7n' : productData.images[selectedImage] }
+                  src={productData?.images == null ? 'https://drive.usercontent.google.com/download?id=1Y7U1QRLKCrlzkOB1ExNujr2DjBc_0a7n&export=view' : productData.images[selectedImage] }
                   alt="Main product image"
                   className="object-cover shadow-lg rounded-lg"
                   
