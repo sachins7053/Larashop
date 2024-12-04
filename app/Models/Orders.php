@@ -27,6 +27,11 @@ class Orders extends Model
     public function orderItems(){
         return $this->hasMany(OrderItems::class, 'order_id', 'id');
         }
+
+    public function orderVendorStatus()
+    {
+        return $this->hasOne(OrderVendorStatus::class, 'order_id', 'id');
+    }
     
     public function payment(){
         return $this->hasOne(Payment::class);

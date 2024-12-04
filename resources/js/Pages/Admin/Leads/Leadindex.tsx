@@ -19,7 +19,7 @@ interface Enquiry {
   lead_details: string;
   image_url: string | null;  
   link: string;  
-  status: 'new' | 'in progress' | 'resolved';  
+  status: string; 
   priority: 'low' | 'medium' | 'high';  
   created_at: string;  
   updated_at: string;  
@@ -119,9 +119,12 @@ const Leadindex = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={"all"}>All Statuses</SelectItem>
-                  <SelectItem value={"new"}>New</SelectItem>
+                  <SelectItem value={"pending"}>Pending</SelectItem>
                   <SelectItem value={"in progress"}>In Progress</SelectItem>
-                  <SelectItem value={"resolved"}>Resolved</SelectItem>
+                  <SelectItem value={"accept"}>Accept</SelectItem>
+                  <SelectItem value={"reject"}>Reject</SelectItem>
+                  <SelectItem value={"completed"}>Completed</SelectItem>
+                  <SelectItem value={"cancelled"}>Cancelled</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={priorityFilter} onValueChange={setPriorityFilter}>
@@ -159,8 +162,8 @@ const Leadindex = () => {
                       <TableCell>{enquiry.customer_email}</TableCell>
                       <TableCell>{enquiry.mobile_no}</TableCell>
                       <TableCell>
-                        <Badge variant={enquiry.status === "new" ? "secondary" : enquiry.status == "in progress" ? "warning" : enquiry.status == "resolved" 
-  ? "success"  :  "destructive" }>
+                        <Badge variant={enquiry.status === "pending" ? "success" : enquiry.status == "in progress" ? "warning" : enquiry.status == "completed" 
+  ? "outline"  :  "destructive" }>
                           {enquiry.status}
                         </Badge>
                       </TableCell>

@@ -31,7 +31,8 @@ interface Product {
   }
 
 export default function ProductShow ( {product, relatedProducts }:PageProps<{ product:Product; relatedProducts:Product[] }>) {
-    
+
+      console.log(product)
       const handleToggleWishlist = (product: any) => {
         // Implement wishlist toggle logic
         console.log('Toggling wishlist:', product)

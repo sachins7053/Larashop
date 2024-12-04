@@ -17,6 +17,7 @@ class Leads extends Model
         'customer_name',
         'customer_email',
         'mobile_no',
+        'address',
         'lead_details',
         'image_url',
         'link',

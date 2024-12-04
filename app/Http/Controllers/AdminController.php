@@ -22,7 +22,7 @@ class AdminController extends Controller
     }
 
     public function vendorShow($id) : Response {
-        $vendorData = Vendor::with(['user','products' => function ($query) {
+        $vendorData = Vendor::where('id', $id)->with(['user','products' => function ($query) {
             $query->limit(5); }] )->get();
 
         $vendors = $vendorData->toArray();  

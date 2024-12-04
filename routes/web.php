@@ -74,6 +74,8 @@ Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(fu
     Route::get('/dashboard', [VendorProductController::class, 'dashboard'])->name('vendor.dashboard');
     Route::get('/products', [VendorProductController::class, 'index'])->name('vendorproduct.index');
     Route::get('/product/edit/{id}', [VendorProductController::class, 'Edit'])->name('vendor.product.edit');
+    Route::get('/orders', [OrderController::class, 'index'])->name('vendor.order.index');
+    Route::get('/order/{id}', [OrderController::class, 'show'])->name('vendor.order.show');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('vendor-profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('vendor-profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('vendor-profile.destroy');
@@ -93,6 +95,7 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::get('/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
     Route::get('/media', [FilesController::class, 'AllFiles'])->name('files.index');
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
+    Route::get('/lead/add', [LeadController::class, 'add'])->name('admin.leads.add');
     Route::get('/lead/view/{id}', [LeadController::class, 'show'])->name('leads.show');
     Route::post('/lead/note/{id}', [LeadController::class, 'AddNote'])->name('leads.Note');
     Route::get('/partners', [PartnerController::class, 'index'])->name('partners.index');
@@ -105,6 +108,7 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::get('/orders', [OrderController::class, 'index'])->name('order.index');
     Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.show');
     Route::put('/order/{id}', [OrderController::class, 'change_status'])->name('order.statusChange');
+    Route::post('/order/assignVendor/', [OrderController::class, 'assignVendor'])->name('assignVendor');
     Route::get('/users', [ProfileController::class, 'index'])->name('user.index');
     Route::get('/user/{id}', [ProfileController::class, 'show'])->name('user.show');
     Route::get('/user/edit/{id}', [ProfileController::class, 'edit'])->name('user.edit');

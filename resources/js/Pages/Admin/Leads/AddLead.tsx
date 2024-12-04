@@ -18,6 +18,7 @@ export default function AddLead(){
     name: '',
     email: '',
     mobile: '',
+    address: '',
     details: '',
     images: [] as File[],
     link: '',
@@ -41,16 +42,22 @@ export default function AddLead(){
     e.preventDefault()
 
     post(route('leads.add'), {
-      onFinish: () => { 
+      onError: () => { 
         
-        reset('name', 'email','mobile', 'details', 'images', 'link')
+        toast({
+          variant: "destructive",
+          title: "There has been Error",
+          description: "Please check all fields and try again",
+        })
+      },
+      onSuccess: () => { 
+        
+        reset();
         toast({
           variant: "success",
           title: "Your enquiry has been submitted",
           description: "we will connect you shortly",
         })
-
-
       },
   })
 
@@ -92,10 +99,10 @@ export default function AddLead(){
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Customer Name</Label>
             <Input 
               id="name" 
-              placeholder="Enter your name"  
+              placeholder="Enter Customer name"  
               name="name"
               value={data.name}
               onChange={(e) => setData('name', e.target.value)}
@@ -103,11 +110,11 @@ export default function AddLead(){
               <InputError message={errors.name} className="mt-2" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Customer Email</Label>
             <Input 
                 id="email" 
                 type="email" 
-                placeholder="Enter your email" 
+                placeholder="Enter Customer email" 
                 name="email"
                 value={data.email}
                 onChange={(e) => setData('email', e.target.value)}
@@ -116,16 +123,27 @@ export default function AddLead(){
               <InputError message={errors.email} className='mt-2' />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="mobile">Mobile Number</Label>
+            <Label htmlFor="mobile">Customer Mobile Number</Label>
             <Input 
                 id="mobile" 
                 type="tel" 
-                placeholder="Enter your mobile number" 
+                placeholder="Enter Customer mobile number" 
                 name="mobile"
                 value={data.mobile}
                 onChange={(e) => setData('mobile', e.target.value)}
                 required />
               <InputError message={errors.mobile} className='mt-2' />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="address">Customer Address</Label>
+            <Textarea 
+                id="address" 
+                placeholder="Enter Customer Full Address"
+                name="address"
+                value={data.address}
+                onChange={(e) => setData('address', e.target.value)}
+                rows={4} />
+              <InputError message={errors.address} className='mt-2' />
           </div>
           <div className="space-y-2">
             <Label htmlFor="product-link">Enquiry Product Link</Label>

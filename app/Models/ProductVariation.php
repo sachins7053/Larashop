@@ -31,13 +31,10 @@ class ProductVariation extends BaseModel
         return $this->belongsTo(Product::class);
     }
 
-    public function variationAttribute()
-    {
-        return $this->hasMany(VariationAttribute::class);
-    }
+
     
     public function variationvalues()
     {
-        return $this->belongsToMany(VariationAttribute::class, 'attribute_values', 'value_id','attribute_id');
+        return $this->belongsToMany(AttributeValue::class, 'variation_attributes', 'variation_id', 'value_id',);
     }
 }

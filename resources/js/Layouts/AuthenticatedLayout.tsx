@@ -180,9 +180,8 @@ export default function Authenticated({
                                             All Leads
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href={route('leads.add')}
-                                            method="post"
-                                            as="button"
+                                            href={route('admin.leads.add')}
+                                         
                                         >
                                             Add new Lead
                                         </Dropdown.Link>
@@ -194,7 +193,14 @@ export default function Authenticated({
                                     >
                                         Vendors
                                     </NavLink>
+                                <NavLink
+                                        href={route('files.index')}
+                                        active={route().current('files.index')}
+                                    >
+                                        Files
+                                    </NavLink>
                                     </>
+                                    
                                 ) }
 
                                 
@@ -333,8 +339,8 @@ export default function Authenticated({
                                     Leads
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
-                                    href={route('leads.add')}
-                                    active={route().current('leads.add')}
+                                    href={route('admin.leads.add')}
+                                    active={route().current('admin.leads.add')}
                                     
                                 >
                                     Add Leads

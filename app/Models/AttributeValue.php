@@ -13,12 +13,11 @@ class AttributeValue extends Model
 
     public function attribute()
     {
-        //return $this->belongsTo(ProductVariation::class);
+        
         return $this->belongsToMany( ProductVariation::class,
-        'variation_attributes',
-        'variation_id',         // Foreign key on the pivot table for ProductVariation
-        'value_id',              // Foreign key on the pivot table for AttributeValue
-        'id',                    // Local key on ProductVariation
-        'value_id');
+        'variation_attributes',       
+        'value_id',              
+        'variation_id'                    
+        );
     }
 }

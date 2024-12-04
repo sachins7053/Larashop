@@ -3,24 +3,68 @@ import { useForm, usePage, Link } from "@inertiajs/react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ArrowLeft, BellRing, Check } from 'lucide-react'
+import { ArrowLeft, BellRing, Check, ChevronsUpDown } from 'lucide-react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { FormEventHandler } from "react"
 import InputError from "@/components/InputError"
 import {toast} from "@/hooks/use-toast"
 import { useState } from "react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { cn } from "@/lib/utils"
 
-export default function OrderDetails() {
-    const currency:any = usePage().props.env
-    const  order:any  = usePage().props.order
-    const { data, setData, put, processing, errors, } = useForm({
-        status: ''
+interface Vendor {
+  id: string
+  business_name: string
+}
+
+export default function OrderDetails({order, vendors, env, roles}:any) {
+    const currency:any = env;
+    // const roles:any = auth.user.roles;
+    console.log(roles)
+    const { data, setData, post, put, processing, errors, } = useForm({
+        status: order.status,
+        orderId: order.id,
+        vendorId: order.order_vendor_status?.vendor_id,
+        vendorOrderStatus:order.order_vendor_status?.status ,
     });
 
+    
+
+
+    console.log(order);
+    const [open, setOpen] = useState(false);
     const [status, setStatus] = useState(data.status || order.status || "pending");
-    console.log('Order',order)
-    console.log('OrderData',{order})
+
+    const handleAssignVendor :FormEventHandler = (e:any) => {
+      e.preventDefault();
+      
+      
+      post(route('assignVendor'), {
+          onError: () => { 
+            
+           
+            toast({
+              variant: "destructive",
+              title: "There is an error in assigning vendor",
+            })
+    
+    
+          },
+          onSuccess: () => { 
+            
+           
+            toast({
+              variant: "success",
+              title: "Order Status Has Been Updated",
+            })
+    
+    
+          },
+      })
+    
+  }
 
     const handleChangeStatus :FormEventHandler = (e:any) => {
         e.preventDefault();
@@ -40,6 +84,7 @@ export default function OrderDetails() {
         })
       
     }
+
 
   return (
     <AuthenticatedLayout>
@@ -115,10 +160,32 @@ export default function OrderDetails() {
                 {/* Admin Action Area */}
                 <Card className="md:w-1/3" >
                     <CardHeader>
-                        <CardTitle>Admin Order Actions</CardTitle>
+                        <CardTitle>Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-4">
+                    {order.order_vendor_status?.status == 'pending' && (
                         <div className="space-4 rounded-md border p-4">
+                          <h3 className="font-semibold">Order Status:</h3>
+                          <form onSubmit={handleAssignVendor}>
+                                <RadioGroup defaultValue={data.vendorOrderStatus} onChange={(e:any) => setData('vendorOrderStatus', e.target.value)}>
+                                    <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="accepted" id="accept" />
+                                    <Label htmlFor="accept">Accept</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="rejected" id="reject" />
+                                    <Label htmlFor="reject">Reject</Label>
+                                    </div>
+                                </RadioGroup>
+                                <InputError message={errors.status} />
+                                <Button className="mt-3" disabled={processing} variant={'dark'} >Submit</Button>
+                                </form>
+
+                        </div>
+                        )}
+                        {order.order_vendor_status?.status == 'accepted' && (
+                        <div className="space-4 rounded-md border p-4">
+                          <h3 className="font-semibold">Change Order Status:</h3>
                             <form onSubmit={handleChangeStatus}>
 
                            
@@ -148,6 +215,59 @@ export default function OrderDetails() {
                                 <Button className="mt-3" disabled={processing} variant={'dark'} >Update</Button>
                             </form>
                         </div>
+                        )}
+                        { roles.includes('Admin') && (
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="assign_vendor">Assign Vendor</Label>
+                            <Popover open={open} onOpenChange={setOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  aria-expanded={open}
+                                  className="w-[200px] justify-between"
+                                >
+                                  {vendors.find((vendor:Vendor) => data.vendorId=== vendor.id)?.business_name  || "Assign Vendor"}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[200px] p-0">
+                                <Command>
+                                  <CommandInput placeholder="Search Category..." />
+                                  <CommandList>
+                                    <CommandEmpty>No Vendor found.</CommandEmpty>
+                                    <CommandGroup>
+                                    
+                                      {vendors.map((vendor:Vendor) => (
+                                        <CommandItem
+                                          key={vendor.id}
+                                          value={vendor.id}
+                                          onSelect={() => {
+                                            setData('vendorId', vendor.id )
+                                            console.log(vendor.id);
+
+                                            setOpen(false)
+                                          }}
+                                        >
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              data.vendorId === vendor.id ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                          {vendor.business_name}
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                            <Button onClick={handleAssignVendor} variant={'dark'} disabled={processing}> Assign Vendor</Button>
+
+
+                        </div>)}
                         
                     </CardContent>
                     <CardFooter>

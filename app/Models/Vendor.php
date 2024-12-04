@@ -32,5 +32,10 @@ class Vendor extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function orderVendorStatuses()
+    {
+        return $this->hasMany(OrderVendorStatus::class, 'vendor_id', 'id');
+    }
         
 }

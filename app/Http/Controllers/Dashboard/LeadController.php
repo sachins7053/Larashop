@@ -29,9 +29,9 @@ class LeadController extends Controller
     }
     public function store(Request $request) :RedirectResponse{
 
+        $imagesArray = [];
         if($request->has('images')){
             $images = $request->file('images');
-            $imagesArray = [];
             if($images){
                 foreach($images as $image){
                     $imageName = time().'.'.$image->getClientOriginalExtension();
@@ -46,6 +46,7 @@ class LeadController extends Controller
             'user_id' => auth()->user()->id,
             'customer_name' => $request->name,
             'customer_email' => $request->email,
+            'customer_address' => $request->address,
             'mobile_no' => $request->mobile,
             'lead_details' => $request->details,
             'image_url' => $imagesArray,
