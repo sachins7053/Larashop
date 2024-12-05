@@ -16,8 +16,6 @@ interface Product {
   variations: variation[];
   product_type: string;
   discount: number | null;
-
-
   }
 
   interface variation {
@@ -34,7 +32,7 @@ export default function ProductShow ( {product, relatedProducts }:PageProps<{ pr
 
       console.log(product)
       const handleToggleWishlist = (product: any) => {
-        // Implement wishlist toggle logic
+        
         console.log('Toggling wishlist:', product)
       }
 

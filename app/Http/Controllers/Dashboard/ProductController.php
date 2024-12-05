@@ -54,14 +54,14 @@ class ProductController extends Controller
     public function ProductDisplay($id)
     {   
     
-        // $product = Product::with(['categories.products','variations' => function($query){
-        //     $query->leftJoin('variation_attributes as var_att','var_att.variation_id', 'product_variations.variation_id')->leftjoin('attribute_values as value', 'value.value_id', 'var_att.value_id')->leftjoin('attributes', 'attributes.attribute_id','value.attribute_id')->select('attributes.attribute_name','product_variations.*','var_att.*', 'value.*');
-        // }])->find($id);
         $product = Product::with(['categories.products','variations' => function($query){
-            $query->leftJoin('attributes','attributes.attribute_id', 'product_variations.attribute_id')->select('attributes.*','product_variations.*');
+            $query->leftJoin('variation_attributes as var_att','var_att.variation_id', 'product_variations.variation_id')->leftjoin('attribute_values as value', 'value.value_id', 'var_att.value_id')->leftjoin('attributes', 'attributes.attribute_id','value.attribute_id')->select('attributes.attribute_name','product_variations.*','var_att.*', 'value.*');
         }])->find($id);
+        // $product = Product::with(['categories.products','variations' => function($query){
+        //     $query->leftJoin('attributes','attributes.attribute_id', 'product_variations.attribute_id')->select('attributes.*','product_variations.*');
+        // }])->find($id);
         
-        $relatedProducts = Product::with('categories.product')
+        $relatedProducts = Product::with('categories.products')
         ->where('id', '!=', $product->id) // Exclude the current product
         ->get();
 

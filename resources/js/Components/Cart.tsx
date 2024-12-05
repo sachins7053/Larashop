@@ -58,7 +58,8 @@ export function Cart(){
                   <div className="flex flex-1 flex-col gap-1">
                     <h3 className="font-medium">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {item.attribute_name}: {item.attribute_value}
+                      {item.attribute_name?.color}: {item.attribute_value}
+                      {item.attribute_name?.size}: {item.attribute_value}
                     </p>
                     <p className="font-medium">₹{item.price}</p>
                     <div className="flex items-center gap-2">

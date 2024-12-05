@@ -93,7 +93,7 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::patch('/product/edit/{id}', [ProductController::class, 'Update'])->name('product.update');
     Route::get('/product-categories', [ProductCategoryController::class, 'categories'])->name('categories');
     Route::get('/product-categorie/edit/{id}', [ProductCategoryController::class, 'edit_cat']);
-    Route::get('/media', [FilesController::class, 'AllFiles'])->name('files.index');
+    Route::get('/media', [FilesController::class, 'AllFiles'])->name('media.index');
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
     Route::get('/lead/add', [LeadController::class, 'add'])->name('admin.leads.add');
     Route::get('/lead/view/{id}', [LeadController::class, 'show'])->name('leads.show');
