@@ -61,7 +61,7 @@ class Product extends BaseModel
 
     public function variations()
     {
-        return $this->hasMany(ProductVariation::class,  'product_id');
+        return $this->hasMany(ProductVariation::class,  'product_id', 'id');
     }
 
     public function categories()
@@ -81,6 +81,10 @@ class Product extends BaseModel
 
     public function vendor(){
         return $this->belongsTo(Vendor::class, 'id', 'store_id');
+    }
+
+    public function reviews(){
+        return $this->hasMany(Reviews::class, 'product_id', 'id');
     }
 
    

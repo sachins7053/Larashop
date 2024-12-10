@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('coupon_category', function (Blueprint $table) {
             $table->id();
-            $table->foreign('coupon_id')->constrained('coupons', 'id')->onDelete('cascade');
-            $table->foreign('category_id')->constrained('product_categories', 'id');
+            $table->foreignId('coupon_id')->constrained('coupons', 'id')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('product_categories', 'id');
             $table->timestamps();
         });
     }

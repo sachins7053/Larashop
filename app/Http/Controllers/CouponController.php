@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\Product;
+use App\Models\ProductCat;
 use App\Models\Coupon;
 use App\Models\User;
 
@@ -54,62 +55,33 @@ class CouponController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request) :RedirectResponse
     {
-        
-        $validated = $request->validate([
-            'coupon_code' => 'required|unique:coupons,coupon_code',
-            'coupon_type' => 'required|in:Discount,Percentage',
-            'discount_amount' => 'nullable|numeric|min:0',
-            'percentage_discount' => 'nullable|numeric|min:0|max:100',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'description' => 'nullable|string',
-            'user_id' => 'nullable|exists:users,id',
-            'usage_limit' => 'nullable|integer|min:0',
-            'payment_methods' => 'nullable|array',
-            'payment_methods.*' => 'nullable|string|in:credit_card,paypal', 
-            'is_new_user' => 'nullable|boolean',
-            'categories' => 'nullable|array', 
-        ]);
 
-        
-        if ($validated['coupon_type'] == 'Discount' && isset($validated['percentage_discount'])) {
-            return response()->json(['error' => 'Discount coupons cannot have percentage discount.'], 400);
-        }
-
-        if ($validated['coupon_type'] == 'Percentage' && isset($validated['discount_amount'])) {
-            return response()->json(['error' => 'Percentage coupons cannot have fixed discount amount.'], 400);
-        }
-
-        
         $coupon = Coupon::create([
-            'coupon_code' => $validated['coupon_code'],
-            'coupon_type' => $validated['coupon_type'],
-            'discount_amount' => $validated['discount_amount'] ?? null,
-            'percentage_discount' => $validated['percentage_discount'] ?? null,
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'description' => $validated['description'] ?? null,
-            'user_id' => $validated['user_id'] ?? null,
-            'usage_limit' => $validated['usage_limit'] ?? null,
-            'payment_methods' => $validated['payment_methods'] ?? null,
-            'is_new_user' => $validated['is_new_user'] ?? false,
+            'coupon_code' => $request->code,
+            'coupon_type' => $request->coupon_type,
+            'discount_amount' => $request->discount,
+            'description' => $request->description,
+            'usage_limit' => $request->limit,
+            'usage_count' => $request->usage,
         ]);
 
-        
-        if (!empty($validated['categories'])) {
-            $categories = Category::find($validated['categories']);
-            $coupon->categories()->attach($categories);
+        if(!$coupon) {
+            return redirect()->back();
         }
 
-        return response()->json(['message' => 'Coupon created successfully!', 'coupon' => $coupon], 201);
+        
+        
+
+        // return response()->json(['message' => 'Coupon created successfully!', 'coupon' => $coupon], 201);
+        return redirect()->route('dashboard');
     }
 
 
 
 
-    public function index(Request $request, $id)
+    public function update(Request $request, $id)
     {
         
         $validated = $request->validate([
@@ -158,5 +130,28 @@ class CouponController extends Controller
         }
 
         return response()->json(['message' => 'Coupon updated successfully!', 'coupon' => $coupon], 200);
+    }
+
+    public function addCoupon(): Response{
+
+        $categories = ProductCat::all();
+
+        return Inertia::render('Admin/Coupons/CouponDetails', compact('categories'));
+
+    }
+
+    public function index() :Response{
+
+        $couponsData = Coupon::paginate(10);
+
+        return Inertia::render('Admin/Coupons/AllCoupons', compact('couponsData'));
+    }
+
+    public function show($id) : Response{
+
+        $couponData = Coupon::find($id);
+        $categories = ProductCat::get();
+
+        return Inertia::render('Admin/Coupons/CouponDetails', ['coupons' => $couponData , 'categories' => $categories]);
     }
 }

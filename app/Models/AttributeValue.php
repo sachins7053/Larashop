@@ -11,7 +11,12 @@ class AttributeValue extends Model
     protected $primaryKey = 'value_id';
     protected $fillable = ['attribute_id', 'value_id', 'value'];
 
-    public function attribute()
+    public function attribute() {
+
+        return $this->belongsTo(ProductAttribute::class);
+    }
+
+    public function variations()
     {
         
         return $this->belongsToMany( ProductVariation::class,

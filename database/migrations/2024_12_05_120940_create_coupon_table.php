@@ -20,12 +20,12 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable(); 
             $table->foreignId('user_id')->constrained('users','id')->onDelete('cascade');  
             $table->integer('usage_limit')->nullable(); 
             $table->integer('usage_count')->default(0); 
             $table->json('payment_methods')->nullable(); 
             $table->boolean('is_new_user')->default(false); 
+            $table->enum('status', ['draft', 'pending', 'active', 'inactive', 'expired']); 
             $table->timestamps();
 
         });

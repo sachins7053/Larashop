@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
@@ -21,6 +21,7 @@ class Coupon extends Model
         'usage_count',
         'payment_methods',
         'is_new_user',
+        'status',
     ];
 
     protected $casts = [

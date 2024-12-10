@@ -1,9 +1,9 @@
 import Guest from "@/Layouts/GuestLayout";
-import { useState, useEffect } from "react";
-import { Header } from "@/components/header"
 import { ProductDetails } from "@/components/productDetails"
 import { PageProps } from "@/types";
 import { ProductGrid } from "@/components/product-grid";
+import { ReviewForm } from "@/components/Reviews/ReviewForm";
+
 
 interface Product {
   id: string;
@@ -28,9 +28,10 @@ interface Product {
     attribute_value: string;
   }
 
-export default function ProductShow ( {product, relatedProducts }:PageProps<{ product:Product; relatedProducts:Product[] }>) {
-
+export default function ProductShow ( {product, relatedProducts, variations, auth }:PageProps<{ product:Product; relatedProducts:Product[]; variations:any, auth:any }>) {
+  
       console.log(product)
+      console.log('variations', variations)
       const handleToggleWishlist = (product: any) => {
         
         console.log('Toggling wishlist:', product)
@@ -50,6 +51,25 @@ export default function ProductShow ( {product, relatedProducts }:PageProps<{ pr
                                   onToggleWishlist={handleToggleWishlist}
                                   />
                               </section>
+                    </div>
+
+                    <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">
+
+                        <div className="md:flex">
+
+                            <div className="basis-1/3 w-full">
+                                {auth?.user? <ReviewForm productId={product.id} />: '' }
+                                
+                            </div>
+                            <div className="basis-2/3 w-full p-4">
+                                
+                                No review Found.
+
+                            </div>
+
+
+                        </div>
+
                     </div>
                 </div>
             </Guest>

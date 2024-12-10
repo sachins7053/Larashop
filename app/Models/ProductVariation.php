@@ -14,27 +14,31 @@ class ProductVariation extends BaseModel
     protected $primarykey = 'variation_id';
     protected $fillable = [
         'product_id',
-        'attributes',
         'price',
         'sale_price',
         'stock',
-        'attribute_id',
-        'attribute_value'
+        'sku',
     ];
 
-    protected $casts = [
-        'attributes' => 'array',
-    ];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
+    public function attributeValues() {
+        return $this->belongsToMany(AttributeValue::class, 'variation_attributes', 'variation_id', 'value_id');
+    }
 
     
+    public function attribute()
+        {
+            return $this->belongsToMany(AttributeValue::class, 'variation_attributes', 'variation_id', 'value_id');
+        }
+
+
     public function variationvalues()
     {
-        return $this->belongsToMany(AttributeValue::class, 'variation_attributes', 'variation_id', 'value_id',);
+        return $this->hasMany(VariationAttribute::class, 'variation_id', 'variation_id',);
     }
 }
