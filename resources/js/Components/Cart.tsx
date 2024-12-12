@@ -58,8 +58,12 @@ export function Cart(){
                   <div className="flex flex-1 flex-col gap-1">
                     <h3 className="font-medium">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {item.attribute_name?.color}: {item.attribute_value}
-                      {item.attribute_name?.size}: {item.attribute_value}
+                    {Object.entries(item.attributes).map(([key, value]) => (
+                                <div key={key} className="flex items-center text-sm">
+                                    <span className="capitalize text-gray-600">{key}:</span>
+                                    <span className="ml-2 text-gray-800 capitalize">{value}</span>
+                                </div>
+                            ))}
                     </p>
                     <p className="font-medium">₹{item.price}</p>
                     <div className="flex items-center gap-2">
@@ -86,7 +90,7 @@ export function Cart(){
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
-                    onClick={() => {console.log("itemCartId",item.id,item.cartId); handleRemoveItem(user.id, item.cartId); }}
+                    onClick={() => {console.log("itemCartId",item.id,item.cartId); handleRemoveItem(item.cartId, user?.id ); }}
                   >
                     <X className="h-4 w-4" />
                   </Button>

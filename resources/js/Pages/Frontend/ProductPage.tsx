@@ -1,36 +1,26 @@
 import Guest from "@/Layouts/GuestLayout";
 import { useState, useEffect } from "react";
-import { Header } from "@/components/header"
-import { ProductDetails } from "@/components/productDetails"
+import ProductDetails from "@/components/ProductDetails/ProductDetails";
 import { PageProps } from "@/types";
 import { ProductGrid } from "@/components/product-grid";
+import { ProductType} from "@/types";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number | null;
-  description: string;
-  content: string;
-  sale_price: number | null;
-  images: string[] | [];
-  variations: variation[];
-  product_type: string;
-  discount: number | null;
-  }
 
-  interface variation {
-    attribute_id: number;
-    attribute_name: string;
-    variation_id: string;
-    product_id: number;
-    price: string;
-    sale_price: string;
-    attribute_value: string;
-  }
 
-export default function ProductShow ( {product, relatedProducts }:PageProps<{ product:Product; relatedProducts:Product[] }>) {
+export default function ProductShow ( {product, relatedProducts }:PageProps<{ product:ProductType; relatedProducts:ProductType[] }>) {
 
-      console.log(product)
+  const productData = typeof product === "string" ? JSON.parse(product) : product;
+
+  const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string | null>>({});
+
+  const handleVariationSelect = (attributeName: string, value: string) => {
+    setSelectedAttributes((prev) => ({
+      ...prev,
+      [attributeName]: prev[attributeName] === value ? null : value,
+    }));
+  };
+
+      // console.log(product)
       const handleToggleWishlist = (product: any) => {
         
         console.log('Toggling wishlist:', product)
@@ -40,7 +30,7 @@ export default function ProductShow ( {product, relatedProducts }:PageProps<{ pr
         <>
           <Guest>
               <div className="bg-white">
-                <ProductDetails productData={product} />
+                <ProductDetails product={productData} />
                   <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">      
                               <section className="mb-12">
                                   <ProductGrid

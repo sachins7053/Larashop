@@ -7,8 +7,7 @@ export interface CartData {
     price: number;
     quantity: number;
     image: string;
-    attribute_name:string;
-    attribute_value:string;
+    attributes: Record<string, string | null>;
     
 }
 

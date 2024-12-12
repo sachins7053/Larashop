@@ -8,6 +8,7 @@ import { ImageSlider } from '@/components/image-slider';
 import Footer from '@/components/Footer';
 import Guest from '@/Layouts/GuestLayout';
 
+
 interface Product {
   id: string | number;
   name: string;
@@ -113,13 +114,13 @@ export default function Welcome({
                         <ImageSlider slides={arrayOfSlides} />
                         
                         <section className="mb-12">
-                            <ProductGrid
+                            {/* <ProductGrid
                             products={featuredProducts}
                             title="Featured Products"
                             columns={{ sm: 2, md: 4, lg: 4 }}
                             onAddToCart={handleAddToCart}
                             onToggleWishlist={handleToggleWishlist}
-                            />
+                            /> */}
                         </section>
                     </div>
                 </div>

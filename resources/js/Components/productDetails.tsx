@@ -110,8 +110,7 @@ export function ProductDetails({ productData }: ProductPageProps){
         price: parseFloat(selectedVariation.sale_price || "0"), 
         quantity: quantity,
         image: images[0] || "",
-        attribute_name: selectedVariation.attribute_name,
-        attribute_value: selectedVariation.attribute_value, 
+        attributes: {},
       };
     } else {
       
@@ -122,8 +121,7 @@ export function ProductDetails({ productData }: ProductPageProps){
         price: parseFloat(productData.sale_price?.toString() || "0"),
         quantity: quantity,
         image: images[0] || "",
-        attribute_name: productData.variations[0]?.attribute_name || "Default",
-        attribute_value: productData.variations[0]?.attribute_value || "default value",  
+        attributes: {}, 
       };
     }
    

@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { ProductGrid } from '@/components/product-grid';
+import { ProductType } from '@/types'
 
 
 interface ProductGridData {
@@ -18,7 +19,7 @@ interface ProductGridData {
 }
 
 const CategoryProduct = (data:any )=> {
-    const [productsData, setProductsData] = useState<ProductGridData[]>([]);
+    const [productsData, setProductsData] = useState<ProductType[]>([]);
     
     useEffect (() => {
         setProductsData(data.category.products);

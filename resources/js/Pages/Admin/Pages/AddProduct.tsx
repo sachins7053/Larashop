@@ -150,6 +150,7 @@ export default function AddProduct( { categories}: PageProps<{categories:Categor
         if(isVariableProduct === true) {
         formData.append("variations", JSON.stringify(variations));
         }
+        console.log("FormData",productName);
     
         try {
             const response = await axios.post("/api/products", formData, {
