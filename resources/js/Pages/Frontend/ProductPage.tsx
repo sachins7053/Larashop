@@ -4,10 +4,11 @@ import ProductDetails from "@/components/ProductDetails/ProductDetails";
 import { PageProps } from "@/types";
 import { ProductGrid } from "@/components/product-grid";
 import { ProductType} from "@/types";
+import { ReviewForm } from "@/components/Reviews/ReviewForm";
 
 
 
-export default function ProductShow ( {product, relatedProducts }:PageProps<{ product:ProductType; relatedProducts:ProductType[] }>) {
+export default function ProductShow ( {product, relatedProducts, auth }:PageProps<{ product:ProductType; relatedProducts:ProductType[] }>) {
 
   const productData = typeof product === "string" ? JSON.parse(product) : product;
 
@@ -40,6 +41,25 @@ export default function ProductShow ( {product, relatedProducts }:PageProps<{ pr
                                   onToggleWishlist={handleToggleWishlist}
                                   />
                               </section>
+                    </div>
+
+                    <div className="relative w-full mx-auto max-w-2xl px-4 lg:max-w-8xl">
+
+                        <div className="md:flex">
+
+                            <div className="basis-1/3 w-full">
+                                {auth?.user? <ReviewForm productId={product.id} />: '' }
+                                
+                            </div>
+                            <div className="basis-2/3 w-full p-4">
+                                
+                                No review Found.
+
+                            </div>
+
+
+                        </div>
+
                     </div>
                 </div>
             </Guest>

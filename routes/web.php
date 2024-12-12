@@ -9,7 +9,9 @@ use App\Http\Controllers\Dashboard\ProductCategoryController;
 use App\Http\Controllers\Dashboard\PartnerController;
 use App\Http\Controllers\Dashboard\LeadController;
 use App\Http\Controllers\Dashboard\OrderController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CartCheckoutCouponController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +55,7 @@ Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(funct
     Route::get('/myaccount/orders', [CustomerController::class, 'orders'])->name('customer.orders');
     Route::get('/myaccount/orders/{orderid}', [CustomerController::class, 'Order_details'])->name('orders.details');
     Route::get('/myaccount/profile', [CustomerController::class, 'profile'])->name('customer.profile');
+    Route::post('review/add', [ReviewController::class, 'submitReview'])->name('submit.review');
 
 });
 
@@ -109,6 +112,10 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.show');
     Route::put('/order/{id}', [OrderController::class, 'change_status'])->name('order.statusChange');
     Route::post('/order/assignVendor/', [OrderController::class, 'assignVendor'])->name('assignVendor');
+    Route::get('/coupons', [CouponController::class, 'index']);
+    Route::get('/coupon/add', [CouponController::class, 'addCoupon'])->name('coupon.store');
+    Route::post('/coupon/add', [CouponController::class, 'store']);
+    Route::get('/coupon/{id}', [CouponController::class, 'show'])->name('coupon.show');
     Route::get('/users', [ProfileController::class, 'index'])->name('user.index');
     Route::get('/user/{id}', [ProfileController::class, 'show'])->name('user.show');
     Route::get('/user/edit/{id}', [ProfileController::class, 'edit'])->name('user.edit');
