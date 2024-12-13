@@ -11,7 +11,7 @@ import { ReviewForm } from "@/components/Reviews/ReviewForm";
 export default function ProductShow ( {product, relatedProducts, auth }:PageProps<{ product:ProductType; relatedProducts:ProductType[] }>) {
 
   const productData = typeof product === "string" ? JSON.parse(product) : product;
-
+  console.log(productData)
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string | null>>({});
 
   const handleVariationSelect = (attributeName: string, value: string) => {
@@ -48,7 +48,7 @@ export default function ProductShow ( {product, relatedProducts, auth }:PageProp
                         <div className="md:flex">
 
                             <div className="basis-1/3 w-full">
-                                {auth?.user? <ReviewForm productId={product.id} />: '' }
+                                {auth?.user? <ReviewForm productId={product.id} />: 'Please Login First To Submit Review' }
                                 
                             </div>
                             <div className="basis-2/3 w-full p-4">

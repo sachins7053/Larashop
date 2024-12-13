@@ -17,7 +17,8 @@ use App\Jobs\ProcessProductExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BulkProductUpload;
 use App\Models\ProductVariation;
-
+use App\Models\ProductAttribute;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -38,7 +39,7 @@ class ProductController extends Controller
                             'value_name' => $value->values
                         ];
 
-                        // Find if the attribute already exists
+                        
                         $existingAttribute = '';
                         foreach ($attributes as &$attribute) {
                             if (is_array($attribute) && isset($attribute['attribute_name']) && $attribute['attribute_name'] === $attributeName) {
@@ -48,14 +49,14 @@ class ProductController extends Controller
                         }
 
                         if ($existingAttribute) {
-                            // Append to the existing attribute values if not already present
+                            
                             if (!in_array($attributeValue, $existingAttribute['values'])) {
                                 $existingAttribute['values'][] = $attributeValue;
                             }
                         } else {
-                            // Create a new attribute entry
+                            
                             $attributes[] = [
-                                'attribute_id' => $variation->variation_id, // Assuming unique ID for each attribute type
+                                'attribute_id' => $variation->variation_id, 
                                 'attribute_name' => $attributeName,
                                 'values' => [$attributeValue]
                             ];
@@ -109,7 +110,7 @@ class ProductController extends Controller
         $product = Product::where('id', $id)->first();
         $variations = $product->variations;
         return Inertia::render('Admin/Pages/EditProduct', compact('product'));
-        //return Inertia::render('Admin/Pages/AddProduct');
+        
     }
 
 
@@ -123,12 +124,12 @@ class ProductController extends Controller
     public function ProductDisplay($id)
     {   
     
-        // $product = Product::with(['categories.products','variations' => function($query){
-        //     $query->leftJoin('variation_attributes as var_att','var_att.variation_id', 'product_variations.variation_id')->leftjoin('attribute_values as value', 'value.value_id', 'var_att.value_id')->leftjoin('attributes', 'attributes.attribute_id','value.attribute_id')->select('attributes.attribute_name','product_variations.*','var_att.*', 'value.*');
-        // }])->find($id);
-        // $product = Product::with(['categories.products','variations' => function($query){
-        //     $query->leftJoin('attributes','attributes.attribute_id', 'product_variations.attribute_id')->select('attributes.*','product_variations.*');
-        // }])->find($id);
+        
+        
+        
+        
+        
+        
 
         $productsData = Product::with('categories')
     ->leftJoin('product_variations as v', 'products.id', '=', 'v.product_id')
@@ -136,32 +137,38 @@ class ProductController extends Controller
     ->leftJoin('attribute_values as value', 'value.value_id', '=', 'va.value_id')
     ->leftJoin('attributes as a', 'a.attribute_id', '=', 'value.attribute_id')
     ->select(
-        'products.*',  // Selecting all fields from products
+        'products.*',  
         'v.variation_id',
         'v.price as variation_price',
         'v.sale_price as variation_sale_price',
         'v.sku',
         'v.stock',
-        'va.attribute_id',
+        
         'va.variation_attribute_id',
         'value.value_id',
         'value.value as attribute_value',
-        'a.attribute_name'
+        'a.attribute_name',
+        'a.attribute_id'
     )
-    ->where('products.id', '=', $id)
+    ->where('products.slug', '=', $id)
+    ->where('products.status', '=', 'published')
     ->get();
+        // dd($productsData);
 
-// Check if the product type is 'variable'
+        if ($productsData->first() == null) {
+            return Redirect::route('404');
+        }
+
 if ($productsData->first()->product_type == 'variable') {
-    // Group variations by product ID and variation_id
+    
     $products = $productsData->groupBy('id')->map(function ($group) {
-        $product = $group->first(); // Get the main product details
+        $product = $group->first(); 
         
-        // Group variations by `variation_id`
+        
         $variations = $group->groupBy('variation_id')->map(function ($variationGroup) {
-            $firstVariation = $variationGroup->first(); // Base details for the variation
+            $firstVariation = $variationGroup->first(); 
             
-            // Collect attributes for this variation
+            
             $attributes = $variationGroup->filter(function ($item) {
                 return $item->attribute_name !== null && $item->attribute_value !== null;
             })->map(function ($item) {
@@ -171,7 +178,7 @@ if ($productsData->first()->product_type == 'variable') {
                 ];
             })->values();
             
-            // Return merged variation with attributes
+            
             return [
                 'variation_id' => $firstVariation->variation_id,
                 'price' => $firstVariation->variation_price,
@@ -180,42 +187,28 @@ if ($productsData->first()->product_type == 'variable') {
                 'stock' => $firstVariation->stock,
                 'attributes' => $attributes,
             ];
-        })->values(); // Ensure the variations are returned as a collection
+        })->values(); 
         
-        // Assign merged variations to the product
+        
         $product->variations = $variations;
         
         return $product;
-    })->values()->first(); // Fetch the first product as we expect a single product
+    })->values()->first(); 
 
-    // Convert to JSON
+    
     $product = $products->toJson(JSON_PRETTY_PRINT);
 } else {
-    // For non-variable products, just return the product with price from products table
+    
     $product = $productsData->first();
 
-    // Set the price and sale_price from the products table
+    
     $product->price = $product->price ?? null;
     $product->sale_price = $product->sale_price ?? null;
-}
-
-// Optionally return or output the $product
-
-    
-    // Optionally return or output the $product
-    
-
-// echo $product;
-
-    
+} 
        
-        
-        if (!$product) {
-            return Redirect::route('404');
-        }
 
         $relatedProducts = Product::with('categories.products')
-        ->where('id', '!=', $id) // Exclude the current product
+        ->where('id', '!=', $id) 
         ->get();
 
       
@@ -231,12 +224,104 @@ if ($productsData->first()->product_type == 'variable') {
         return Inertia::render('Frontend/Category');
     }
 
-    public function search(Request $request) :Response {
-        $keyword = $request->query('keyword');
-        $products = Product::where('name', 'like', '%' . $keyword . '%')->with('categories', 'variations')->get();
-        // dd($products);
-        return Inertia::render('Frontend/Search', compact( 'keyword','products'));
+    public function search(Request $request): Response {
+        // Start building the query
+        $query = Product::with('categories')
+        ->leftJoin('product_variations as v', 'products.id', '=', 'v.product_id')
+        ->leftJoin('variation_attributes as va', 'va.variation_id', '=', 'v.variation_id')
+        ->leftJoin('attribute_values as value', 'value.value_id', '=', 'va.value_id')
+        ->leftJoin('attributes as a', 'a.attribute_id', '=', 'value.attribute_id')
+        ->select(
+            'products.*',  
+            'v.variation_id',
+            'v.price as variation_price',
+            'v.sale_price as variation_sale_price',
+            'v.sku',
+            'v.stock',
+            'va.variation_attribute_id',
+            'value.value_id',
+            'value.value as attribute_value',
+            'a.attribute_name',
+            'a.attribute_id'
+        )
+        ->where('products.name', 'like', '%' . $request->query('keyword') . '%')->where('products.status', 'published');
+
+        if ($request->filled('category')) {
+            $category = $request->input('category');
+            $query->whereHas('categories', function ($subQuery) use ($category) {
+                // Filter for products that have any of the selected attributes
+                $subQuery->whereIn('product_categories.id', $category);
+            });
+        }
+    
+        // Apply price_min filter
+        if ($request->filled('price_min')) {
+            $query->where(function ($subQuery) use ($request) {
+                // Filter for variable products
+                $subQuery->where('v.price', '>=', $request->input('price_min'))
+                    // Filter for regular products (non-variable)
+                    ->orWhere('products.price', '>=', $request->input('price_min'));
+            });
+        }
+    
+        // Apply price_max filter
+        if ($request->filled('price_max')) {
+            $price_max = $request->input('price_max');
+            
+            $query->where(function ($subQuery) use ($price_max) {
+                // Filter for variable products
+                $subQuery->where('v.sale_price', '<=', $price_max)
+                    ->orWhere('v.price', '<=', $price_max)
+                    // Filter for regular products (non-variable)
+                    ->orWhere('products.sale_price', '<=', $price_max)
+                    ->orWhere('products.price', '<=', $price_max);
+            });
+        }
+
+        // Apply attributes filter
+        if ($request->filled('attributes')) {
+            $attributeFilters = $request->input('attributes');
+    
+            // Apply filtering on product variations using the selected attribute filters
+            $query->whereHas('variations', function ($subQuery) use ($attributeFilters) {
+                // Filter for products that have any of the selected attributes
+                $subQuery->whereIn('va.value_id', $attributeFilters);
+            });
+        }
+        
+        $maxPrice = $query->max(DB::raw('COALESCE(v.sale_price, v.price, products.sale_price, products.price)'));
+
+
+        // Get the minimum price value after applying all filters (but without pagination)
+        $minPrice = $query->min(DB::raw('COALESCE(v.sale_price, v.price, products.sale_price, products.price)'));
+// Apply any additional filters, such as category or rating
+        // If needed, you can add further filter logic here
+    
+        // Execute the query and paginate the results
+        $products = $query->paginate(2);
+    
+        // Get all categories and attributes for filtering
+        $categories = ProductCat::all();
+        $attributes = ProductAttribute::with('values')->get();
+    
+        // Return the response to the frontend (Inertia.js)
+        return inertia('Frontend/SearchResult', [
+            'keyword' => $request->query('keyword'),
+            'products' => $products->items(), // Pass only the product data (not the full pagination object)
+            'categories' => $categories,
+            'attributes' => $attributes,
+            'pagination' => [
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+            ],
+            'filters' => $request->only(['category', 'price_min', 'price_max', 'rating', 'attributes']),
+            'max_price' => $maxPrice,  
+            'min_price' => $minPrice,
+        ]);
     }
+    
 
     public function bulkUploadForm(Request $request): Response{
         return Inertia::render('Admin/Pages/BulkProductUpload');
@@ -257,7 +342,7 @@ if ($productsData->first()->product_type == 'variable') {
                     'zip_file' => 'nullable|mimes:zip',
                 ]);
 
-                // Upload Excel File
+                
                 $excelPath = $request->file('file')->store('temp/uploads', 'public');
                 $zipPath = $request->file('zip_file')->store('temp/uploads' , 'public');
                 
@@ -270,7 +355,7 @@ if ($productsData->first()->product_type == 'variable') {
                 ]);
               
                 
-                // Dispatch Job for Excel Processing with fileUpload ID
+                
                 
                     ProcessProductExcel::dispatch($fileUpload , $zipPath);
                     return redirect()->intended(route('bulkproduct.status', absolute:false));

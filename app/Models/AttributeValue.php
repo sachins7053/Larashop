@@ -19,17 +19,17 @@ class AttributeValue extends Model
 
     public function variations(){
         
-        return $this->belongsToMany(ProductVariation::class, 'variation_attributes', 'value_id', 'variation_id');
+        return $this->belongsToMany(ProductVariation::class, 'variation_attributes', 'value_id', 'variation_id'->withPivot('value_id'));
     }
 
 
-    public function variation()
-    {
+    // public function variation()
+    // {
         
-        return $this->belongsToMany( ProductVariation::class,
-        'variation_attributes',       
-        'value_id',              
-        'variation_id'                    
-        )->withPivot('active', 'created_by');;
-    }
+    //     return $this->belongsToMany( ProductVariation::class,
+    //     'variation_attributes',       
+    //     'value_id',              
+    //     'variation_id'                    
+    //     )->withPivot('active', 'created_by');;
+    // }
 }

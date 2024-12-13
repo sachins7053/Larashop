@@ -30,7 +30,7 @@ class ProductVariation extends BaseModel
 
     public function attributevalues(){
         
-        return $this->belongsToMany(AttributeValue::class, 'variation_attributes', 'variation_id', 'value_id',)->withPivot('price','sale_price');
+        return $this->belongsToMany(AttributeValue::class, 'variation_attributes', 'variation_id', 'value_id',)->withPivot('value_id');
     }
 
 

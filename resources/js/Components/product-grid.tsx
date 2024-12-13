@@ -19,7 +19,7 @@ interface ProductGridProps {
 
 export function ProductGrid({
   products = [],
-  title = "Products",
+  title = "",
   columns = { sm: 2, md: 3, lg: 4, xl: 5 },
   onAddToCart,
   onToggleWishlist
