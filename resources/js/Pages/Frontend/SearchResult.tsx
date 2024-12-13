@@ -5,20 +5,12 @@ import Guest from '@/Layouts/GuestLayout';
 import { ProductGrid } from '@/components/product-grid';
 import { ProductType } from '@/types'
 import { Button } from '@/components/ui/button';
-import {
-    Sheet,
-    SheetContent,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-  } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet"
 import { Label } from '@/components/ui/label';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from "@/components/ui/slider"
 import { Input } from '@/components/ui/input';
-
   
 
 
@@ -69,15 +61,12 @@ interface Props {
     min_price: number;
     max_price: number;
 }
-interface priceRange {
-    priceRange: [number, number] 
-}
 
 const SearchResults: React.FC<Props> = ({ keyword, products, categories, attributes, filters,min_price, max_price , pagination }) => {
     const [category, setCategory] = useState(filters.category || '');
     const [priceMin, setPriceMin] = useState(filters.price_min || '');
     const [priceMax, setPriceMax] = useState(filters.price_max || '');
-    const [rating, setRating] = useState(filters.rating || '');
+    const [rating, setRating] = useState(filters.rating || ''); 
     const [priceRange, setPriceRange] = useState<number[]>([min_price, max_price])
     const [selectedAttributes, setSelectedAttributes] = useState<Record<number, number[]>>(filters.attributes || {});
     console.log(products, "categories", categories, "attributes", attributes, "filters", filters)
@@ -92,7 +81,7 @@ const SearchResults: React.FC<Props> = ({ keyword, products, categories, attribu
 
     console.log(min_price, max_price ,'filters' , priceMin, priceMax)
 
-    const applyFilters = () => {
+    const handlePageChange = (page: number) => {
         // Flatten selectedAttributes for query string compatibility
         const attributesQuery: Record<string, number[]> = {};
         Object.keys(selectedAttributes).forEach((attributeId) => {
@@ -104,9 +93,10 @@ const SearchResults: React.FC<Props> = ({ keyword, products, categories, attribu
             keyword:keyword,
             category,
             price_min: priceRange[0],
-            price_max: priceRange[0],
+            price_max: priceRange[1],
             rating,
-            ...attributesQuery, // Spread the transformed attributes
+            ...attributesQuery,
+            page:  page 
         });
     };
 
@@ -136,7 +126,7 @@ const SearchResults: React.FC<Props> = ({ keyword, products, categories, attribu
                 <h2 className="text-2xl font-bold mb-6"> Search Result For {keyword}</h2>
                     <Sheet>
                         <SheetTrigger><Button size='lg' variant='outline' >Filter </Button></SheetTrigger>
-                            <SheetContent>
+                            <SheetContent className='overflow-y-auto'>
                                 <SheetHeader>
                                 <SheetTitle>Filter</SheetTitle>                              
                                 </SheetHeader>
@@ -194,7 +184,9 @@ const SearchResults: React.FC<Props> = ({ keyword, products, categories, attribu
                                 </div>
                                 </div>
                                 <SheetFooter className='justify-start'>
-                                    <Button className='hover:bg-slate-800' variant={'dark'} onClick={applyFilters}>Apply Filters</Button>
+                                    <Button className='hover:bg-slate-800' variant={'dark'} onClick={(e) => {e.preventDefault(); 
+                                handlePageChange(1)
+                            }}>Apply Filters</Button>
                                 </SheetFooter>
                         </SheetContent>
                     </Sheet>
@@ -211,19 +203,24 @@ const SearchResults: React.FC<Props> = ({ keyword, products, categories, attribu
                                   />
                               </section>
                     <div>
-                        <nav className='w-full mx-auto space-x-2 '>
-                            {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((page) => (
-                                <Link
-                                    key={page}
-                                    href={`?page=${page}`}
-                                    className={page === pagination.current_page ? 'font-bold' : ''}
-                                ><Button className='hover:bg-black hover:text-white' variant={page === pagination.current_page ? 'dark' :'outline'} size="sm">
-                                    {page}
-
-                                </Button>
-                                </Link>
-                            ))}
+                    <nav className="w-full mx-auto flex justify-center space-x-2">
+                        {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((page) => (
+                            <Link
+                            key={page}
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault(); // Prevent default link behavior
+                                handlePageChange(page); // Call the handlePageChange function
+                            }}
+                            className={page === pagination.current_page ? 'font-bold' : ''}
+                            >
+                            <Button className="hover:bg-black hover:text-white" variant={page === pagination.current_page ? 'dark' : 'outline'} size="sm">
+                                {page}
+                            </Button>
+                            </Link>
+                        ))}
                         </nav>
+
                     </div>
                 </div>
         </div>

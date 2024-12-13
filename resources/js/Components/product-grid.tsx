@@ -3,6 +3,7 @@ import { Heart } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ProductType } from '@/types'
+import { Link } from '@inertiajs/react'
 
 interface ProductGridProps {
   products?: ProductType[]
@@ -53,7 +54,8 @@ export function ProductGrid({
       {title && <h2 className="text-2xl font-bold mb-6">{title}</h2>}
       <div className={`grid ${getGridColumns()} gap-6 gap-y-12`}>
         {products.map((product) => (
-          <div key={product.id} className="overflow-hidden">
+          <Link href={route('product.slug', {slug: product.slug})} key={product.id}>
+          <div className="overflow-hidden">
             <div className="relative transition duration-500 rounded hover:shadow-md overflow-hidden group">
               <img
                 src={product?.images == null ? "" : product.images[0]}
@@ -73,7 +75,7 @@ export function ProductGrid({
               </Button>
             </div>
             <div className="py-1">
-              <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.name}</h3>
+              <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.name}{product.attribute_value && `- ${product.attribute_value}`}</h3>
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-muted-foreground line-through text-sm mr-2">
@@ -93,6 +95,7 @@ export function ProductGrid({
               </div>
             </div>
           </div>
+          </Link>
         ))}
       </div>
     </div>

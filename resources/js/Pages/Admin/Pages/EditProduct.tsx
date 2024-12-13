@@ -25,19 +25,24 @@ interface Product {
     content: string;
     sale_price: string;
     images : string[] | null;
+    is_variation : boolean | number;
 
+}
+interface Category {
+    id: number;
+    name: string;
 }
 
 
 // Mock data for categories and brands
-const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Books']
+// const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Books']
 const brands = ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
 
 
-export default function EditProduct( {product }:PageProps<{ product:Product}> ) {
+export default function EditProduct( {product, categories, product_var }:PageProps<{ product:Product; categories:Category[]; product_var:any}> ) {
     const { toast } = useToast()
    
-    const [isVariableProduct, setIsVariableProduct] = useState(false)
+    const [isVariableProduct, setIsVariableProduct] = useState(product.is_variation == 1 ? true : false)
     const [mainImage, setMainImage] = useState<string>(product.images === null ? '' : product.images[0] )
     const [galleryImages, setGalleryImages] = useState<string[]>(product.images === null ? [] : product.images)
 
@@ -49,7 +54,9 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
     //const [productStatus, setProductStatus] = useState("draft");
     
 
-
+    console.log(product)
+    console.log("category",categories)
+    console.log("product_var", product_var)
 
     
     const [attributeGroups, setAttributeGroups] = useState([
@@ -173,14 +180,13 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
+                    Add New Product
                 </h2>
             }
         >
-            <Head title="Dashboard" />
+            <Head title="Add New Product" />
 
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-6">Add New Product</h1>
                 <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-6">
                     <div className="md:col-span-2 space-y-6 p-6 bg-white rounded-lg">
                     <div>
@@ -390,7 +396,7 @@ export default function EditProduct( {product }:PageProps<{ product:Product}> ) 
                                 </SelectTrigger>
                                 <SelectContent>
                                 {categories.map((category) => (
-                                    <SelectItem key={category} value={category.toLowerCase()}>{category}</SelectItem>
+                                    <SelectItem key={category.id} value={category.id.toString()}>{category.name}</SelectItem>
                                 ))}
                                 </SelectContent>
                             </Select>

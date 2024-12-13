@@ -108,8 +108,48 @@ class ProductController extends Controller
     public function Edit($id): Response 
     {   
         $product = Product::where('id', $id)->first();
-        $variations = $product->variations;
-        return Inertia::render('Admin/Pages/EditProduct', compact('product'));
+
+        $variations = ProductVariation::where('product_variations.product_id', $product->id)
+        ->leftJoin('variation_attributes as va', 'va.variation_id', '=', 'product_variations.variation_id')
+        ->leftJoin('attribute_values as value', 'value.value_id', '=', 'va.value_id')
+        ->leftJoin('attributes as a', 'a.attribute_id', '=', 'value.attribute_id')
+        ->select(
+            'product_variations.*',
+            'va.variation_attribute_id',
+            'value.value_id',
+            'value.value as attribute_value',
+            'a.attribute_name',
+            'a.attribute_id'
+        )
+        ->get();
+
+        $product_var = $variations->groupBy('variation_id')->map(function ($variationGroup) {
+            $firstVariation = $variationGroup->first(); 
+            
+            
+            $attributes = $variationGroup->filter(function ($item) {
+                return $item->attribute_name !== null && $item->attribute_value !== null;
+            })->map(function ($item) {
+                return [
+                    'attribute_name' => $item->attribute_name,
+                    'attribute_value' => $item->attribute_value,
+                ];
+            })->values();
+            
+            
+            return [
+                'variation_id' => $firstVariation->variation_id,
+                'price' => $firstVariation->price,
+                'sale_price' => $firstVariation->sale_price,
+                'sku' => $firstVariation->sku,
+                'stock' => $firstVariation->stock,
+                'attributes' => $attributes,
+            ];
+        })->values(); 
+
+        // $product_var = $product->variations;
+        $categories = ProductCat::all();
+        return Inertia::render('Admin/Pages/EditProduct', compact('product', 'categories', 'product_var'));
         
     }
 
@@ -298,7 +338,7 @@ if ($productsData->first()->product_type == 'variable') {
         // If needed, you can add further filter logic here
     
         // Execute the query and paginate the results
-        $products = $query->paginate(2);
+        $products = $query->paginate(1);
     
         // Get all categories and attributes for filtering
         $categories = ProductCat::all();
