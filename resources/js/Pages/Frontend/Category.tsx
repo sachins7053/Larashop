@@ -23,11 +23,13 @@ async function fetchCategoryProducts(category: string, start: number, end: numbe
   }
 
   const data = await response.json()
+  console.log('data' , data)
   return data 
 }
 
 export default function CategoryPage(data: any) {
   const { category } = data;
+console.log(category )
   
   const [initialProducts, setInitialProducts] = useState<ProductGridData[]>([]);
   const [allProductsLoaded, setAllProductsLoaded] = useState(false); 

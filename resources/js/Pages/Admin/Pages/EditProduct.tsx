@@ -10,12 +10,14 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import FileUploader from '@/components/file-uploader';
 import { useToast } from "@/hooks/use-toast"
 import { PageProps } from '@/types';
 import {useForm} from '@inertiajs/react';
+import Select from "react-select";
+import { Separator } from '@/components/ui/separator';
 
 interface Product {
     id: number;
@@ -33,101 +35,97 @@ interface Category {
     name: string;
 }
 
+type AttributeValue = {
+    value_id: number;
+    value: string;
+  };
+  
+  type Attribute = {
+    attribute_id: number;
+    attribute_name: string;
+    values: AttributeValue[];
+  };
+  
+  type Variation = {
+    attributes: { attribute_name: string; attribute_value: string }[];
+    mrp: string;
+    salePrice: string;
+    stock: string;
+    sku: string;
+  };
+
 
 // Mock data for categories and brands
 // const categories = ['Electronics', 'Clothing', 'Home & Garden', 'Books']
 const brands = ['Apple', 'Samsung', 'Nike', 'Adidas', 'IKEA']
 
 
-export default function EditProduct( {product, categories, product_var }:PageProps<{ product:Product; categories:Category[]; product_var:any}> ) {
+export default function EditProduct( {product, categories, product_var , Attributes}:PageProps<{ product:Product; categories:Category[]; product_var:Variation[]; Attributes:Attribute[];}> ) {
     const { toast } = useToast()
    
     const [isVariableProduct, setIsVariableProduct] = useState(product.is_variation == 1 ? true : false)
     const [mainImage, setMainImage] = useState<string>(product.images === null ? '' : product.images[0] )
     const [galleryImages, setGalleryImages] = useState<string[]>(product.images === null ? [] : product.images)
-
     //const [attributeGroups, setAttributeGroups] = useState([]);
     //const [variations, setVariations] = useState([]);
 
     const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     //const [productStatus, setProductStatus] = useState("draft");
+    const [productStatus, setProductStatus] = useState('draft')
     
 
     console.log(product)
     console.log("category",categories)
     console.log("product_var", product_var)
+    console.log("Attributes", Attributes)
 
+
+   
     
-    const [attributeGroups, setAttributeGroups] = useState([
-      { name: 'Size', values: ['S', 'M', 'L'] },
-      { name: 'Color', values: ['Red', 'Blue', 'Green'] },
-      { name: 'Pattern', values: ['Solid', 'Striped', 'Floral'] }
-    ])
-      
-    const [variations, setVariations] = useState([{ attributes: {}, mrpPrice: '', salePrice: '', stock: '' }])
-    const [productStatus, setProductStatus] = useState('draft')
-  
-    const addAttributeGroup = () => {
-      setAttributeGroups([...attributeGroups, { name: '', values: [''] }])
+    const [selectedAttributes, setSelectedAttributes] = useState<{
+        [key: string]: string[];
+      }>({});
+      const [variations, setVariations] = useState<Variation[]>(product_var || []);
+    
+      // Handle attribute value selection
+      const handleSelectValue = (attributeName: string, selectedValues: any) => {
+        setSelectedAttributes((prev) => {
+          return {
+            ...prev,
+            [attributeName]: selectedValues ? selectedValues.map((item: any) => item.value) : [],
+          };
+        });
+      };
+    
+      // Generate combinations for variations
+      const generateVariations = () => {
+        const keys = Object.keys(selectedAttributes);
+        if (keys.length === 0) return;
+    
+        const combinations = keys.reduce<string[][]>(
+          (acc, key) =>
+            acc.flatMap((combination) =>
+              selectedAttributes[key].map((value) => [...combination, `${key}:${value}`])
+            ),
+          [[]]
+        );
+    
+        const newVariations = combinations.map((combination) => ({
+          attributes: combination.map((item) => {
+            const [attribute_name, attribute_value] = item.split(":");
+            return { attribute_name, attribute_value };
+          }),
+          mrp: "",
+          salePrice: "",
+          stock: "",
+          sku: "",
+        }));
+    
+        setVariations(newVariations);
     }
-  
-    const updateAttributeGroup = (
-        index: number,
-        field: 'name' | 'values',
-        value: string | string[]
-      ) => {
-        const newGroups = [...attributeGroups]
-      
-        if (field === 'name' && typeof value === 'string') {
-          newGroups[index][field] = value
-        } else if (field === 'values' && Array.isArray(value)) {
-          newGroups[index][field] = value
-        } else {
-          throw new Error("Type mismatch: 'name' expects a string and 'values' expects a string[]")
-        }
-      
-        setAttributeGroups(newGroups)
-      }
-      
-  
-    const removeAttributeGroup = (index: number) => {
-      setAttributeGroups(attributeGroups.filter((_, i) => i !== index))
-    }
-  
-    const addVariation = () => {
-      setVariations([...variations, { attributes: {}, mrpPrice: '', salePrice: '', stock: '' }])
-    }
-  
-    interface Variation {
-        attributes: { [key: string]: string }
-        mrpPrice: string
-        salePrice: string
-        stock: string
-      }
 
-
-      
-      const updateVariation = (index: number, field: keyof Variation | `attribute-${string}`, value: string) => {
-        const newVariations = [...variations]
-        
-        if (field.startsWith('attribute-')) {
-          const attributeName = field.split('-')[1]
-          newVariations[index].attributes = { 
-            ...newVariations[index].attributes, 
-            [attributeName]: value 
-          }
-        } else {
-          newVariations[index][field as keyof Variation] = value
-        }
-      
-        setVariations(newVariations)
-      }
-      
-  
-    const removeVariation = (index: number) => {
-      setVariations(variations.filter((_, i) => i !== index))
-    }
+   
 
     const {data , setData, put, processing, errors} = useForm({
 
@@ -187,7 +185,7 @@ export default function EditProduct( {product, categories, product_var }:PagePro
             <Head title="Add New Product" />
 
             <div className="container mx-auto px-4 py-8">
-                <form onSubmit={handleSubmit} className="grid md:grid-cols-3 gap-6">
+                <form  className="grid md:grid-cols-3 gap-6">
                     <div className="md:col-span-2 space-y-6 p-6 bg-white rounded-lg">
                     <div>
                         <Label htmlFor="productName">Product Name </Label>
@@ -227,115 +225,148 @@ export default function EditProduct( {product, categories, product_var }:PagePro
                     {isVariableProduct && (
                         <div className="space-y-6">
                         <h2 className="text-xl font-semibold">Product Attributes</h2>
-                        {attributeGroups.map((group, groupIndex) => (
-                            <Card key={groupIndex}>
-                            <CardContent className="pt-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <Label htmlFor={`attribute-group-${groupIndex}`}>Attribute Group</Label>
-                                    <Input
-                                    id={`attribute-group-${groupIndex}`}
-                                    value={group.name}
-                                    onChange={(e) => updateAttributeGroup(groupIndex, 'name', e.target.value)}
-                                    placeholder="e.g. Size, Color"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor={`attribute-values-${groupIndex}`}>Attribute Values</Label>
-                                    <Input
-                                    id={`attribute-values-${groupIndex}`}
-                                    value={group.values.join(', ')}
-                                    onChange={(e) => updateAttributeGroup(groupIndex, 'values', e.target.value.split(',').map(v => v.trim()))}
-                                    placeholder="e.g. Small, Medium, Large"
-                                    />
-                                </div>
-                                </div>
-                                <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                className="mt-4"
-                                onClick={() => removeAttributeGroup(groupIndex)}
-                                >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                Remove Attribute Group
-                                </Button>
-                            </CardContent>
-                            </Card>
-                        ))}
-                        <Button type="button" onClick={addAttributeGroup}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Attribute Group
-                        </Button>
 
-                        <h2 className="text-xl font-semibold">Product Variations</h2>
-                        {variations.map((variation, index) => (
-                            <Card key={index}>
-                            <CardContent className="pt-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                {attributeGroups.map((group) => (
-                                    <div key={group.name}>
-                                    <Label htmlFor={`variation-${index}-${group.name}`}>{group.name}</Label>
-                                    <Select onValueChange={(value) => updateVariation(index, `attribute-${group.name}`, value)}>
-                                        <SelectTrigger id={`variation-${index}-${group.name}`}>
-                                        <SelectValue placeholder={`Select ${group.name}`} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                        {group.values.map((value) => (
-                                            <SelectItem key={value} value={value}>{value}</SelectItem>
-                                        ))}
-                                        </SelectContent>
-                                    </Select>
+                        {/* Display all attributes */}
+                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 my-class">
+                                {Attributes?.map((attribute) => (
+                                <div key={attribute.attribute_id} className="border p-4 rounded shadow">
+                                    <h3 className="font-medium mb-2">{attribute.attribute_name}</h3>
+                                    <div className="space-y-2">
+                                    <Select
+                                        isMulti
+                                        options={attribute.values.map((value) => ({
+                                        value: value.value,
+                                        label: value.value,
+                                        }))}
+                                        onChange={(selectedValues) => handleSelectValue(attribute.attribute_name, selectedValues)}
+                                        value={selectedAttributes[attribute.attribute_name]?.map((value) => ({
+                                        value,
+                                        label: value,
+                                        }))}
+                                        placeholder={`Select ${attribute.attribute_name}`}
+                                    />
                                     </div>
+                                </div>
                                 ))}
-                                <div>
-                                    <Label htmlFor={`variation-${index}-mrp`}>MRP Price</Label>
-                                    <Input
-                                    id={`variation-${index}-mrp`}
-                                    type="number"
-                                    value={variation.mrpPrice}
-                                    onChange={(e) => updateVariation(index, 'mrpPrice', e.target.value)}
-                                    placeholder="0.00"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor={`variation-${index}-sale`}>Sale Price</Label>
-                                    <Input
-                                    id={`variation-${index}-sale`}
-                                    type="number"
-                                    value={variation.salePrice}
-                                    onChange={(e) => updateVariation(index, 'salePrice', e.target.value)}
-                                    placeholder="0.00"
-                                    />
-                                </div>
-                                <div>
-                                    <Label htmlFor={`variation-${index}-stock`}>Stock</Label>
-                                    <Input
-                                    id={`variation-${index}-stock`}
-                                    type="number"
-                                    value={variation.stock}
-                                    onChange={(e) => updateVariation(index, 'stock', e.target.value)}
-                                    placeholder="0"
-                                    />
-                                </div>
-                                </div>
-                                <Button
+                            </div>
+
+                            {/* Generate Variations Button */}
+                            <Button
                                 type="button"
-                                variant="destructive"
-                                size="sm"
-                                className="mt-4"
-                                onClick={() => removeVariation(index)}
-                                >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                Remove Variation
-                                </Button>
-                            </CardContent>
-                            </Card>
-                        ))}
-                        <Button type="button" onClick={addVariation}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Variation
-                        </Button>
+                                className="text-white px-4 py-2 rounded mt-4"
+                                onClick={generateVariations}
+                            >
+                                Generate Variations
+                            </Button>
+
+                            {/* Display Selected Attributes */}
+                            {selectedAttributes.length  && (
+                            <div className="mt-4">
+                                <h3 className="text-lg font-bold mb-4">Selected Attributes</h3>
+                                <div className="flex flex-wrap gap-2">
+                                {Object.keys(selectedAttributes).map((attributeName) => (
+                                    selectedAttributes[attributeName].map((value) => (
+                                    <div key={`${attributeName}-${value}`} className="bg-gray-200 px-3 py-1 rounded flex items-center">
+                                        <span>{`${attributeName}: ${value}`}</span>
+                                        <button
+                                        className="ml-2 text-red-500"
+                                        onClick={() => {
+                                            setSelectedAttributes((prev) => {
+                                            const updated = { ...prev };
+                                            updated[attributeName] = updated[attributeName].filter((v) => v !== value);
+                                            if (updated[attributeName].length === 0) {
+                                                delete updated[attributeName];
+                                            }
+                                            return updated;
+                                            });
+                                        }}
+                                        >
+                                        Remove
+                                        </button>
+                                    </div>
+                                    ))
+                                ))}
+                                </div>
+                            </div>
+                                )}
+
+                            {/* Display Generated Variations */}
+                            {variations.length > 0 && (
+                                <div className="mt-6">
+                                <h3 className="text-lg font-bold mb-4">Generated Variations</h3>
+                                <div className="space-y-4">
+                                    {variations?.map((variation, index) => (
+                                    <div key={index} className="border p-4 rounded shadow md:items-center md:justify-between">
+                                        <div className="flex space-x-5 mb-3">
+                                            {variation?.attributes.map((attr, i) => (
+                                                <>
+                                                    <p key={i}>
+                                                        <strong>{attr.attribute_name}:</strong> {attr.attribute_value}
+                                                    </p>
+                                                    <Separator orientation="vertical" />
+                                                </>
+                                            ))}
+                                        </div>
+                                        <div className='md:flex gap-5'>
+                                        <div className="w-full">
+                                        <Input
+                                            type="text"
+                                            placeholder="MRP"
+                                            className="w-full"
+                                            value={variation.mrp}
+                                            onChange={(e) => {
+                                            const updatedVariations = [...variations];
+                                            updatedVariations[index].mrp = e.target.value;
+                                            setVariations(updatedVariations);
+                                            }}
+                                        />
+                                        </div>
+                                        <div className="w-full">
+                                        <Input
+                                            type="text"
+                                            placeholder="Sale Price"
+                                            className="w-full"
+                                            value={variation.salePrice}
+                                            onChange={(e) => {
+                                            const updatedVariations = [...variations];
+                                            updatedVariations[index].salePrice = e.target.value;
+                                            setVariations(updatedVariations);
+                                            }}
+                                        />
+                                        </div>
+                                        <div className="w-full">
+                                        <Input
+                                            type="text"
+                                            placeholder="Stock"
+                                            className="w-full"
+                                            value={variation.stock}
+                                            onChange={(e) => {
+                                            const updatedVariations = [...variations];
+                                            updatedVariations[index].stock = e.target.value;
+                                            setVariations(updatedVariations);
+                                            }}
+                                        />
+                                        </div>
+                                            <div className="w-full">
+                                            <Input
+                                                type="text"
+                                                placeholder="SKU"
+                                                className="w-full border rounded px-3 py-2"
+                                                value={variation.sku}
+                                                onChange={(e) => {
+                                                const updatedVariations = [...variations];
+                                                updatedVariations[index].sku = e.target.value;
+                                                setVariations(updatedVariations);
+                                                }}
+                                            />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ))}
+                                </div>
+                                </div>
+                            )}
+                       
                         </div>
                     )}
                     </div>
@@ -390,7 +421,7 @@ export default function EditProduct( {product, categories, product_var }:PagePro
                         <div className="space-y-4">
                             <div>
                             <Label htmlFor="category">Category</Label>
-                            <Select>
+                            {/* <Select>
                                 <SelectTrigger id="category">
                                 <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
@@ -412,7 +443,7 @@ export default function EditProduct( {product, categories, product_var }:PagePro
                                     <SelectItem key={brand} value={brand.toLowerCase()}>{brand}</SelectItem>
                                 ))}
                                 </SelectContent>
-                            </Select>
+                            </Select> */}
                             </div>
                         </div>
                         </CardContent>
@@ -434,7 +465,7 @@ export default function EditProduct( {product, categories, product_var }:PagePro
                         </CardContent>
                     </Card>
 
-                    <Button type="submit" className="w-full">
+                    <Button onClick={handleSubmit} type="submit" className="w-full">
                         {productStatus ===   'draft' ? 'Save Draft' : 'Publish Product'}
                     </Button>
                     </div>

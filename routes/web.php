@@ -43,7 +43,7 @@ Route::get('/product/demo', [ProductController::class, 'ProductPage']);
 Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay'])->name('product.slug');
 Route::get('/category', [ProductController::class, 'Category']);
 Route::get('/checkout', [CartCheckoutCouponController::class, 'checkout']);
-Route::get('/category/{slug}', [ProductCategoryController::class, 'CategoryProduct']);
+Route::get('/category/{slug}', [ProductCategoryController::class, 'products']);
 Route::get('/search', [ProductController::class, 'Search'])->name('search');
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
 Route::get('login', [CustomerController::class, 'dashboard']);

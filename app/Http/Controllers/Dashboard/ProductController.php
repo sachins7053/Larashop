@@ -67,6 +67,8 @@ class ProductController extends Controller
         }
 
         return $attributes;
+
+
     }
 
     private function formatVariations($variations)
@@ -135,21 +137,23 @@ class ProductController extends Controller
                     'attribute_value' => $item->attribute_value,
                 ];
             })->values();
+
             
             
             return [
                 'variation_id' => $firstVariation->variation_id,
-                'price' => $firstVariation->price,
-                'sale_price' => $firstVariation->sale_price,
+                'mrp' => $firstVariation->price,
+                'salePrice' => $firstVariation->sale_price,
                 'sku' => $firstVariation->sku,
                 'stock' => $firstVariation->stock,
                 'attributes' => $attributes,
             ];
         })->values(); 
-
+        
+        $Attributes = ProductAttribute::with('values')->get(); 
         // $product_var = $product->variations;
         $categories = ProductCat::all();
-        return Inertia::render('Admin/Pages/EditProduct', compact('product', 'categories', 'product_var'));
+        return Inertia::render('Admin/Pages/EditProduct', compact('product', 'categories', 'product_var', 'Attributes'));
         
     }
 

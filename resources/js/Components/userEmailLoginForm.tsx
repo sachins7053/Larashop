@@ -51,7 +51,6 @@ const handleRegister: FormEventHandler = (e) => {
                         placeholder="Enter Your Email"
                         onChange={(e) => setData('email', e.target.value)}
                         value={data.email}
-                        
                         />
                 </div>
                 <div  className="mt-4">
@@ -73,7 +72,7 @@ const handleRegister: FormEventHandler = (e) => {
                 <InputError message={errors.email} />
             <form onSubmit={handleRegister}>
                 <div  className="mt-4">
-                    <InputLabel htmlFor="name" value="name" />
+                    <InputLabel htmlFor="name" value="Name" />
                     <Input
                         id="name"
                         name="name"
@@ -122,7 +121,7 @@ const handleRegister: FormEventHandler = (e) => {
                 <div className="mt-4">
                     <InputLabel
                         htmlFor="mobile"
-                        value="mobile"
+                        value="Mobile"
                     />
 
                     <Input
