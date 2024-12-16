@@ -1,5 +1,3 @@
-'use client'
-import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { Button } from "@/components/ui/button"
@@ -10,7 +8,6 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent } from "@/components/ui/card"
-import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import FileUploader from '@/components/file-uploader';
 import { useToast } from "@/hooks/use-toast"
@@ -28,6 +25,7 @@ interface Product {
     sale_price: string;
     images : string[] | null;
     is_variation : boolean | number;
+    status: string;
 
 }
 interface Category {
@@ -66,27 +64,40 @@ export default function EditProduct( {product, categories, product_var , Attribu
     const [isVariableProduct, setIsVariableProduct] = useState(product.is_variation == 1 ? true : false)
     const [mainImage, setMainImage] = useState<string>(product.images === null ? '' : product.images[0] )
     const [galleryImages, setGalleryImages] = useState<string[]>(product.images === null ? [] : product.images)
+    const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+    const [variations, setVariations] = useState<Variation[]>(product_var || []);
+    const [selectedAttributes, setSelectedAttributes] = useState<{
+        [key: string]: string[];
+      }>({});
     //const [attributeGroups, setAttributeGroups] = useState([]);
     //const [variations, setVariations] = useState([]);
 
     const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     //const [productStatus, setProductStatus] = useState("draft");
-    const [productStatus, setProductStatus] = useState('draft')
+    const [productStatus, setProductStatus] = useState(product.status || 'draft')
     
 
     console.log(product)
     console.log("category",categories)
     console.log("product_var", product_var)
     console.log("Attributes", Attributes)
-
+    console.log('variations', variations)
+    console.log('selectedCategories', selectedCategories)
 
    
     
-    const [selectedAttributes, setSelectedAttributes] = useState<{
-        [key: string]: string[];
-      }>({});
-      const [variations, setVariations] = useState<Variation[]>(product_var || []);
+  
+
+      const handleSelectChange = (selectedOptions: any) => {
+        // If no categories are selected, set the selected categories to an empty array
+        const selectedCategories = selectedOptions ? selectedOptions.map((option: any) => ({
+          id: option.value,
+          name: option.label
+        })) : [];
+        setSelectedCategories(selectedCategories);
+        setData('categories', selectedCategories)
+      };
     
       // Handle attribute value selection
       const handleSelectValue = (attributeName: string, selectedValues: any) => {
@@ -127,7 +138,7 @@ export default function EditProduct( {product, categories, product_var , Attribu
 
    
 
-    const {data , setData, put, processing, errors} = useForm({
+    const {data , setData, patch, processing, errors} = useForm({
 
         id: product.id ,
         name: product.name || '',
@@ -135,7 +146,9 @@ export default function EditProduct( {product, categories, product_var , Attribu
         description: product.description || '',
         content: product.content || '',
         sale_price: product.sale_price || '',
-        images : product.images || ''
+        images : product.images || '',
+        categories: selectedCategories,
+        variations: variations
 
     })
 
@@ -145,9 +158,12 @@ export default function EditProduct( {product, categories, product_var , Attribu
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
+
+        console.log("form data",data)
         
 
-        put( '/api/products') , {
+        patch(route('product.update', {id:product.id}),{
+
 
             onError : (errors:any) => {
                 console.log(errors)
@@ -166,23 +182,22 @@ export default function EditProduct( {product, categories, product_var , Attribu
                   })
 
             }, 
-
-        
-
         }
-        
-      };
+    
+    
+    ) };
   
+    console.error(errors)
 
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Add New Product
+                    Edit Product
                 </h2>
             }
         >
-            <Head title="Add New Product" />
+            <Head title="Edit Product" />
 
             <div className="container mx-auto px-4 py-8">
                 <form  className="grid md:grid-cols-3 gap-6">
@@ -421,6 +436,19 @@ export default function EditProduct( {product, categories, product_var , Attribu
                         <div className="space-y-4">
                             <div>
                             <Label htmlFor="category">Category</Label>
+                            <Select
+                                isMulti
+                                options={categories.map((category) => ({
+                                value: category.id,
+                                label: category.name,
+                                }))}
+                                onChange={handleSelectChange}
+                                value={selectedCategories.map((category) => ({
+                                value: category.id,
+                                label: category.name,
+                                }))}
+                                placeholder="Select categories"
+                            />
                             {/* <Select>
                                 <SelectTrigger id="category">
                                 <SelectValue placeholder="Select category" />

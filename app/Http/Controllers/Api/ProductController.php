@@ -52,16 +52,20 @@ class ProductController extends Controller
             'height' => $request->height,
             'length' => $request->length,
             'weight' => $request->weight,
-            
             'images' => $request->images,
             'sku' => $request->sku,
             'status' => $request->status,
         ]);
 
-        ProductCatLinking::Create([
-            'product_id' => $product->id,
-            'category_id' => $request->category,
-        ]);
+        if ($request->has('categories')) {
+
+            foreach($request->categories as $category) {
+            ProductCatLinking::Create([
+                'product_id' => $product->id,
+                'category_id' => $category['id'],
+            ]);
+        }
+        }
 
         // $categories = json_decode($request->input('categories'), true);
         // foreach($categories as $category){
@@ -73,6 +77,8 @@ class ProductController extends Controller
         // }
 
         if ($request->has('variations')) {
+
+
             $variations = json_decode($request->input('variations'), true);
  
             // Create variations
@@ -80,21 +86,27 @@ class ProductController extends Controller
             
             foreach ($variations as $variationData) {   
 
-            $variation = \App\Models\ProductVariation::create([
+            $variation = ProductVariation::create([
                     'product_id' =>  $product->id,
                     //'attributes' => json_encode($variationData['attributes']),
-                    'price' => $variationData['mrpPrice'],
+                    'price' => $variationData['mrp'],
                     'sale_price' => $variationData['salePrice'],
-                    'sku' => $variationData['stock']
+                    'stock' => $variationData['stock'],
+                    'sku' => $variationData['sku']
                 ]);
 
                 // Handle attribute values for this variation
-            if (isset($variationData['attribute_values'])) {
-                foreach ($variationData['attribute_values'] as $attributeValue) {
-                    $value = AttributeValue::where('value', $attributeValue)->first();
-                    if ($value) {
+            if (isset($variationData['attributes'])) {
+                foreach ($variationData['attributes'] as $attributeValue) {
+                    $value = AttributeValue::where('value', $attributeValue->attribute_value)->first();
+                    $attribute = ProductAttribute::where('attribute_name', $attributeValue->attribute_name)->first();
+                    if ($value && $attribute)  {
                         // Attach the attribute value to the variation
-                        $variation->VariationsAttributes()->attach($value->id);
+                       VariationAttribute::create([
+                        'variation_id' => $variation->id,
+                        'attribute_id' => $attribute->id,
+                        'value_id' => $value->id,
+                       ]);
                     }
                 }
             }

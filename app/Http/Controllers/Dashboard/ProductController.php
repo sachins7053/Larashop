@@ -17,82 +17,16 @@ use App\Jobs\ProcessProductExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\BulkProductUpload;
 use App\Models\ProductVariation;
+use App\Models\ProductCatLinking;
 use App\Models\ProductAttribute;
+use App\Models\AttributeValue;
+use App\Models\VariationAttribute;
 use Illuminate\Support\Facades\DB;
 
 
 
 class ProductController extends Controller
 {   
-    private function formatAttributes($variations)
-    {
-        $attributes = [];
-
-        foreach ($variations as $variation) {
-            if ($variation && isset($variation->name)) {
-                $attributeName = ucfirst($variation->name);
-
-                foreach ($variation->variationvalues as $value) {
-                    if ($value) {
-                        $attributeValue = [
-                            'value_id' => $value->variation_attribute_id,
-                            'value_name' => $value->values
-                        ];
-
-                        
-                        $existingAttribute = '';
-                        foreach ($attributes as &$attribute) {
-                            if (is_array($attribute) && isset($attribute['attribute_name']) && $attribute['attribute_name'] === $attributeName) {
-                                $existingAttribute = &$attribute;
-                                break;
-                            }
-                        }
-
-                        if ($existingAttribute) {
-                            
-                            if (!in_array($attributeValue, $existingAttribute['values'])) {
-                                $existingAttribute['values'][] = $attributeValue;
-                            }
-                        } else {
-                            
-                            $attributes[] = [
-                                'attribute_id' => $variation->variation_id, 
-                                'attribute_name' => $attributeName,
-                                'values' => [$attributeValue]
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-
-        return $attributes;
-
-
-    }
-
-    private function formatVariations($variations)
-    {
-        return $variations->map(function ($variation) {
-            $formattedAttributes = [];
-            if ($variation && isset($variation->name)) {
-                foreach ($variation->variationvalues as $value) {
-                    if ($value) {
-                        $formattedAttributes[ucfirst($variation->name)] = $value->values;
-                    }
-                }
-
-                return [
-                    'variation_id' => $variation->variation_id,
-                    'attributes' => $formattedAttributes,
-                    'price' => $variation->price,
-                    'stock' => $variation->stock_status
-                ];
-            }
-        })->filter()->toArray();
-    }
-        
-
 
 
         public function index(): Response 
@@ -157,6 +91,115 @@ class ProductController extends Controller
         
     }
 
+    public function Update(Request $request, $id)
+        {
+            $Product = Product::find($id);
+
+            if (!$Product) {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
+
+            // Validate incoming request data
+            $validated = $request->validate([
+                'name' => 'required|string|max:191',
+                'description' => 'nullable|string|max:400',
+                'content' => 'nullable|string',
+                'images' => 'nullable', // Assuming it's a string path
+                // 'status' => 'required|string|in:published,Active,draft', // Add any other statuses if necessary
+                'price' => 'required|integer|min:0',
+                'sale_price' => 'nullable|integer|min:0',
+            ]);
+
+            $product = Product::updateOrCreate(
+                ['id' => $request->id],
+                [
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'sale_price' => $request->sale_price,
+                'content' => $request->content,
+                'quantity' => $request->quantity,
+                'wide' => $request->wide,
+                'height' => $request->height,
+                'length' => $request->length,
+                'weight' => $request->weight,
+                'images' => $request->images,
+                'sku' => $request->sku,
+                // 'status' => $request->status,
+            ]);
+
+            if ($request->has('categories')) {
+
+                foreach($request->categories as $category) {
+                ProductCatLinking::updateOrCreate([
+                    'product_id' => $product->id,
+                    'category_id' => $category['id'],
+                ]);
+            }
+            }
+
+            if($request->has('variations')) {   
+
+                foreach ($request->variations as $variationData) {   
+
+                    // Create or update the variation
+                    $variation = ProductVariation::updateOrCreate(
+                        [
+                            'variation_id' => $variationData['variation_id'], // Assuming this is the unique identifier
+                        ],
+                        [
+                            'product_id' => $product->id,
+                            'price' => $variationData['mrp'],
+                            'sale_price' => $variationData['salePrice'],
+                            'stock' => $variationData['stock'],
+                            'sku' => $variationData['sku'],
+                            // Add other fields as necessary
+                        ]
+                    );
+                
+                    // Handle attribute values for this variation
+                    if (isset($variationData['attributes'])) {
+
+                        VariationAttribute::where('variation_id', $variation->id )->delete();
+
+                        foreach ($variationData['attributes'] as $attributeValue) {
+                            // Assuming attributeValue contains 'attribute_name' and 'value'
+                            $attributeName = $attributeValue['attribute_name'];
+                            $value = $attributeValue['attribute_value'];
+                
+                            // Retrieve the attribute ID based on the name
+                            $attribute = ProductAttribute::where('attribute_name', $attributeName)->first();
+                            $attributeId = $attribute ? $attribute->id : null;
+                
+                            // Retrieve the value ID based on the value
+                            $attributeValueRecord = AttributeValue::where('value', $value)->first();
+                            $valueId = $attributeValueRecord ? $attributeValueRecord->id : null;
+                
+                            // Only attach if both IDs are found
+                            if ($attributeId && $valueId) {
+                                // Attach the attribute to the variation without detaching existing ones
+                                VariationAttribute::create([
+                                    'variation_id' => $variation->id,
+                                    'attribute_id' => $attribute->id,
+                                    'value_id' => $value->id,
+                                   ]);
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            // Update Product with validated data
+            // $Product->update($validated);
+
+            // Return a success response
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'Product' => $Product
+            ], 200);
+        }
+
 
 
     public function ProductPage(): Response
@@ -167,14 +210,7 @@ class ProductController extends Controller
 
     public function ProductDisplay($id)
     {   
-    
-        
-        
-        
-        
-        
-        
-
+       
         $productsData = Product::with('categories')
     ->leftJoin('product_variations as v', 'products.id', '=', 'v.product_id')
     ->leftJoin('variation_attributes as va', 'va.variation_id', '=', 'v.variation_id')
@@ -187,7 +223,7 @@ class ProductController extends Controller
         'v.sale_price as variation_sale_price',
         'v.sku',
         'v.stock',
-        
+
         'va.variation_attribute_id',
         'value.value_id',
         'value.value as attribute_value',
