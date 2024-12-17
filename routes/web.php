@@ -9,6 +9,7 @@ use App\Http\Controllers\Dashboard\ProductCategoryController;
 use App\Http\Controllers\Dashboard\PartnerController;
 use App\Http\Controllers\Dashboard\LeadController;
 use App\Http\Controllers\Dashboard\OrderController;
+use App\Http\Controllers\Dashboard\HomePageController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CouponController;
@@ -86,6 +87,9 @@ Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(fu
 
 
 Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function () {
+    Route::get('/page-builder', [HomePageController::class, 'index'])->name('page-builder');
+    Route::get('/page/{id}', [HomePageController::class, 'getPage']);
+    Route::post('/page/save', [HomePageController::class, 'savePage']);
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');
     Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
     Route::get('/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');

@@ -71,23 +71,10 @@ export default function EditProduct( {product, categories, product_var , Attribu
       }>({});
     //const [attributeGroups, setAttributeGroups] = useState([]);
     //const [variations, setVariations] = useState([]);
-
-    const [category, setCategory] = useState("");
     const [brand, setBrand] = useState("");
     //const [productStatus, setProductStatus] = useState("draft");
     const [productStatus, setProductStatus] = useState(product.status || 'draft')
-    
 
-    console.log(product)
-    console.log("category",categories)
-    console.log("product_var", product_var)
-    console.log("Attributes", Attributes)
-    console.log('variations', variations)
-    console.log('selectedCategories', selectedCategories)
-
-   
-    
-  
 
       const handleSelectChange = (selectedOptions: any) => {
         // If no categories are selected, set the selected categories to an empty array
@@ -435,7 +422,7 @@ export default function EditProduct( {product, categories, product_var , Attribu
                         <h2 className="text-xl font-semibold mb-4">Product Details</h2>
                         <div className="space-y-4">
                             <div>
-                            <Label htmlFor="category">Category</Label>
+                            <Label htmlFor="category">Select Category</Label>
                             <Select
                                 isMulti
                                 options={categories.map((category) => ({
@@ -449,29 +436,6 @@ export default function EditProduct( {product, categories, product_var , Attribu
                                 }))}
                                 placeholder="Select categories"
                             />
-                            {/* <Select>
-                                <SelectTrigger id="category">
-                                <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                {categories.map((category) => (
-                                    <SelectItem key={category.id} value={category.id.toString()}>{category.name}</SelectItem>
-                                ))}
-                                </SelectContent>
-                            </Select>
-                            </div>
-                            <div>
-                            <Label htmlFor="brand">Brand</Label>
-                            <Select>
-                                <SelectTrigger id="brand">
-                                <SelectValue placeholder="Select brand" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                {brands.map((brand) => (
-                                    <SelectItem key={brand} value={brand.toLowerCase()}>{brand}</SelectItem>
-                                ))}
-                                </SelectContent>
-                            </Select> */}
                             </div>
                         </div>
                         </CardContent>

@@ -21,6 +21,13 @@
   }
 }
 
+.dnd-item {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

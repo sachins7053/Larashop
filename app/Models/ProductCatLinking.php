@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 
 class ProductCatLinking extends Model
-{
+{   
     public $timestamps = false;
     protected $table = 'cat_product';
     protected $fillable = [

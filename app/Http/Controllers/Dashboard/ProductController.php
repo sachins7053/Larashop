@@ -110,7 +110,9 @@ class ProductController extends Controller
                 'sale_price' => 'nullable|integer|min:0',
             ]);
 
-            $product = Product::updateOrCreate(
+            // dd($request);
+
+           Product::updateOrCreate(
                 ['id' => $request->id],
                 [
                 'name' => $request->name,
@@ -129,26 +131,39 @@ class ProductController extends Controller
             ]);
 
             if ($request->has('categories')) {
-
-                foreach($request->categories as $category) {
-                ProductCatLinking::updateOrCreate([
-                    'product_id' => $product->id,
-                    'category_id' => $category['id'],
-                ]);
+                foreach ($request->categories as $category) {
+                    // Step 1: Check if the record exists
+                    $exists = DB::table('cat_product')
+                        ->where('product_id', $request->id)
+                        ->exists();
+            
+                    // Step 2: If it exists, delete the record
+                    if ($exists) {
+                        DB::table('cat_product')
+                            ->where('product_id', $request->id)
+                            ->delete();
+                    }
+            
+                    // Step 3: Insert the new record
+                    DB::table('cat_product')->insert([
+                        'product_id' => $request->id,
+                        'category_id' => $category['id'],
+                    ]);
+                }
             }
-            }
+         
 
             if($request->has('variations')) {   
 
                 foreach ($request->variations as $variationData) {   
+                    ProductVariation::where('variation_id', $variationData['variation_id'])->delete();
 
-                    // Create or update the variation
                     $variation = ProductVariation::updateOrCreate(
                         [
                             'variation_id' => $variationData['variation_id'], // Assuming this is the unique identifier
                         ],
                         [
-                            'product_id' => $product->id,
+                            'product_id' => $request->id,
                             'price' => $variationData['mrp'],
                             'sale_price' => $variationData['salePrice'],
                             'stock' => $variationData['stock'],
@@ -158,9 +173,9 @@ class ProductController extends Controller
                     );
                 
                     // Handle attribute values for this variation
-                    if (isset($variationData['attributes'])) {
+                    if ($variation) {
 
-                        VariationAttribute::where('variation_id', $variation->id )->delete();
+                        // VariationAttribute::where('variation_id', $variation->id )->delete();
 
                         foreach ($variationData['attributes'] as $attributeValue) {
                             // Assuming attributeValue contains 'attribute_name' and 'value'
@@ -291,11 +306,7 @@ if ($productsData->first()->product_type == 'variable') {
         ->where('id', '!=', $id) 
         ->get();
 
-      
-        
-        
-        
-        
+
         return Inertia::render('Frontend/ProductPage', compact('product', 'relatedProducts'));
     }
 

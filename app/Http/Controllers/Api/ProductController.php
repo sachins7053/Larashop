@@ -60,11 +60,11 @@ class ProductController extends Controller
         if ($request->has('categories')) {
 
             foreach($request->categories as $category) {
-            ProductCatLinking::Create([
-                'product_id' => $product->id,
-                'category_id' => $category['id'],
-            ]);
-        }
+                ProductCatLinking::Create([
+                    'product_id' => $product->id,
+                    'category_id' => $category['id'],
+                ]);
+            }
         }
 
         // $categories = json_decode($request->input('categories'), true);
