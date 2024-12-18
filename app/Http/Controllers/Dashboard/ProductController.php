@@ -461,4 +461,27 @@ if ($productsData->first()->product_type == 'variable') {
                         'fileUploads' => $fileUploads,
                     ]);
                 }
+
+
+                public function getProducts(Request $request)
+                {
+                    $query = Product::query();
+
+                    // Handle the category filter
+                    if ($request->has('category')) {
+                        $query->where('category', $request->category);
+                    }
+
+                    // Handle sorting
+                    if ($request->has('sort')) {
+                        $query->orderBy($request->sort, $request->direction ?? 'asc');
+                    }
+
+                    // Handle the limit
+                    $limit = $request->has('limit') ? (int) $request->limit : 10; // Default to 10 products
+                    $products = $query->take($limit)->get();
+
+                    return $products;
+                }
+
 }

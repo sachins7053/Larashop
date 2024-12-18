@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->json('components'); // Store components data (sections, widgets, etc.)
+            $table->string('title');
+            $table->json('content'); // Store components data (sections, widgets, etc.)
+            $table->enum('type',['home', 'default'] )->default('default'); 
             $table->timestamps();
         });
     }

@@ -7,33 +7,33 @@ use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\Inertia;
 use App\Models\Pages;
+use App\Models\Product;
 
 
 class HomePageController extends Controller
 {
-    public function index() :Response {
-        return Inertia::render('PageBuilder/Index');
+    public function index()
+    {
+        return inertia('Admin/Pages/PageBuilder', [
+            'layout' => Pages::latest()->first(),
+        ]);
     }
 
-    public function getPage($id) {
-        $page = Pages::findOrFail($id);
-        return response()->json($page);
-    }
-
-    public function savePage(Request $request) {
-        $data = $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'required|string',
-            'components' => 'required|json'
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'content' => 'required',
         ]);
 
-        if ($data['id']) {
-            $page = Pages::findOrFail($data['id']);
-            $page->update($data);
-        } else {
-            $page = Pages::create($data);
-        }
+        $layout = Pages::create($validated);
 
-        return response()->json($page);
+        return response()->json($layout);
+    }
+
+    public function showLatest()
+    {
+        $layout = Pages::where('type', 'home')->first();
+        return inertia('Welcome', ['content' => $layout->content]);
     }
 }

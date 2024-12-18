@@ -13,19 +13,15 @@ use App\Http\Controllers\Dashboard\HomePageController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\ShortcodeController;
 use App\Http\Controllers\CartCheckoutCouponController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
+// Route::get('/', function () {
+//     return Inertia::render('Welcome', []);
+// })->name('home');
 
 Route::get('/admin/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -35,10 +31,8 @@ route::get('/404', function () {
     return Inertia::render('404');
     })->name('404');
 
-
-
-
-
+Route::get('/', [HomePageController::class, 'showLatest' ])->name('home');
+Route::get('/products', [ProductController::class, 'getproducts']);
 Route::post('/upload', [FilesController::class, 'upload']);
 Route::get('/product/demo', [ProductController::class, 'ProductPage']);
 Route::get('/product/{slug}', [ProductController::class, 'ProductDisplay'])->name('product.slug');
@@ -48,6 +42,7 @@ Route::get('/category/{slug}', [ProductCategoryController::class, 'products']);
 Route::get('/search', [ProductController::class, 'Search'])->name('search');
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
 Route::get('login', [CustomerController::class, 'dashboard']);
+Route::post('/shortcodes/parse', [ShortcodeController::class, 'parse']);
 
 
 Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
@@ -87,9 +82,9 @@ Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(fu
 
 
 Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function () {
-    Route::get('/page-builder', [HomePageController::class, 'index'])->name('page-builder');
-    Route::get('/page/{id}', [HomePageController::class, 'getPage']);
-    Route::post('/page/save', [HomePageController::class, 'savePage']);
+    Route::get('/pages', [HomePageController::class, 'index']);
+    Route::get('/pages/{id}', [HomePageController::class, 'show']);
+    Route::post('/pages', [HomePageController::class, 'store']);
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');
     Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
     Route::get('/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');
@@ -126,6 +121,9 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/homepage', [HomepageController::class, 'index'])->name('admin.homepage');
+    Route::post('/homepage', [HomepageController::class, 'store']);
+
 });
 
 
