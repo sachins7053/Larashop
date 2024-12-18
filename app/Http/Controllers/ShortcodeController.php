@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Slider;
 
 class ShortcodeController extends Controller
 {
@@ -28,6 +29,8 @@ class ShortcodeController extends Controller
                 $parsedContent[] = $this->renderProducts($attributes);
             } elseif ($name === 'image') {
                 $parsedContent[] = $this->renderImage($attributes);
+            }  elseif ($name === 'slider') {
+                $parsedContent[] = $this->renderSlider($attributes);
             } else {
                 // If the shortcode is unknown, add it as raw content
                 $parsedContent[] = [
@@ -90,6 +93,19 @@ class ShortcodeController extends Controller
         return [
             'type' => 'image',
             'content' => "<img src=\"{$src}\" alt=\"{$alt}\" />"
+        ];
+    }
+
+    private function renderSlider($attributes)
+    {
+
+        // Query the products (you can modify this query to filter by category or other parameters)
+        $slider = Slider::where('type', $attributes['type'])->get();
+
+        // Return the structured response for products
+        return [
+            'type' => 'slider',
+            'slider' => $slider
         ];
     }
 }

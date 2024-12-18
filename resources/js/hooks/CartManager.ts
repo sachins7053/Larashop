@@ -81,7 +81,6 @@ export class CartManager {
             const response = await fetch(`/api/usercart/${userId}/cart/${userId}`);
             if (response) {
                 return await response.json();
-                console.log(response);
             } else {
                 console.error("Failed to fetch cart from database");
                 return [];
@@ -96,7 +95,6 @@ export class CartManager {
     static async syncCart(userId: string): Promise<void> {
         const localCart = this.getCart();
         const databaseCart = await this.fetchCartFromDatabase(userId);
-        console.log('Database Cart' , databaseCart);
         // const updatedCart = localCart.map(item => {
         //     const databaseItem = databaseCart.find(cartItem => cartItem.cartId === item.cartId);
         //     if (databaseItem) {
@@ -105,7 +103,6 @@ export class CartManager {
         //         return item;
         //         });
         const mergedCart = this.mergeCarts(localCart, databaseCart);
-        console.log('mergedCart', mergedCart);
         // Save merged cart both locally and remotely
         this.saveCart(mergedCart);
         if(databaseCart.length > 0){
@@ -115,7 +112,6 @@ export class CartManager {
                     headers: { "Content-Type": "application/json" },
                     //body: JSON.stringify(cart),
                 });
-                 console.log("Delete response", response)
                 if (!response.ok) {
                     console.error("Failed to delete cart to database", response);
                 }
@@ -161,8 +157,7 @@ export class CartManager {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cart),
             });
-            console.log('Send Cart data',JSON.stringify(cart))
-             console.log("response", response)
+           
             if (!response.ok) {
                 console.error("Failed to save cart to database", response);
             }

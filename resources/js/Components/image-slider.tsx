@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
-interface SliderProps {
+export interface SliderProps {
   slides: {
     id: number
     image: string
