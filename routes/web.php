@@ -82,9 +82,11 @@ Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(fu
 
 
 Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function () {
-    Route::get('/pages', [HomePageController::class, 'index']);
-    Route::get('/pages/{id}', [HomePageController::class, 'show']);
-    Route::post('/pages', [HomePageController::class, 'store']);
+    Route::get('/pages', [HomePageController::class, 'index'])->name('pages.index');
+    Route::get('/pages/add', [HomePageController::class, 'addPage'])->name('pages.add');
+    Route::post('/pages/add', [HomePageController::class, 'store'])->name('pages.store');
+    Route::get('/pages/{id}', [HomePageController::class, 'editPage'])->name('pages.edit');
+    Route::put('/pages/{id}', [HomePageController::class, 'updatePage'])->name('page.update');
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');
     Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
     Route::get('/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');
@@ -121,7 +123,7 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/homepage', [HomepageController::class, 'index'])->name('admin.homepage');
+    Route::get('/homepage', [HomepageController::class, 'editHome'])->name('admin.homepage');
     Route::post('/homepage', [HomepageController::class, 'store']);
 
 });
