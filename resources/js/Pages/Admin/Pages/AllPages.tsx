@@ -6,8 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { EyeIcon, Pencil } from 'lucide-react';
+import { Edit, EyeIcon, Trash2  } from 'lucide-react';
 import { PageProps } from '@/types';
+import { useToast } from "@/hooks/use-toast"
+import axios from 'axios';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Pages {
   id: string,
@@ -20,6 +23,9 @@ interface Pages {
 }
 
 export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
+
+  const { toast } = useToast()
+
   const pageData = pages;
   const [Pages, setPages] = useState<Pages[]>([])
   const [filteredPages, setFilteredPages] = useState<Pages[]>([])
@@ -27,6 +33,8 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedPages, setSelectedPages] = useState<Set<string>>(new Set())
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [pageToDelete, setPageToDelete] = useState<number | null>(null)
 
   const itemsPerPage = 10
 
@@ -77,7 +85,39 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
     }
   }
 
+  const handleDelete = (pageId: number) => {
+    // Implement delete functionality
+    console.log(`Delete Page with ID: ${pageId}`)
+    setPageToDelete(pageId)
+    setIsDeleteDialogOpen(true)
+  }
+  const handleDeleteConfirm = async () => {
 
+    if (pageToDelete === null) return
+
+    // Simulate API call
+    try {
+    
+      console.log("Deleting Page", pageToDelete)
+       const res = await axios.delete( route('page.delete', {id:pageToDelete}));
+        setPages(pages.filter(page => page.id !== pageToDelete.toString()))
+        
+      toast({
+        title: "Page deleted",
+          variant: "success",
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "There was an error deleting the page. Please try again.",
+        variant: "destructive",
+      })
+      console.log(error)
+    }
+
+    setIsDeleteDialogOpen(false)
+    setPageToDelete(null)
+  }
 
 
 
@@ -139,13 +179,47 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
                       </TableCell>
                      
                       <TableCell>{new Date(page.created_at).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Link 
+                      <TableCell className='flex gap-5'>
+                      <div className="flex space-x-2">
+                          <Link href={route('pages.edit', {id: page.id})}>
+                            <Button variant="outline" size="sm">
+                              <Edit className="w-4 h-4" />
+                              <span className="sr-only">Edit</span>
+                            </Button>
+                          </Link>
+                          <Link href={route('page.view', {id: page.id})}>
+                            <Button variant="outline" size="sm">
+                              <EyeIcon className="w-4 h-4" />
+                              <span className="sr-only">View</span>
+                            </Button>
+                          </Link>
+                          { page.type !== 'home' && (
+                          <Button variant="destructive" size="sm" onClick={() => handleDelete(Number(page.id))}>
+                            <Trash2 className="w-4 h-4" />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                          )}
+                        </div>
+                        {/* <Link 
                         href={route('pages.edit',  { id: page.id })}
+                        >
+                        <Pencil className='w-5' />
+                     
+                        </Link>
+                        <Link 
+                        href={route('page.view',  { id: page.slug })}
                         >
                         <EyeIcon className='w-5' />
                      
                         </Link>
+                      { page.type !== 'home' && (
+                        <Link 
+                        href={route('page.delete',  { id: page.id })}
+                        >
+                        <Trash2 className='w-5 rounded text-pink-600' />
+                     
+                        </Link>
+                      )} */}
                         </TableCell>
                     </TableRow>
                   ))}
@@ -181,6 +255,21 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
             </div>
           </div>
         </div>
+        
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the product from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AuthenticatedLayout>
   )
 }

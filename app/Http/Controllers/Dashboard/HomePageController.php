@@ -38,11 +38,13 @@ class HomePageController extends Controller
         $page = Pages::find($id);
         $page->title = $request->title;
         $page->content = $request->content;
+        $page->type = $request->type;
+        $page->status = $request->status;
         $page->save();
         return redirect()->intended(route('pages.edit', ['id' => $id] , absolute: false ));
     }
 
-    public function store(Request $request)
+    public function store(Request $request):RedirectResponse
     {
         $validated = $request->validate([
             'title' => 'required|string',
@@ -58,12 +60,21 @@ class HomePageController extends Controller
             'status' => $request->status,
             'type' => 'default',
         ]);
-        return redirect()->route('pages.edit', ['id' => $page->id]);
+        return redirect()->intended(route('pages.edit', ['id' => $page->id] , absolute: false ));
     }
 
     public function showLatest()
     {
         $layout = Pages::where('type', 'home')->first();
         return inertia('Welcome', ['content' => $layout->content]);
+    }
+
+    public function deletePage($id){
+        $page = Pages::find($id);
+        if($page->type !== 'home'){
+        $page->delete();
+        return response()->json(['message' => 'Page deleted successfully'], 200);
+        };
+        return response()->json(['message' => 'Product deleted successfully'], 404);
     }
 }

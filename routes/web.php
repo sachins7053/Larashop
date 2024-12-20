@@ -43,6 +43,8 @@ Route::get('/search', [ProductController::class, 'Search'])->name('search');
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
 Route::get('login', [CustomerController::class, 'dashboard']);
 Route::post('/shortcodes/parse', [ShortcodeController::class, 'parse']);
+Route::get('/pg/{slug}', [HomePageController::class, 'ProductDisplay'])->name('page.view');
+
 
 
 Route::middleware([\App\Http\Middleware\CustomerMiddleware::class])->group(function () {
@@ -87,6 +89,7 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::post('/pages/add', [HomePageController::class, 'store'])->name('pages.store');
     Route::get('/pages/{id}', [HomePageController::class, 'editPage'])->name('pages.edit');
     Route::put('/pages/{id}', [HomePageController::class, 'updatePage'])->name('page.update');
+    Route::delete('/page/delete/{id}', [HomePageController::class, 'deletePage'])->name('page.delete');
     Route::get('/products', [ProductController::class, 'index'])->name('product.index');
     Route::get('/product/add', [ProductController::class, 'add'])->name('product.add');
     Route::get('/product/bulkuploading', [ProductController::class, 'bulkUploadForm'])->name('bulkproduct.add');

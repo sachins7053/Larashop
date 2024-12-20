@@ -3,6 +3,8 @@ import axios from 'axios';
 import { ProductGrid } from './product-grid';
 import { ProductType } from '@/types';
 import { ImageSlider, SliderProps } from './image-slider';
+import { Link } from '@inertiajs/react';
+import { Skeleton } from './ui/skeleton';
 
 interface ShortcodeParserProps {
   content: string;
@@ -13,6 +15,13 @@ interface Slide {
   image: string;
   title?: string;
   description?: string;
+}
+
+interface Categories {
+  id: number;
+  name: string;
+  image: string;
+  slug: string;
 }
 
 const ShortcodeParser = ({ content }: ShortcodeParserProps) => {
@@ -51,7 +60,7 @@ const ShortcodeParser = ({ content }: ShortcodeParserProps) => {
         }
       } catch (error) {
         console.error('Error during batch request:', error);
-        setParsedContent('Error loading content');
+        // setParsedContent('Error loading content');
       } finally {
         setLoading(false);
       }
@@ -63,11 +72,13 @@ const ShortcodeParser = ({ content }: ShortcodeParserProps) => {
   // Helper function to render products
   const renderProducts = (products: ProductType[], title: string) => {
     return (
-      <ProductGrid
-        products={products}
-        title={title || 'Featured Products'} // Use the provided title or default to 'Products'
-        columns={{ sm: 2, md: 4, lg: 4 }}
-      />
+        <div className='my-10'>
+              <ProductGrid
+                products={products}
+                title={title || 'Featured Products'} // Use the provided title or default to 'Products'
+                columns={{ sm: 2, md: 4, lg: 4 }}
+              />
+          </div>
     );
   };
 
@@ -79,26 +90,45 @@ const ShortcodeParser = ({ content }: ShortcodeParserProps) => {
    
   };
 
+  const renderCategories = (categories: Categories[]) => {
+    if (categories.length > 0) {
+      return (
+        <div className=" max-w-5xl place-content-center justify-evenly flex flex-wrap my-10 gap-5">
+            {categories.map((cat) => {
+              return (
+                <div key={cat.id} className="">
+                  <Link className='text-center' href={cat.slug}>
+                    <img className='rounded-full max-w-52' src={cat.image}></img>
+                    <h2 className="text-lg hover:text-amber-500 font-bold">{cat.name}</h2>
+                  </Link>
+                </div>
+                
+              );
+            }  ) }      
+        </div>
+      )
+    }
+   
+  };
+ 
+
   // Loading state while fetching data
   if (loading) {
-    return <div>Loading content...</div>;
-  }
-
-  // Render errors if any
-  if (errors.length > 0) {
+    // return <div className='w-full h-[400px] rounded-lg bg-slate-100 animate-pulse'></div>;
     return (
-      <div style={{ color: 'red' }}>
-        <h3>Errors occurred while parsing content:</h3>
-        <ul>
-          {errors.map((error, index) => (
-            <li key={index}>{error}</li>
-          ))}
-        </ul>
-      </div>
-    );
+          <div className='w-full'>
+            <Skeleton className="w-full h-[300px] rounded-lg bg-slate-100 animate-pulse" />
+            <div className='flex flex-col md:flex-row my-10 gap-10'>
+            <Skeleton className="w-full h-[300px] rounded-lg bg-slate-100 animate-pulse" />
+            <Skeleton className="w-full h-[300px] rounded-lg bg-slate-100 animate-pulse" />
+            <Skeleton className="w-full h-[300px] rounded-lg bg-slate-100 animate-pulse" />
+            <Skeleton className="w-full h-[300px] rounded-lg bg-slate-100 animate-pulse" />
+            </div>
+          </div>
+      );
   }
+  
 
-  // Render the parsed content
   return (
     <div>
       {Array.isArray(parsedContent) && parsedContent.length > 0 ? (
@@ -114,14 +144,30 @@ const ShortcodeParser = ({ content }: ShortcodeParserProps) => {
           if (firstItem?.type === 'slider') {
             return renderSlider(firstItem?.slider || []);
           }
-
+          if (firstItem?.type === 'categories') {
+            return renderCategories(firstItem?.categories || []);
+          }
+          // Handle slider shortcodes
+         
+          if (errors.length > 0) {
+              return (
+                <div style={{ color: 'red' }}>
+                  <h3>Errors occurred while parsing content:</h3>
+                  <ul>
+                    {errors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            }
           // If it's not 'products' or 'slider', render the content as HTML
           return (
-            <div key={outerIndex} dangerouslySetInnerHTML={{ __html: firstItem?.content || '' }} />
+            <div className='my-10' key={outerIndex} dangerouslySetInnerHTML={{ __html: firstItem?.content || '' }} />
           );
         })
       ) : (
-        <div dangerouslySetInnerHTML={{ __html: parsedContent }} />
+        <div className='my-10' dangerouslySetInnerHTML={{ __html: parsedContent }} />
       )}
     </div>
   );

@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useToast } from "@/hooks/use-toast"
-import { PageProps } from '@/types';
 import {useForm} from '@inertiajs/react';
 
 
@@ -16,7 +15,8 @@ import {useForm} from '@inertiajs/react';
 export default function AddPage() {
     const { toast } = useToast()
     const [pageStatus, setPageStatus] = useState('draft')
-   
+    
+    console.log("pageStatus",pageStatus)
 
     const {data , setData, post, processing, errors} = useForm({
 
@@ -27,11 +27,17 @@ export default function AddPage() {
 
     })
 
+    useEffect(() => {
+        setData((prevData) => ({
+            ...prevData,
+            status: pageStatus,
+        }));
+        
+    }, [pageStatus, setData]);
+
     const handleSubmit = async (e:any) => {
         e.preventDefault();
-
-        console.log("form data",data)
-        
+        console.log(data)
 
         post(route('pages.store'),{
 
@@ -88,7 +94,7 @@ export default function AddPage() {
                         <Card>
                             <CardContent className="pt-6">
                                 <h2 className="text-xl font-semibold mb-4">Page Status</h2>
-                                <RadioGroup defaultValue="draft" onValueChange={setPageStatus}>
+                                <RadioGroup defaultValue={pageStatus} onValueChange={setPageStatus}>
                                     <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="draft" id="draft" />
                                     <Label htmlFor="draft">Draft</Label>
@@ -102,7 +108,7 @@ export default function AddPage() {
                         </Card>
 
                         <Button disabled={processing} onClick={handleSubmit} type="submit" className="w-full">
-                            {pageStatus ===   'draft' ? 'Save Draft' :  'Update'}
+                            {pageStatus ===   'draft' ? 'Save Draft' :  'Publish'}
                         </Button>
                         </div>
                     </form>

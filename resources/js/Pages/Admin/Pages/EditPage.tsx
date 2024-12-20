@@ -28,7 +28,7 @@ interface Page {
 
 export default function Editpage( {page}:PageProps<{ page:Page;}> ) {
     const { toast } = useToast()
-    const [pageStatus, setPageStatus] = useState(page.status || 'draft')
+    const [pageStatus, setPageStatus] = useState(page.status)
    
 
     const {data , setData, put, processing, errors} = useForm({
@@ -37,9 +37,19 @@ export default function Editpage( {page}:PageProps<{ page:Page;}> ) {
         title: page.title || '',
         content: page.content || '',
         type: page.type || '',
-        status: page.status || pageStatus,
+        status: pageStatus,
 
     })
+
+    useEffect(() => {
+        setData((prevData) => ({
+            ...prevData,
+            status: pageStatus,
+        }));
+        
+    }, [pageStatus, setData]);
+   
+
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
@@ -71,6 +81,8 @@ export default function Editpage( {page}:PageProps<{ page:Page;}> ) {
     
     
     ) };
+
+  
   
 
     return (
@@ -82,8 +94,8 @@ export default function Editpage( {page}:PageProps<{ page:Page;}> ) {
             }
         >
             <Head title="Edit page" />
-            <Card>
-                <CardContent className="container mx-auto px-4 py-8">
+            <Card  className="container mx-auto px-4 py-8 mt-4">
+                <CardContent>
                     <form  className="grid md:grid-cols-3 gap-6">
                         <div className="md:col-span-2 space-y-6 p-6 bg-white rounded-lg">
                             <div>
@@ -115,7 +127,7 @@ export default function Editpage( {page}:PageProps<{ page:Page;}> ) {
                             </CardContent>
                         </Card>
 
-                        <Button onClick={handleSubmit} type="submit" className="w-full">
+                        <Button disabled={processing} onClick={handleSubmit} type="submit" className="w-full">
                             {pageStatus ===   'draft' ? 'Save Draft' :  'Update'}
                         </Button>
                         </div>
