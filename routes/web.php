@@ -23,9 +23,9 @@ use Inertia\Inertia;
 //     return Inertia::render('Welcome', []);
 // })->name('home');
 
-Route::get('/admin/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['role_or_permission:Admin'])->name('dashboard');
+// Route::get('/admin/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['role_or_permission:Admin'])->name('dashboard');
 
 route::get('/404', function () {
     return Inertia::render('404');
@@ -84,6 +84,8 @@ Route::prefix('vendor')->middleware('role_or_permission:Admin|Vendor')->group(fu
 
 
 Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function () {
+
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/pages', [HomePageController::class, 'index'])->name('pages.index');
     Route::get('/pages/add', [HomePageController::class, 'addPage'])->name('pages.add');
     Route::post('/pages/add', [HomePageController::class, 'store'])->name('pages.store');

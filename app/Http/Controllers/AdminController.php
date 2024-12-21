@@ -6,12 +6,46 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Vendor;
+use App\Models\Orders;
+use App\Models\Orderitems;
+use App\Models\OrderVendorStatus;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
     public function index(): Response 
-    {
-        return Inertia::render('Admin/Dashboard');
+    {   
+        $salesReport = Orders::with('orderItems')->get();
+
+        $topSellingProducts = OrderItems::select('product_id', DB::raw('SUM(quantity) as total_quantity'))
+            ->groupBy('product_id')
+            ->orderByDesc('total_quantity')
+            ->limit(5)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'product_id' => $item->product_id,
+                    'quantity_sold' => $item->total_quantity,
+                    // Optionally fetch product details
+                    'product_name' => $item->product->name ?? 'Unknown Product', 
+                ];
+            });
+
+        $topVendors = OrderVendorStatus::select('vendor_id', DB::raw('COUNT(*) as total_orders'))
+            ->groupBy('vendor_id')
+            ->orderByDesc('total_orders')
+            ->limit(5)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'vendor_id' => $item->vendor_id,
+                    'orders_count' => $item->total_orders,
+                    'vendor_name' => $item->vendor->name ?? 'Unknown Vendor', 
+                ];
+            });
+
+        return Inertia::render('Admin/Dashboard', [ 'salesReport' => $salesReport, 'topProducts' => $topSellingProducts, 'topVendors' => $topVendors, ]);
+
     }
 
     public function vendors() : Response {
