@@ -194,8 +194,8 @@ export default function Authenticated({
                                         Vendors
                                     </NavLink>
                                 <NavLink
-                                        href={route('files.index')}
-                                        active={route().current('files.index')}
+                                        href={route('media.index')}
+                                        active={route().current('media.index')}
                                     >
                                         Files
                                     </NavLink>

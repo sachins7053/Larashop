@@ -22,7 +22,20 @@ class HomePageController extends Controller
     {
         $pages = Pages::latest()->get();
         // dd($pages);
-        return inertia('Admin/Pages/AllPages', compact('pages') );
+        return Inertia::render('Admin/Pages/AllPages', compact('pages') );
+    }
+
+    public function PageDisplay($slug){
+        $page = Pages::where('id', $slug)->where('status', 'active')->first();
+        if (!$page) {
+            abort(404, 'Page not found');
+        }
+
+        if ($page->type == 'home') {
+            return redirect()->route('home');
+        }
+
+        return Inertia::render('Frontend/Page', compact('page'));
     }
 
 

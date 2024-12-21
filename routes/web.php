@@ -43,7 +43,7 @@ Route::get('/search', [ProductController::class, 'Search'])->name('search');
 Route::post('/cart/add/{userId}', [CartCheckoutCouponController::class, 'syncCart']);
 Route::get('login', [CustomerController::class, 'dashboard']);
 Route::post('/shortcodes/parse', [ShortcodeController::class, 'parse']);
-Route::get('/pg/{slug}', [HomePageController::class, 'ProductDisplay'])->name('page.view');
+Route::get('/pg/{slug}', [HomePageController::class, 'PageDisplay'])->name('page.view');
 
 
 

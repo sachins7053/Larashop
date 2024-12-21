@@ -50,7 +50,6 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
     }
     
     fetchPages()
-    console.log('PageData fetched', pageData)
   }, [])
 
   useEffect(() => {
@@ -86,8 +85,6 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
   }
 
   const handleDelete = (pageId: number) => {
-    // Implement delete functionality
-    console.log(`Delete Page with ID: ${pageId}`)
     setPageToDelete(pageId)
     setIsDeleteDialogOpen(true)
   }
@@ -95,12 +92,10 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
 
     if (pageToDelete === null) return
 
-    // Simulate API call
     try {
     
-      console.log("Deleting Page", pageToDelete)
        const res = await axios.delete( route('page.delete', {id:pageToDelete}));
-        setPages(pages.filter(page => page.id !== pageToDelete.toString()))
+        setPages(pages.filter(page => Number(page.id) !== pageToDelete))
         
       toast({
         title: "Page deleted",
@@ -200,26 +195,7 @@ export default function Pages({pages}:PageProps<{pages:Pages[]}>) {
                           </Button>
                           )}
                         </div>
-                        {/* <Link 
-                        href={route('pages.edit',  { id: page.id })}
-                        >
-                        <Pencil className='w-5' />
-                     
-                        </Link>
-                        <Link 
-                        href={route('page.view',  { id: page.slug })}
-                        >
-                        <EyeIcon className='w-5' />
-                     
-                        </Link>
-                      { page.type !== 'home' && (
-                        <Link 
-                        href={route('page.delete',  { id: page.id })}
-                        >
-                        <Trash2 className='w-5 rounded text-pink-600' />
-                     
-                        </Link>
-                      )} */}
+                       
                         </TableCell>
                     </TableRow>
                   ))}

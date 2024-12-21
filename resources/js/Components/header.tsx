@@ -402,14 +402,6 @@ export function Header() {
 
             {/* Actions */}
             <div className="flex items-center gap-4">
-              <div className="hidden items-center gap-2 md:flex">
-                <Button variant="link" className="h-auto p-0 text-sm">
-                  Sign Up Now
-                </Button>
-                <p className="text-xs text-orange-500">
-                  Get Credits worth INR 10,000
-                </p>
-              </div>
               <div className="flex items-center gap-2">
               <Dialog>
                 <DialogTrigger asChild>
@@ -422,14 +414,6 @@ export function Header() {
                 </DialogContent>
               </Dialog>
                 
-                <Button variant="ghost" size="icon">
-                  <Store className="h-5 w-5" />
-                  <span className="sr-only">Find a Store</span>
-                </Button>
-                <Button variant="ghost" size="icon">
-                  <Heart className="h-5 w-5" />
-                  <span className="sr-only">Wishlist</span>
-                </Button>
                 
                 {/* Cart Sidebar */}
                   <Sheet open={cartIsOpen} onOpenChange={setCartIsOpen}>
