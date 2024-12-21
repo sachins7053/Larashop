@@ -12,14 +12,19 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'cartId',
+        'productId',
         'name',
         'price',
         'quantity',
         'image',
+        'attributes',
         'attribute_name',
         'attribute_value',
     ];
 
+    protected $casts = [
+        'attributes' => 'array', 
+    ];
 
     public function user()
     {

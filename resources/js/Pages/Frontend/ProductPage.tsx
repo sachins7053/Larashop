@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import ProductDetails from "@/components/ProductDetails/ProductDetails";
 import { PageProps } from "@/types";
 import { ProductGrid } from "@/components/product-grid";
-import { ProductType} from "@/types";
+import { ProductType, Reviews} from "@/types";
 import { ReviewForm } from "@/components/Reviews/ReviewForm";
 
 
@@ -12,6 +12,7 @@ export default function ProductShow ( {product, relatedProducts, auth }:PageProp
 
   const productData = typeof product === "string" ? JSON.parse(product) : product;
   console.log(productData)
+  const [reviews, setReviews] = useState<Reviews[]>(productData.reviews || []);
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string | null>>({});
 
   const handleVariationSelect = (attributeName: string, value: string) => {
@@ -22,9 +23,9 @@ export default function ProductShow ( {product, relatedProducts, auth }:PageProp
   };
 
       // console.log(product)
-      const handleToggleWishlist = (product: any) => {
+      const handleToggleWishlist = (productData: any) => {
         
-        console.log('Toggling wishlist:', product)
+        console.log('Toggling wishlist:', productData)
       }
 
     return (
@@ -48,12 +49,26 @@ export default function ProductShow ( {product, relatedProducts, auth }:PageProp
                         <div className="md:flex">
 
                             <div className="basis-1/3 w-full">
-                                {auth?.user? <ReviewForm productId={product.id} />: 'Please Login First To Submit Review' }
+                                {auth?.user? <ReviewForm productId={productData.id} />: 'Please Login First To Submit Review' }
                                 
                             </div>
                             <div className="basis-2/3 w-full p-4">
+                                  <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+                                    <h2 className="text-lg font-bold mb-2">Reviews</h2>
                                 
-                                No review Found.
+                                {productData.reviews.length > 0 ? (
+                                    <div className="flex flex-col">
+                                      {/* {reviews.map((review, index) => (
+                                        <div key={index} className="mb-4">
+                                          <p className="text-sm text-gray-600">{review.user_id}</p>
+                                          <p className="text-sm text-gray-600">{review.rating}/5</p>
+                                          <p className="text-sm text-gray-600">{review.review}</p>
+                                          </div>
+                                          ))} */}
+                                          No reviews Found
+                                          </div>
+                                ) : 'No Review Found'}
+                                </div>
 
                             </div>
 

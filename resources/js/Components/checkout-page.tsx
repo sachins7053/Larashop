@@ -30,7 +30,8 @@ export function CheckoutPage() {
   const discount = appliedCoupon ? 20 : 0 // Assuming a flat $20 discount for simplicity
   const total = subtotal + tax - discount
   const [couponCode, setCouponCode] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('credit-card')
+  const [paymentMethod, setPaymentMethod] = useState('Cash On Delivery')
+  const [Errors , setNewErrors] = useState<any>({})
   const { data, setData, post, processing, errors, reset } = useForm({
     firstName: `${user.name}`,
     lastName: '',
@@ -41,16 +42,23 @@ export function CheckoutPage() {
     pincode: '',
     city: '',
     country: '',
-    paymentMethod: '',
+    paymentMethod: paymentMethod,
     totalamount: total,
   })
 
+
+
+  console.log("FormData",data)
+
+  // Function to check if the form is valid
+  const isFormValid = () => {
+    return data.firstName && data.lastName && data.email && data.phone && data.address && data.state && data.pincode && paymentMethod;
+  }
+
   const handleCheckout: FormEventHandler = (e) => {
     e.preventDefault()
-
-    // Clear previous errors
-    const newErrors: any = {}
-
+    
+    const newErrors:any = {}
     // Check for required fields
     if (!data.firstName) newErrors.firstName = "First Name is required"
     if (!data.lastName) newErrors.lastName = "Last Name is required"
@@ -63,25 +71,35 @@ export function CheckoutPage() {
 
     // If there are errors, set them and return
     if (Object.keys(newErrors).length > 0) {
+      setNewErrors(newErrors)
       Object.keys(newErrors).forEach((key) => {
-        setData((prev: any) => ({ ...prev, [key]: prev[key] })); // Update the form data to reflect validation errors
+        setNewErrors((prev: any) => ({ ...prev, [key]: prev[key] })); // Update the form data to reflect validation errors
       });
+      console.log("Not Valid", newErrors)
+      console.log("Error Lenght", newErrors.length)
       return;
+    
     }
+
+    console.log("Working")
 
     try {
       post(route('checkout', { userid: user.id }), {
-        onFinish: () => {
+        onSuccess: () => {
           reset('address', 'email', 'firstName', 'lastName', 'phone', 'pincode', 'state')
           toast({
             variant: "success",
             title: "Your Order has been placed successfully",
-          })
-        },
-        onError: (errors) => {
-          Object.keys(errors).forEach((key: any) => {
-            setData((prev: any) => ({ ...prev, [key]: prev[key] }));
           });
+          localStorage.removeItem("cart");
+
+        },
+        onError: (error) => {
+          toast({
+            variant: "destructive",
+            title: "There has been error please try again",
+          })
+          console.log("cached error", error)
         }
       });
     } catch (error) {
@@ -90,6 +108,7 @@ export function CheckoutPage() {
         title: "error in creating order",
       })
       console.error(error)
+      console.error(errors)
     }
   }
 
@@ -103,10 +122,7 @@ export function CheckoutPage() {
  
   }
 
-  // Function to check if the form is valid
-  const isFormValid = () => {
-    return data.firstName && data.lastName && data.email && data.phone && data.address && data.state && data.pincode && paymentMethod;
-  }
+  
 
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -134,7 +150,7 @@ export function CheckoutPage() {
                           onChange={(e) => setData('firstName', e.target.value)}
                           required
                         />
-                        <InputError message={errors.firstName} />
+                        <InputError message={errors.firstName || Errors.firstName} />
                       </div>
                       <div>
                         <Label htmlFor="lastName">Last Name</Label>
@@ -146,7 +162,7 @@ export function CheckoutPage() {
                           onChange={(e) => setData({ ...data, lastName: e.target.value })}
                           required
                         />
-                        <InputError message={errors.lastName} />
+                        <InputError message={errors.lastName || Errors.lastName} />
                       </div>
                     </div>
                     <div>
@@ -159,7 +175,7 @@ export function CheckoutPage() {
                         onChange={(e) => setData({ ...data, email: e.target.value })}
                         required
                       />
-                      <InputError message={errors.email} />
+                      <InputError message={errors.email || Errors.email} />
                     </div>
                     <div>
                       <Label htmlFor="phone">Mobile Number</Label>
@@ -171,7 +187,7 @@ export function CheckoutPage() {
                         onChange={(e) => setData({ ...data, phone: e.target.value })}
                         required
                       />
-                      <InputError message={errors.phone} />
+                      <InputError message={errors.phone || Errors.phone} />
                     </div>
                     <div>
                       <Label htmlFor="address">Address</Label>
@@ -183,12 +199,12 @@ export function CheckoutPage() {
                         onChange={(e) => setData({ ...data, address: e.target.value })}
                         required
                       />
-                      <InputError message={errors.address} />
+                      <InputError message={errors.address || Errors.address} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="state">State</Label>
-                        <Select name="state" defaultValue='Delhi' onValueChange={(value) => setData({ ...data, state: value })}>
+                        <Select name="state" onValueChange={(value) => setData({ ...data, state: value })}>
                           <SelectTrigger id="state">
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
@@ -238,7 +254,7 @@ export function CheckoutPage() {
                           onChange={(e) => setData({ ...data, pincode: e.target.value })}
                           required
                         />
-                        <InputError message={errors.pincode} />
+                        <InputError message={errors.pincode || Errors.pincode} />
                       </div>
                     </div>
                   </form>
@@ -254,8 +270,8 @@ export function CheckoutPage() {
                 <CardContent>
                   <RadioGroup  value={paymentMethod} onValueChange={setPaymentMethod}>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Cash On Delivery" id="Cash_on_Delivery" />
-                      <Label htmlFor="Cash_on_Delivery">Cash On Delivery</Label>
+                      <RadioGroupItem value="Cash On Delivery" id="phonepe" />
+                      <Label htmlFor="phonepe">phonepe</Label>
                     </div>
                     
                   </RadioGroup>
@@ -322,7 +338,7 @@ export function CheckoutPage() {
                         </div>
                       </>
                     )}
-                    <Button type="submit" disabled={processing || !isFormValid()} onClick={handleCheckout} className="w-full">
+                    <Button type="submit" disabled={processing} onClick={handleCheckout} className="w-full">
                       Place Order
                     </Button>
                   </div>

@@ -85,6 +85,17 @@ export interface VariationValues {
         variations: ProductVariation[];
         categories: Category[];
         discount: number | null;
+        reviews: Reviews[];
+    }
+
+    export interface Reviews{
+        id: number;
+        product_id: number;
+        user_id: number;
+        rating: number;
+        review_title: string;
+        review: string;
+        updated_at: string;
     }
 
 

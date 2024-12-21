@@ -12,9 +12,14 @@ class OrderItems extends Model
         'order_id',
         'product_id',
         'quantity',
+        'attributes',
         'price',
         'variation_id',
         'subtotal',
+    ];
+
+    protected $casts = [
+        'attributes' => 'array', 
     ];
 
     public function order(){

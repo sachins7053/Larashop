@@ -226,7 +226,7 @@ class ProductController extends Controller
     public function ProductDisplay($id)
     {   
        
-        $productsData = Product::with('categories')
+        $productsData = Product::with('categories','reviews')
     ->leftJoin('product_variations as v', 'products.id', '=', 'v.product_id')
     ->leftJoin('variation_attributes as va', 'va.variation_id', '=', 'v.variation_id')
     ->leftJoin('attribute_values as value', 'value.value_id', '=', 'va.value_id')
@@ -389,7 +389,7 @@ if ($productsData->first()->product_type == 'variable') {
         // If needed, you can add further filter logic here
     
         // Execute the query and paginate the results
-        $products = $query->paginate(1);
+        $products = $query->paginate(10);
     
         // Get all categories and attributes for filtering
         $categories = ProductCat::all();

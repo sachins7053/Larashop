@@ -58,7 +58,7 @@ export function Cart(){
                   <div className="flex flex-1 flex-col gap-1">
                     <h3 className="font-medium">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                    {Object.entries(item.attributes).map(([key, value]) => (
+                    {item.attributes !== null && Object.entries(item.attributes).map(([key, value]) => (
                                 <div key={key} className="flex items-center text-sm">
                                     <span className="capitalize text-gray-600">{key}:</span>
                                     <span className="ml-2 text-gray-800 capitalize">{value}</span>

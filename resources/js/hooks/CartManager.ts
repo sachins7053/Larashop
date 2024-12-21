@@ -3,6 +3,7 @@ import axios from "axios";
 export interface CartData {
     id: string;
     cartId: string;
+    productId: string;
     name: string;
     price: number;
     quantity: number;
@@ -118,7 +119,6 @@ export class CartManager {
             } catch (error) {
                 console.error("Error delete cart to database:", error);
             }
-
             await this.saveCartToDatabase(userId, mergedCart);
         }else{
         await this.saveCartToDatabase(userId, mergedCart);
@@ -140,7 +140,7 @@ export class CartManager {
         for (const item of localCart) {
             if (cartMap.has(item.cartId)) {
                 const existingItem = cartMap.get(item.cartId)!;
-                existingItem.quantity = item.quantity; // Combine quantities
+                existingItem.quantity = item.quantity; 
             } else {
                 cartMap.set(item.cartId, { ...item });
             }
@@ -157,6 +157,8 @@ export class CartManager {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cart),
             });
+
+            // console.log("Sending Cart",cart)
            
             if (!response.ok) {
                 console.error("Failed to save cart to database", response);

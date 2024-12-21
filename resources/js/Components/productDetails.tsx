@@ -106,6 +106,7 @@ export function ProductDetails({ productData }: ProductPageProps){
       item = {
         id: productData.id,
         cartId: productData.id + selectedVariation.attribute_value,
+        productId: productData.id,
         name: productData.name,
         price: parseFloat(selectedVariation.sale_price || "0"), 
         quantity: quantity,
@@ -117,6 +118,7 @@ export function ProductDetails({ productData }: ProductPageProps){
       item = {
         id: productData.id,
         cartId: productData.id,
+        productId: productData.id,
         name: productData.name,
         price: parseFloat(productData.sale_price?.toString() || "0"),
         quantity: quantity,

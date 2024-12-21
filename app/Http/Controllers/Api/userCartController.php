@@ -34,10 +34,12 @@ class userCartController extends Controller
             Cart::create([
                 'user_id' => $usercart,
                 'cartId' => $item['cartId'],
+                'productId' => $item['productId'],
                 'name' => $item['name'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
                 'image' => $item['image'] ?? null,
+                'attributes' => $item['attributes'] ?? null,
                 'attribute_name' => $item['attribute_name'] ?? null,
                 'attribute_value' => $item['attribute_value'] ?? null,
             ]);
@@ -58,10 +60,12 @@ class userCartController extends Controller
             'cart' => 'required|array',
             'cart.*.id' => 'nullable|integer',
             'cart.*.cartId' => 'required|string',
+            'cart.*.productId' => 'required|string',
             'cart.*.name' => 'required|string',
             'cart.*.price' => 'required|numeric',
             'cart.*.quantity' => 'required|integer|min:1',
             'cart.*.image' => 'nullable|string',
+            'cart.*.attributes' => 'nullable|json',
             'cart.*.attribute_name' => 'nullable|string',
             'cart.*.attribute_value' => 'nullable|string',
         ]);
@@ -70,10 +74,12 @@ class userCartController extends Controller
             Cart::create([
                 'user_id' => $usercart,
                 'cartId' => $item['cartId'],
+                'productId' => $item['productId'],
                 'name' => $item['name'],
                 'price' => $item['price'],
                 'quantity' => $item['quantity'],
                 'image' => $item['image'] ?? null,
+                'attributes' => $item['attributes'] ?? null,
                 'attribute_name' => $item['attribute_name'] ?? null,
                 'attribute_value' => $item['attribute_value'] ?? null,
             ]);
@@ -93,6 +99,12 @@ class userCartController extends Controller
         }
 
     public function place_order(Request $request, $userid): RedirectResponse{
+            
+        $validatedData = $request->validate([            
+            'phone' => 'required|numeric',
+            'address' => 'required|string',
+            'paymentMethod' => 'required|string',
+        ]);
         
         try {
             
@@ -106,13 +118,15 @@ class userCartController extends Controller
             foreach ($cart as $item) {
                 OrderItems::create([
                     'order_id' => $order->id,
-                    'product_id' => $item->cartId,
+                    'product_id' => $item->productId,
+                    'attributes' => $item->attributes,
                     'quantity' => $item->quantity,
                     'price' => $item->price,
                     'subtotal' => $item->price * $item->quantity,
                 ]);
                 $item->delete();
             }
+            
             return redirect()->intended(route('orders.details', [  $order->id ]));
 
         } catch (ValidationException $e) {

@@ -21,6 +21,10 @@
   }
 }
 
+.z-50{
+  z-index: 999 !important
+}
+
 .dnd-item {
   border: 1px solid #ccc;
   margin-bottom: 10px;

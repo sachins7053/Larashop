@@ -59,7 +59,7 @@ export function Header() {
   const categories = [
     {
       name: "Sale",
-      icon: "/placeholder.svg?height=40&width=40",
+      icon: "https://e7.pngegg.com/pngimages/517/914/png-clipart-computer-icons-discounts-and-allowances-sales-red-sale-lable-miscellaneous-text-thumbnail.png",
       highlight: true,
       href: "/sale",
       submenu: [
@@ -88,11 +88,11 @@ export function Header() {
           ]
         },
       ],
-      image: "/placeholder.svg?height=200&width=300"
+      image: "https://e7.pngegg.com/pngimages/517/914/png-clipart-computer-icons-discounts-and-allowances-sales-red-sale-lable-miscellaneous-text-thumbnail.png"
     },
     {
       name: "Sofas & Seating",
-      icon: "/placeholder.svg?height=40&width=40",
+      icon: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png",
       href: "/category/sofas-seating",
       submenu: [
         { 
@@ -120,11 +120,11 @@ export function Header() {
           ]
         },
       ],
-      image: "/placeholder.svg?height=200&width=300"
+      image: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png"
     },
     {
       name: "Living",
-      icon: "/placeholder.svg?height=40&width=40",
+      icon: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png",
       href: "/category/living",
       submenu: [
         { 
@@ -152,13 +152,13 @@ export function Header() {
           ]
         },
       ],
-      image: "/placeholder.svg?height=200&width=300"
+      image: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png"
     },
   ]
 
   const renderSubmenu = (items:any, level = 0) => {
     return items.map((item:any) => (
-      <div key={item.name} className={`pl-${level * 4}`}>
+      <div key={item.name} className={`pl-${level * 4} bg-white`}>
         <Link href={item.href} className="block py-2 text-sm text-muted-foreground hover:text-primary">
           {item.name}
         </Link>
@@ -312,7 +312,7 @@ export function Header() {
                 </Sheet>
           </div>
         </div>
-        {showSearch && (
+        {/* {showSearch && (
           <div className="border-b px-4 py-2" ref={searchRef}>
             <div className="relative">
               <Input
@@ -352,7 +352,7 @@ export function Header() {
               )}
             </div>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Desktop Header */}
@@ -360,23 +360,11 @@ export function Header() {
         {/* Top bar */}
         <div className="border-b px-4 py-2 text-xs">
           <div className="mx-auto flex max-w-7xl justify-end gap-4">
-            <Link href="#" className="text-muted-foreground hover:text-primary">
-              SELL ON FernIndia
+            <Link href={route('vendor.register')} className="text-muted-foreground hover:text-primary">
+              SELL ON FERNINDIA
             </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary">
+            <Link href={route('partnerRegister')} className="text-muted-foreground hover:text-primary">
               BECOME A FRANCHISEE
-            </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary">
-              BUY IN BULK
-            </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary">
-              GIFT CARDS
-            </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary">
-              TRACK YOUR ORDER
-            </Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary">
-              CONTACT US
             </Link>
           </div>
         </div>
@@ -441,7 +429,7 @@ export function Header() {
         </div>
 
         {/* Navigation with Mega Menus */}
-        <nav className="relative px-4 ">
+        <nav className="relative px-4 z-50">
           <ul className="mx-auto flex max-w-7xl items-center gap-8 overflow-x-auto py-2 text-sm font-medium sticky top-0">
             {categories.map((category) => (
               <li key={category.name} className="shrink-0">
@@ -451,7 +439,7 @@ export function Header() {
                       {category.name}
                     </Link>
                   </HoverCardTrigger>
-                  <HoverCardContent className="left-0 w-screen max-w-screen-xl translate-x-0" align="start">
+                  <HoverCardContent className="bg-white left-0 z-50 w-screen max-w-screen-xl translate-x-0" align="start">
                     <div className="grid grid-cols-5 gap-4 p-4">
                       <div className="col-span-4 grid grid-cols-3 gap-8">
                         {category.submenu.map((item) => (

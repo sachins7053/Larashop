@@ -30,7 +30,7 @@ export default function SearchBar() {
       useEffect(() => {
         if (searchQuery) {
           // Simulating API call for search suggestions
-          const suggestions = ['Sofa', 'Dining Table', 'Bed', 'Wardrobe'].filter(item =>
+          const suggestions = ['demo','Sofa', 'Dining Table', 'Bed', 'Wardrobe'].filter(item =>
             item.toLowerCase().includes(searchQuery.toLowerCase())
           )
           console.log(searchQuery);
@@ -38,7 +38,7 @@ export default function SearchBar() {
           setSearchSuggestions(suggestions)
     
           // Simulating API call for search results
-          const results = ['Leather Sofa', 'Wooden Dining Table', 'Queen Size Bed', 'Modern Wardrobe'].filter(item =>
+          const results = ['demo', 'Leather Sofa', 'Wooden Dining Table', 'Queen Size Bed', 'Modern Wardrobe'].filter(item =>
             item.toLowerCase().includes(searchQuery.toLowerCase())
           )
           setSearchResults(results)
@@ -82,10 +82,10 @@ export default function SearchBar() {
       <div className="absolute left-0 z-40 right-0 top-full mt-1 rounded-md border bg-background shadow-lg">
         {searchSuggestions.length > 0 && (
           <div className="p-2">
-            <h3 className="mb-1 text-sm font-semibold">Suggestions</h3>
+            <h3 className="mb-3 text-sm font-semibold">Suggestions</h3>
             <ul>
               {searchSuggestions.map((suggestion, index) => (
-                <li key={index} className="cursor-pointer p-1 text-sm hover:bg-muted">
+                <li key={index} onClick={handleSearch} className="cursor-pointer p-1 text-sm hover:bg-muted">
                   {suggestion}
                 </li>
               ))}
@@ -97,7 +97,7 @@ export default function SearchBar() {
             <h3 className="mb-1 text-sm font-semibold">Results</h3>
             <ul>
               {searchResults.map((result, index) => (
-                <li key={index} className="cursor-pointer p-1 text-sm hover:bg-muted">
+                <li key={index} onClick={handleSearch} className="cursor-pointer p-1 text-sm hover:bg-muted">
                   {result}
                 </li>
               ))}

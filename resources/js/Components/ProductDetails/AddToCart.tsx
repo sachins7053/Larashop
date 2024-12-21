@@ -30,6 +30,7 @@ const AddToCart: React.FC<AddToCartProps> = ({ product, variationId, price, sale
       item = {
         id: product.id,
         cartId: variationId? variationId: product.id,
+        productId: product.id,
         name: product.name,
         price: salePrice || price,
         quantity: quantity,
@@ -40,6 +41,7 @@ const AddToCart: React.FC<AddToCartProps> = ({ product, variationId, price, sale
       item = {
         id: product.id,
         cartId: product.id.toString(),
+        productId: product.id,
         name: product.name,
         price: salePrice || price,
         quantity: quantity,
