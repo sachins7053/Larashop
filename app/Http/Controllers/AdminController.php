@@ -9,6 +9,7 @@ use App\Models\Vendor;
 use App\Models\Orders;
 use App\Models\Orderitems;
 use App\Models\OrderVendorStatus;
+use App\Models\UserActivity;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -74,4 +75,40 @@ class AdminController extends Controller
         return redirect()->back();
 
     }
+    public function analytics(Request $request):Response
+        {
+            $query = UserActivity::query();
+
+            // Apply filters if present
+            if ($request->filled('source')) {
+                $query->where('source', 'LIKE', '%' . $request->source . '%');
+            }
+
+            if ($request->filled('landing_page')) {
+                $query->where('landing_page', 'LIKE', '%' . $request->landing_page . '%');
+            }
+
+            if ($request->filled('location')) {
+                $query->where('location', 'LIKE', '%' . $request->location . '%');
+            }
+
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
+
+            // Pagination
+            $activities = $query->latest()->paginate(10)->withQueryString();
+
+            return inertia::render('Admin/Analytics/Index', [
+                'activities' => $activities,
+                'filters' => $request->only(['source', 'landing_page', 'location', 'date_from', 'date_to']),
+            ]);
+        }
+
+
+   
 }

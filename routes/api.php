@@ -9,6 +9,7 @@ use App\Http\Controllers\CartCheckoutCouponController;
 use App\Http\Controllers\Api\TaxController;
 use App\Http\Controllers\FilesController;
 use App\Http\Controllers\Api\UserCartController;
+use App\Http\Controllers\Api\UserActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,7 @@ Route::apiResource('files', FilesController::class);
 route::apiResource('usercart.cart', UserCartController::class);
 route::delete('cart/item/{userid}/{itemid}', [UserCartController::class, 'removeCartItem']);
 route::post('place-order/{userid}', [UserCartController::class, 'place_order'])->name('checkout');
-
+Route::post('/user-activity', [UserActivityController::class, 'store']);
 // Add auth:sanctum middleware to cart routes
     Route::get('/cart', [CartCheckoutCouponController::class, 'getCart']);
     Route::post('/cart/sync', [CartCheckoutCouponController::class, 'syncCart']);

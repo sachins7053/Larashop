@@ -130,6 +130,7 @@ Route::prefix('admin')->middleware('role_or_permission:Admin')->group(function (
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/homepage', [HomepageController::class, 'editHome'])->name('admin.homepage');
     Route::post('/homepage', [HomepageController::class, 'store']);
+    Route::get('/analytics', [AdminController::class, 'analytics'])->name('admin.analytics');
 
 });
 
