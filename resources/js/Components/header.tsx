@@ -58,41 +58,8 @@ export function Header() {
 
   const categories = [
     {
-      name: "Sale",
-      icon: "https://e7.pngegg.com/pngimages/517/914/png-clipart-computer-icons-discounts-and-allowances-sales-red-sale-lable-miscellaneous-text-thumbnail.png",
-      highlight: true,
-      href: "/sale",
-      submenu: [
-        { 
-          name: "Flash Sale", 
-          href: "/sale/flash",
-          submenu: [
-            { name: "Today's Deals", href: "/sale/flash/today" },
-            { name: "Upcoming Deals", href: "/sale/flash/upcoming" },
-          ]
-        },
-        { 
-          name: "Clearance", 
-          href: "/sale/clearance",
-          submenu: [
-            { name: "Final Stock", href: "/sale/clearance/final-stock" },
-            { name: "Overstock", href: "/sale/clearance/overstock" },
-          ]
-        },
-        { 
-          name: "Bundle Offers", 
-          href: "/sale/bundles",
-          submenu: [
-            { name: "Room Sets", href: "/sale/bundles/room-sets" },
-            { name: "Combo Deals", href: "/sale/bundles/combo-deals" },
-          ]
-        },
-      ],
-      image: "https://e7.pngegg.com/pngimages/517/914/png-clipart-computer-icons-discounts-and-allowances-sales-red-sale-lable-miscellaneous-text-thumbnail.png"
-    },
-    {
       name: "Sofas & Seating",
-      icon: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png",
+      icon: "https://www.estre.in/cdn/shop/files/6-min_43d42e73-065e-4563-9dce-f1d8541e47c0.jpg?v=1710326062",
       href: "/category/sofas-seating",
       submenu: [
         { 
@@ -101,6 +68,7 @@ export function Header() {
           submenu: [
             { name: "3-Seater Sofas", href: "/category/sofas-seating/sofa-sets/3-seater" },
             { name: "2-Seater Sofas", href: "/category/sofas-seating/sofa-sets/2-seater" },
+            { name: "1-Seater Sofas", href: "/category/sofas-seating/sofa-sets/1-seater" },
           ]
         },
         { 
@@ -109,26 +77,61 @@ export function Header() {
           submenu: [
             { name: "L-Shaped", href: "/category/sofas-seating/sectionals/l-shaped" },
             { name: "U-Shaped", href: "/category/sofas-seating/sectionals/u-shaped" },
+            { name: "Corner Sofas", href: "/category/sofas-seating/sectionals/u-shaped" },
           ]
         },
         { 
           name: "Recliners", 
           href: "/category/sofas-seating/recliners",
           submenu: [
-            { name: "Manual Recliners", href: "/category/sofas-seating/recliners/manual" },
-            { name: "Power Recliners", href: "/category/sofas-seating/recliners/power" },
+            { name: "3-Seater Recliner", href: "/category/sofas-seating/sofa-sets/3-seater" },
+            { name: "2-Seater Recliner", href: "/category/sofas-seating/sofa-sets/2-seater" },
+            { name: "1-Seater Recliner", href: "/category/sofas-seating/sofa-sets/1-seater" },
           ]
         },
       ],
-      image: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png"
+      image: "https://www.estre.in/cdn/shop/files/6-min_43d42e73-065e-4563-9dce-f1d8541e47c0.jpg?v=1710326062"
     },
     {
-      name: "Living",
-      icon: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png",
+      name: "Beds",
+      icon: "https://imagecdn.99acres.com//microsite/wp-content/blogs.dir/6161/files/2023/06/Upholstered-Bed-Design.jpg",
+      highlight: true,
+      href: "/sale",
+      submenu: [
+        { 
+          name: "King Size", 
+          href: "/sale/flash",
+          submenu: [
+            { name: "Today's Deals", href: "/sale/flash/today" },
+            { name: "Upcoming Deals", href: "/sale/flash/upcoming" },
+          ]
+        },
+        { 
+          name: "Queen Size", 
+          href: "/sale/clearance",
+          submenu: [
+            { name: "Final Stock", href: "/sale/clearance/final-stock" },
+            { name: "Overstock", href: "/sale/clearance/overstock" },
+          ]
+        },
+        { 
+          name: "Single Bed", 
+          href: "/sale/bundles",
+          submenu: [
+            { name: "Room Sets", href: "/sale/bundles/room-sets" },
+            { name: "Combo Deals", href: "/sale/bundles/combo-deals" },
+          ]
+        }
+      ],
+      image: "https://imagecdn.99acres.com//microsite/wp-content/blogs.dir/6161/files/2023/06/Upholstered-Bed-Design.jpg"
+    },
+    {
+      name: "Chairs",
+      icon: "https://cellbell.in/cdn/shop/files/IMG-20240417-WA0012_3.png?v=1715334897",
       href: "/category/living",
       submenu: [
         { 
-          name: "TV Units", 
+          name: "Gaming Chair", 
           href: "/category/living/tv-units",
           submenu: [
             { name: "Wall-Mounted", href: "/category/living/tv-units/wall-mounted" },
@@ -136,7 +139,7 @@ export function Header() {
           ]
         },
         { 
-          name: "Coffee Tables", 
+          name: "Office Chair", 
           href: "/category/living/coffee-tables",
           submenu: [
             { name: "Wood", href: "/category/living/coffee-tables/wood" },
@@ -144,7 +147,7 @@ export function Header() {
           ]
         },
         { 
-          name: "Bookshelves", 
+          name: "Wooden Chair", 
           href: "/category/living/bookshelves",
           submenu: [
             { name: "Ladder Shelves", href: "/category/living/bookshelves/ladder" },
@@ -152,8 +155,14 @@ export function Header() {
           ]
         },
       ],
-      image: "https://w7.pngwing.com/pngs/443/378/png-transparent-furniture-computer-icons-building-sofa-rectangle-couch-interior-design-services-thumbnail.png"
+      image: "https://cellbell.in/cdn/shop/files/IMG-20240417-WA0012_3.png?v=1715334897"
     },
+    {
+      name: "Cabinets",
+      icon: "https://m.media-amazon.com/images/I/51Zv93sBY2L._AC_UF894,1000_QL80_.jpg",
+      href: "/category/living",
+      image: "https://m.media-amazon.com/images/I/51Zv93sBY2L._AC_UF894,1000_QL80_.jpg"
+    }
   ]
 
   const renderSubmenu = (items:any, level = 0) => {
@@ -234,7 +243,7 @@ export function Header() {
                     <ChevronRight className="h-5 w-5 text-muted-foreground" />
                   </Link>
                 </div>
-                <div className="flex flex-col py-2">
+                <div className="flex flex-col gap-y-2 py-2">
                   {activeSubmenu.length === 0 ? (
                     categories.map((category) => (
                       <Button
@@ -312,7 +321,7 @@ export function Header() {
                 </Sheet>
           </div>
         </div>
-        {/* {showSearch && (
+        {showSearch && (
           <div className="border-b px-4 py-2" ref={searchRef}>
             <div className="relative">
               <Input
@@ -322,7 +331,7 @@ export function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-              {(searchSuggestions.length > 0 || searchResults.length > 0) && (
+              {/* {(searchSuggestions.length > 0 || searchResults.length > 0) && (
                 <div className="absolute left-0 z-40 right-0 top-full mt-1 rounded-md border bg-background shadow-lg">
                   {searchSuggestions.length > 0 && (
                     <div className="p-2">
@@ -349,10 +358,10 @@ export function Header() {
                     </div>
                   )}
                 </div>
-              )}
+              )} */}
             </div>
           </div>
-        )} */}
+        )}
       </div>
 
       {/* Desktop Header */}
@@ -442,7 +451,7 @@ export function Header() {
                   <HoverCardContent className="bg-white left-0 z-50 w-screen max-w-screen-xl translate-x-0" align="start">
                     <div className="grid grid-cols-5 gap-4 p-4">
                       <div className="col-span-4 grid grid-cols-3 gap-8">
-                        {category.submenu.map((item) => (
+                        {category.submenu?.map((item) => (
                           <div key={item.name}>
                             <h3 className="mb-2 font-semibold">
                               <Link href={item.href} className="hover:text-primary">
