@@ -155,13 +155,11 @@ class ProductController extends Controller
 
             if($request->has('variations')) {   
 
+                ProductVariation::where('product_id', $id)->delete();
                 foreach ($request->variations as $variationData) {   
-                    ProductVariation::where('variation_id', $variationData['variation_id'])->delete();
 
-                    $variation = ProductVariation::updateOrCreate(
-                        [
-                            'variation_id' => $variationData['variation_id'], // Assuming this is the unique identifier
-                        ],
+                    $variation = ProductVariation::create(
+
                         [
                             'product_id' => $request->id,
                             'price' => $variationData['mrp'],
@@ -203,16 +201,19 @@ class ProductController extends Controller
                     }
                 }
 
-            }
+            };
 
             // Update Product with validated data
             // $Product->update($validated);
 
             // Return a success response
-            return response()->json([
-                'message' => 'Product updated successfully',
-                'Product' => $Product
-            ], 200);
+            // return response()->json([
+            //     'message' => 'Product updated successfully',
+            //     'Product' => $Product
+            // ], 200);
+
+            return redirect()->intended(route('product.index', absolute:false));
+                
         }
 
 

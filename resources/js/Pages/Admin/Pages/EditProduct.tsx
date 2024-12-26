@@ -97,7 +97,7 @@ export default function EditProduct( {product, categories, product_var , Attribu
       };
     
       // Generate combinations for variations
-      const generateVariations = () => {
+    const generateVariations = () => {
         const keys = Object.keys(selectedAttributes);
         if (keys.length === 0) return;
     
@@ -121,8 +121,11 @@ export default function EditProduct( {product, categories, product_var , Attribu
         }));
     
         setVariations(newVariations);
+        setData('variations', newVariations);
+        console.log('New Variations',variations);
     }
-
+    
+    console.log('Variations',variations);
    
 
     const {data , setData, patch, processing, errors} = useForm({
@@ -135,7 +138,7 @@ export default function EditProduct( {product, categories, product_var , Attribu
         sale_price: product.sale_price || '',
         images : product.images || '',
         categories: selectedCategories,
-        variations: variations
+        variations: product_var || variations
 
     })
 
@@ -174,7 +177,6 @@ export default function EditProduct( {product, categories, product_var , Attribu
     
     ) };
   
-    console.error(errors)
 
     return (
         <AuthenticatedLayout
@@ -457,7 +459,7 @@ export default function EditProduct( {product, categories, product_var , Attribu
                         </CardContent>
                     </Card>
 
-                    <Button onClick={handleSubmit} type="submit" className="w-full">
+                    <Button disabled={processing} onClick={handleSubmit} type="submit" className="w-full">
                         {productStatus ===   'draft' ? 'Save Draft' : 'Publish Product'}
                     </Button>
                     </div>

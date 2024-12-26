@@ -25,7 +25,6 @@ export const logUserActivity = async () => {
     const userData = await getUserData();
     try {
         await axios.post("/api/user-activity", userData);
-        console.log("user Data: " , userData);
     } catch (error) {
         console.error("Error logging user activity:", error);
     }
